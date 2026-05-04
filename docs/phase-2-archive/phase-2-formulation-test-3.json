@@ -1,0 +1,34 @@
+{
+  "output_type": "refusal",
+  "refusal_trigger": "Test result identifiers do not match the submission metadata",
+  "refusal_explanation": "The submission metadata specifies the patient as female (patient_sex: 'F', age 47), and the practitioner's clinical notes describe a 47-year-old female. However, the attached NutriSTAT pathology PDF (Lab ID 4209436) is labelled 'Male' on every page, and the hormone results are physiologically consistent with a male patient (Testosterone 21.0 nmol/L within the male reference range 6.7–25.7; Calculated Free Testosterone 427.6 pmol/L within the male reference range 170–670; Progesterone 0.3 nmol/L mapped against the male reference 0.159–0.474). These values are an order of magnitude above expected female ranges. This identifier and physiological mismatch between the submission and the laboratory document means the patient identity and the test result cannot be reconciled with confidence, which is a hard refusal trigger under the service's safety rules. The practitioner is asked to verify that the correct test result has been attached to the correct patient submission and to resubmit. No formulation has been generated and the Ingredients Library was not consulted for ingredient selection.",
+  "escalation_recommended": true,
+  "compliance_self_check": {
+    "practitioner_scope_filter_applied": false,
+    "no_commercial_framing": true,
+    "no_banned_terms": true,
+    "no_banned_diagnostic_language": true,
+    "no_banned_causal_language": true,
+    "no_banned_recommendation_language": true,
+    "no_banned_therapeutic_claims": true,
+    "no_restricted_representations": true,
+    "third_person_framing": true,
+    "all_required_schema_fields_populated": true,
+    "notes": "Refusal output. Practitioner scope filter not applied because no formulation was generated. Contraindication checks, biomarker analysis, and formulation logic are not applicable in a refusal output. Ingredients Library was not consulted because the submission failed identity verification at the input stage."
+  },
+  "audit_metadata": {
+    "prompt_version": "0.1.0",
+    "library_revision": "not_referenced_due_to_refusal",
+    "submission_id": "TEST-002-FORMULATION",
+    "test_type": "NutriSTAT",
+    "practitioner_id_hash": "HASH-TEST-002",
+    "escalation_flags_raised": [
+      "submission_metadata_mismatch_with_lab_pdf",
+      "patient_sex_mismatch",
+      "hormone_values_inconsistent_with_stated_sex"
+    ],
+    "contraindications_flagged": 0,
+    "practitioner_scope_filter_applied": false,
+    "s4_ingredients_excluded_count": 0
+  }
+}

@@ -3,7 +3,7 @@
     "source_file": "Ingredients Library AUST Master Rev15 02Mar2026.xlsx",
     "library_revision": 15,
     "library_revision_date": "2026-03-02",
-    "built_at": "2026-05-04T08:44:15.173Z",
+    "built_at": "2026-05-04T08:49:38.326Z",
     "ingredient_count": 107,
     "scheduling_note": "All ingredients in this MVP library are unscheduled. The S2/S3/S4 practitioner scope filter has no effect at this stage and will be activated in a future revision when scheduling status is added per ingredient."
   },
