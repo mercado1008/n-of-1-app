@@ -15,8 +15,12 @@
  *   9. The library_revision sentinel ("not_referenced_due_to_refusal") is accepted on refusal.
  *  10-12. v0.3.0 — category enum, original_target_dose, excluded_from_pod.
  *  13-15. v0.4.0 — granules per ingredient, total_granules.
- *  16-18. v0.4.1 — panel_classes, recognised_patterns, granule_budget_allocation_plan,
+ *  16-21. v0.4.1 — panel_classes, recognised_patterns, granule_budget_allocation_plan,
  *                  binding_exclusions_applied.
+ *  22-23. v0.4.7 — references field (round-trip and optional).
+ *  24.    HL7 path — callClaudeForAnalysisFromText parses a valid formulation.
+ *  25-30. HL7 parser and adapter — segment splitting, field/comp accessors,
+ *         line endings, PID extraction, NM/FT separation, OBR fields.
  *
  * Run with:  npx tsx scripts/test-claude-client-mock.ts
  *
@@ -24,8 +28,11 @@
  */
 import {
   callClaudeForAnalysis,
+  callClaudeForAnalysisFromText,
   ClaudeOutputShapeError,
 } from '../lib/claude-client';
+import { parseHL7Message, field, comp } from '../lib/hl7-parser';
+import { adaptHL7Message } from '../lib/hl7-adapter';
 // ---------------------------------------------------------------------------
 // Fake Anthropic client
 // ---------------------------------------------------------------------------
@@ -397,6 +404,27 @@ const MISSING_ALLOCATION_PLAN = {
   ...VALID_FORMULATION,
   granule_budget_allocation_plan: [],  // empty array — should be rejected by min(1)
 };
+
+// v0.4.7 — formulation with references field populated
+const FORMULATION_WITH_REFERENCES = {
+  ...VALID_FORMULATION,
+  references: [
+    {
+      ingredient_name: 'Vitamin D3 (cholecalciferol)',
+      citation: 'Holick MF et al. (2011). Evaluation, treatment, and prevention of vitamin D deficiency. J Clin Endocrinol Metab.',
+    },
+  ],
+};
+
+// Minimal HL7 v2.3.1 ORU^R01 message for parser/adapter tests.
+const MINIMAL_HL7 = [
+  'MSH|^~\\&|LIS|LAB|APP|FAC|20260413|||ORU^R01|MSG001|P|2.3.1',
+  'PID|1||P000065||DOE^JANE||19700101|F',
+  'OBR|1||LAB001-0001|OAT|||20260406000000+1000',
+  'OBX|1|NM|BENZOIC_ACID^Benzoic Acid^L||25.00|mmol/molCR|<9.30|H|||F',
+  'OBX|2|NM|HIPPURIC_ACID^Hippuric Acid^L||330.0|mmol/molCR|<603.0||||F',
+  'OBX|3|FT|OAT_INTRO^OAT Introduction^L||Narrative comment text.|||||||F',
+].join('\r\n');
 
 // ---------------------------------------------------------------------------
 // Test runner
@@ -1002,6 +1030,145 @@ const tests: Test[] = [
       }
     },
   },
+  // v0.4.7 tests — references field
+  {
+    name: 'v0.4.7: references field round-trips on formulation',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system',
+        pdfBase64: 'AAAA',
+        userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use',
+          usage: { input_tokens: 100, output_tokens: 200 },
+          content: [
+            { type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: FORMULATION_WITH_REFERENCES } },
+          ],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const refs = (result.output as { references?: { ingredient_name: string; citation: string }[] }).references;
+      if (!Array.isArray(refs) || refs.length !== 1) {
+        throw new Error(`Expected 1 reference, got ${refs?.length}`);
+      }
+      if (!refs[0].citation.includes('Holick')) {
+        throw new Error('citation did not round-trip');
+      }
+    },
+  },
+  {
+    name: 'v0.4.7: references field is optional — omitted is accepted',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system',
+        pdfBase64: 'AAAA',
+        userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use',
+          usage: { input_tokens: 100, output_tokens: 200 },
+          content: [
+            { type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: VALID_FORMULATION } },
+          ],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const refs = (result.output as { references?: unknown }).references;
+      if (refs !== undefined) throw new Error(`Expected references to be absent, got ${JSON.stringify(refs)}`);
+    },
+  },
+  // HL7 path — callClaudeForAnalysisFromText
+  {
+    name: 'callClaudeForAnalysisFromText: parses a valid formulation (text-only path)',
+    run: async () => {
+      const fakeClient = makeFakeClient({
+        stop_reason: 'tool_use',
+        usage: { input_tokens: 100, output_tokens: 200 },
+        content: [
+          { type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: VALID_FORMULATION } },
+        ],
+      }) as unknown as Parameters<typeof callClaudeForAnalysisFromText>[0]['client'];
+      const result = await callClaudeForAnalysisFromText({
+        systemPrompt: 'system',
+        userPrompt: 'biomarker table goes here',
+        client: fakeClient,
+      });
+      if (result.output.output_type !== 'formulation') {
+        throw new Error(`Expected formulation, got ${result.output.output_type}`);
+      }
+    },
+  },
+  // HL7 parser tests
+  {
+    name: 'HL7 parser: parseHL7Message splits segments and fields correctly',
+    run: async () => {
+      const segments = parseHL7Message(MINIMAL_HL7);
+      if (segments.length !== 6) throw new Error(`Expected 6 segments, got ${segments.length}`);
+      if (segments[0].name !== 'MSH') throw new Error(`Expected MSH, got ${segments[0].name}`);
+      if (segments[3].name !== 'OBX') throw new Error(`Expected OBX at index 3, got ${segments[3].name}`);
+    },
+  },
+  {
+    name: 'HL7 parser: field() and comp() accessors return correct values',
+    run: async () => {
+      const segments = parseHL7Message(MINIMAL_HL7);
+      const obx = segments[3]; // first OBX — Benzoic Acid
+      if (field(obx, 2).raw !== 'NM') throw new Error(`OBX-2 expected NM, got ${field(obx, 2).raw}`);
+      if (comp(obx, 3, 0) !== 'BENZOIC_ACID') throw new Error(`OBX-3.1 expected BENZOIC_ACID, got ${comp(obx, 3, 0)}`);
+      if (comp(obx, 3, 1) !== 'Benzoic Acid') throw new Error(`OBX-3.2 expected 'Benzoic Acid', got ${comp(obx, 3, 1)}`);
+      if (field(obx, 5).raw !== '25.00') throw new Error(`OBX-5 expected 25.00, got ${field(obx, 5).raw}`);
+      if (field(obx, 8).raw !== 'H') throw new Error(`OBX-8 expected H, got ${field(obx, 8).raw}`);
+    },
+  },
+  {
+    name: 'HL7 parser: handles both CRLF and LF line endings',
+    run: async () => {
+      const crlf = parseHL7Message(MINIMAL_HL7); // uses \r\n
+      const lf = parseHL7Message(MINIMAL_HL7.replace(/\r\n/g, '\n'));
+      if (crlf.length !== lf.length) {
+        throw new Error(`CRLF gave ${crlf.length} segments, LF gave ${lf.length}`);
+      }
+    },
+  },
+  // HL7 adapter tests
+  {
+    name: 'HL7 adapter: extracts PID fields correctly',
+    run: async () => {
+      const parsed = adaptHL7Message(MINIMAL_HL7);
+      if (parsed.patient_id !== 'P000065') throw new Error(`patient_id expected P000065, got ${parsed.patient_id}`);
+      if (parsed.patient_dob !== '19700101') throw new Error(`patient_dob expected 19700101, got ${parsed.patient_dob}`);
+      if (parsed.patient_sex !== 'F') throw new Error(`patient_sex expected F, got ${parsed.patient_sex}`);
+    },
+  },
+  {
+    name: 'HL7 adapter: separates NM and FT OBX rows correctly',
+    run: async () => {
+      const parsed = adaptHL7Message(MINIMAL_HL7);
+      if (parsed.numeric_findings.length !== 2) {
+        throw new Error(`Expected 2 NM findings, got ${parsed.numeric_findings.length}`);
+      }
+      if (parsed.narrative_comments.length !== 1) {
+        throw new Error(`Expected 1 FT comment, got ${parsed.narrative_comments.length}`);
+      }
+      if (parsed.numeric_findings[0].code !== 'BENZOIC_ACID') {
+        throw new Error(`First NM code expected BENZOIC_ACID, got ${parsed.numeric_findings[0].code}`);
+      }
+      if (parsed.numeric_findings[0].abnormal_flag !== 'H') {
+        throw new Error(`First NM flag expected H, got ${parsed.numeric_findings[0].abnormal_flag}`);
+      }
+    },
+  },
+  {
+    name: 'HL7 adapter: extracts OBR order_id and collection_datetime',
+    run: async () => {
+      const parsed = adaptHL7Message(MINIMAL_HL7);
+      if (parsed.order_id !== 'LAB001-0001') {
+        throw new Error(`order_id expected LAB001-0001, got ${parsed.order_id}`);
+      }
+      if (parsed.collection_datetime !== '20260406000000+1000') {
+        throw new Error(`collection_datetime expected 20260406000000+1000, got ${parsed.collection_datetime}`);
+      }
+    },
+  },
 ];
 
 async function main() {
@@ -1017,7 +1184,7 @@ async function main() {
     }
   }
   console.log('');
-  console.log(`${tests.length - failed}/${tests.length} tests passed`);
+  console.log(`${tests.length - failed}/${tests.length} tests passed${failed > 0 ? '' : ' ✓'}`);
   if (failed > 0) process.exit(1);
 }
 
