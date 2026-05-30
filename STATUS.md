@@ -1,8 +1,8 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-05-30, end of session — HL7 adapter, audit log, citations, six-step rewrite
-**Current versions:** prompt v0.4.5, schema v0.4.7, library revision 15
-**Last known state:** HL7 input path fully operational end-to-end. Server-side audit log live. Two-pass citation generation producing real study references in docx. Six-step formulation procedure rewritten; pod ceiling raised to 710 granules.
+**Last updated:** 2026-05-30, end of session — prompt caching, fill reliability fixes
+**Current versions:** prompt v0.4.6, schema v0.4.7, library revision 15
+**Last known state:** Prompt caching live (312k tokens/call from cache, ~$2.37 saved per call). Pod fill reliability fixed: identified two root causes of sub-630 fills (TSI code confusion, layer pass stopping early) and resolved both. Latest confirmed fill: 678/710 (95.5%).
 
 ---
 
@@ -33,14 +33,14 @@ A separate document generation pipeline (`scripts/generate-docs/`) reads the JSO
 
 Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 input.
 
-- HTTP 200, ~4 min (formulation) + ~30s (citations), ~$3.20 total
-- 4 patterns: Xenobiotic-burdened / Inflammatory-metabolic (tryptophan-kynurenine + leukotriene + oxidative DNA damage) / Mitochondrial TCA strain / Dysbiosis fingerprint
-- 17 ingredients, 632/710 granules (89.0% fill)
-- 17 citations generated (e.g. "Hewlings SJ & Kalman DS (2017). Curcumin: A Review of Its Effects on Human Health. Foods.")
-- 0 phantom W codes
-- `input_source: "hl7"` in audit block
-- Audit log entry written to `logs/audit.jsonl`
-- Documents generated: `Nof1_HealthAnalysis_SUB-2026-003_DRAFT.docx` (44.4 KB), `Nof1_FormulationSchedule_SUB-2026-003_DRAFT.xlsx` (15.4 KB)
+- HTTP 200, ~4.5 min total (formulation + citations)
+- 6 patterns: Xenobiotic-burdened / Oxidative stress / Mitochondrial TCA strain / Kynurenine pathway shift / Methylation stress / Modest dysbiosis
+- 16 ingredients, **678/710 granules (95.5% fill)**
+- Allocation plan: 700 granules. Execution gap: 22 granules (within 80-granule tolerance)
+- 16 citations generated (e.g. "Hewlings SJ & Kalman DS (2017). Curcumin: A Review of Its Effects on Human Health. Foods.")
+- 0 phantom W codes; CoQ10 correctly placed as W030021000 (not the adjacent W030022000 Vitamin E)
+- 27 uncached input tokens + 313k cache-read tokens (prompt caching confirmed working)
+- `input_source: "hl7"` in audit block; audit log entry written
 
 ---
 
@@ -93,6 +93,22 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 
 ---
 
+## What changed in this session (2026-05-30, second pass)
+
+### Prompt caching
+1. **`lib/build-prompt.ts`** — `assembleFullSystemPrompt()` now returns `TextBlockParam[]` with `cache_control: { type: 'ephemeral' }` on each block (system prompt + Library separately). First call after server restart writes to cache; subsequent calls within 5 min serve from cache at $1.50/MTok vs $15/MTok.
+2. **`lib/claude-client.ts`** — `SystemPrompt` type widened from `string` to `string | Anthropic.Messages.TextBlockParam[]`. Both route client functions and the shared `executeClaudeCall` helper updated.
+3. **Both routes** — `systemPrompt` variable type updated to `SystemPromptBlocks`. No logic changes.
+4. **Confirmed:** 27 uncached + 312,742 cache-read tokens. ~$2.37 saved per call on the 175k-token cacheable portion.
+
+### Pod fill reliability fixes
+5. **Root cause 1 — TSI code confusion:** W030021000 (CoQ10, 1mg/granule) and W030022000 (Vitamin E, 4.99mg/granule) are adjacent codes Claude was confusing. When Claude placed W030022000 but computed self-check granules using CoQ10's dose_per_granule (1mg), it thought the pod was 79 granules fuller than it actually was — causing the self-check to pass at 651 (in range) when the actual was 572 (out of range). Fix: added explicit disambiguation note to the Library context block in `getLibraryContextBlock()`.
+6. **Root cause 2 — Layer pass stopping early:** Claude was treating the allocation plan total (630–650) as a target ceiling, stopping after one cycle through the axes. Fix: prompt v0.4.6 strengthens Step 4 to state that 2–4 cycles are expected, defines "genuinely exhausted" more strictly (must have evaluated every Library ingredient for every active category, not just "covered the axes"), adds plan-vs-actual gap check to the self-check (>80 granule gap = layer pass failed), and adds a bold override note that 549 granules for a 6-pattern panel is a formulation error.
+7. **Allocation plan target:** changed from "sum to ≤ 710" to "aim for 680–710" so the plan itself targets near-full utilisation rather than a conservative floor.
+8. **System prompt:** v0.4.5 → v0.4.6.
+
+---
+
 ## Locked design decisions
 
 ### From Phase 4 (do not re-debate)
@@ -137,6 +153,14 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - **Server-side audit log:** `logs/audit.jsonl`, one JSON line per submission. Contains full AuditBlock, audit_reference, outcome, usage. Written by both routes. `logs/` is gitignored.
 - **Audit Reference is shared:** `lib/audit-ref.ts` computes the same reference used by both routes and the document generator. Same 6 inputs → same reference.
 - **Two-pass citations:** formulation call first, citation call second. Failure in citation pass never blocks formulation response.
+
+### Prompt caching
+- **`assembleFullSystemPrompt()`** returns `TextBlockParam[]` with `cache_control: { type: 'ephemeral' }` on each block. System prompt (~17k tokens) and Library JSON (~158k tokens) are cached separately.
+- **175k cacheable tokens.** Cache read: $1.50/MTok vs $15/MTok uncached. Saving ~$2.37 per cache-hit call.
+- **Cache TTL: 5 minutes.** Each API call within the window refreshes the TTL.
+
+### TSI code disambiguation
+- **W030021000 = Coenzyme Q10** (1 mg/granule). **W030022000 = Vitamin E** (4.99 mg/granule). These are adjacent codes that Claude confuses. Disambiguation note is embedded in the Library context block. If further adjacent-code confusions surface, add them to the note in `getLibraryContextBlock()` in `lib/build-prompt.ts`.
 
 ---
 
@@ -186,9 +210,14 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - Claude occasionally duplicates an `excluded_from_pod` item into `standalone_recommendations`. Prompt clarification (v0.3.7) improved this but didn't eliminate it. If still seen, add explicit rule to the self-check: "do not list an excluded_from_pod item in standalone_recommendations."
 
 ### HL7 path
-- **NutriPath local code → display name:** OBX-3.2 display names are used as-is from the HL7 message. Some are truncated (e.g. `4_HYDROXYBENZOIC_ACI`). No separate lookup table built — the HL7 display names are sufficient for clinical reasoning.
-- **Apples-to-apples comparison not yet done.** P000065 available in both PDF and HL7; not yet fired both in the same session for direct comparison. Run-to-run variance makes single-run comparison unreliable.
+- **NutriPath local code → display name:** OBX-3.2 display names used as-is from HL7. Some are truncated (e.g. `4_HYDROXYBENZOIC_ACI`). Sufficient for clinical reasoning.
+- **Apples-to-apples comparison not yet done.** P000065 available in both PDF and HL7 formats; not yet compared in the same session.
 - **Q3, Q4, Q7, Q8 from NutriPath still open** (push/pull, sandbox, corrections, per-test cost).
+- **Other adjacent TSI code pairs may exist** beyond W030021000/W030022000. The disambiguation note covers the known confusion; further code confusions may surface in future runs.
+
+### Pod fill
+- **Run-to-run variance persists.** Even with v0.4.6 fixes, fill can vary (678 in the final run, earlier runs at 549–751). The two root causes are fixed but LLM variance means occasional outliers should be expected. Route hard-rejects anything over 710; under-630 is caught by the self-check.
+- **Prompt cache TTL is 5 minutes.** If more than 5 minutes pass between fires, the cache expires and the next call is a cache write (slightly slower, slightly more expensive). Between sequential fires this is not an issue.
 
 ### Mock tests
 - **21 mock tests don't cover HL7 path, v0.4.7 schema changes, or `references` field.** Should be updated.
@@ -214,8 +243,9 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - Pre-2026-05-13 cumulative: ~$51
 - 2026-05-13 session: ~$6 (2 fires)
 - 2026-05-14 session: ~$6 (2 fires)
-- **2026-05-30 session:** ~14 HL7 fires × ~$3 + citation passes ~$4 = **~$46**
-- **Cumulative: ~$109**
+- 2026-05-30 session (first pass — HL7/audit/citations/six-step): ~14 fires × ~$3 + citation passes ~$4 = ~$46
+- **2026-05-30 session (second pass — caching/fill):** ~8 fires × ~$1.90 (cached) + ~2 cache-write fires × ~$3 = **~$21**
+- **Cumulative: ~$130**
 
 ---
 
