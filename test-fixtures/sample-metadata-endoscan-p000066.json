@@ -1,0 +1,12 @@
+{
+  "submission_id": "SUB-2026-004",
+  "practitioner_id": "P001-NATUROPATH",
+  "practitioner_type": "naturopath",
+  "patient_pseudonym": "PT-2026-004",
+  "patient_age_years": 53,
+  "patient_sex_assigned_at_birth": "male",
+  "test_type": "EndoSCAN",
+  "test_lab_id": "6463011",
+  "test_collection_date": "2026-03-10",
+  "panel_classes": ["HMP"]
+}
