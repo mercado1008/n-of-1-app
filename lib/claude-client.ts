@@ -186,8 +186,10 @@ function normaliseToolInput(rawInput: unknown): unknown {
 // Public API
 // ---------------------------------------------------------------------------
 
+type SystemPrompt = string | Anthropic.Messages.TextBlockParam[];
+
 export interface AnalyseClaudeArgs {
-  systemPrompt: string;
+  systemPrompt: SystemPrompt;
   /** Base64-encoded PDF bytes. */
   pdfBase64: string;
   /** Free-text user prompt: practitioner metadata block + clinical notes. */
@@ -197,7 +199,7 @@ export interface AnalyseClaudeArgs {
 }
 
 export interface AnalyseClaudeArgsFromText {
-  systemPrompt: string;
+  systemPrompt: SystemPrompt;
   /**
    * Full user prompt including inline biomarker data (HL7 path).
    * No PDF document is attached — all test data is embedded as text.
@@ -230,7 +232,7 @@ type MessageContent = Anthropic.Messages.ContentBlockParam[];
 
 async function executeClaudeCall(
   client: Anthropic,
-  systemPrompt: string,
+  systemPrompt: SystemPrompt,
   content: MessageContent,
 ): Promise<AnalyseClaudeResult> {
   let response;

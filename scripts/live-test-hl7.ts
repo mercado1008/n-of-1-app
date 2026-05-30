@@ -223,7 +223,7 @@ async function main() {
     console.log(`Code:    ${body.error.code}`);
     console.log(`Message: ${body.error.message}`);
     if (body.error.code === 'granule_verification_failed') {
-      console.log(`Computed total: ${body.error.computed_total_granules ?? '?'} / 700`);
+      console.log(`Computed total: ${body.error.computed_total_granules ?? '?'} / 710`);
       if (body.error.pod_overage) console.log('Pod overage: YES');
       for (const issue of body.error.issues ?? []) {
         console.log(`  - ${issue.tsi_code}: ${issue.reason}`);

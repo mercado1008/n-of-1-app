@@ -9,9 +9,13 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
+import type Anthropic from '@anthropic-ai/sdk';
 import promptVersion from '@/prompts/prompt-version.json';
 import type { RequestMetadata } from './request-schema';
 import type { ParsedHL7Message } from './hl7-adapter';
+
+/** Cached system prompt blocks — same across all requests until the process restarts. */
+export type SystemPromptBlocks = Anthropic.Messages.TextBlockParam[];
 
 // ---------------------------------------------------------------------------
 // User prompt
@@ -174,9 +178,31 @@ export async function getSystemPrompt(): Promise<string> {
   return cachedSystemPrompt;
 }
 
-export async function assembleFullSystemPrompt(): Promise<string> {
+/**
+ * Assemble the system prompt as two separately-cached content blocks.
+ *
+ * The Anthropic prompt cache has a 5-minute TTL. Placing cache_control on
+ * each block tells the API to cache them independently so the large library
+ * JSON (≈158k tokens) and the clinical reasoning prompt (≈17k tokens) are
+ * served from cache on every call after the first within a session.
+ *
+ * Cache read cost: $1.50/MTok vs $15/MTok for uncached input — roughly
+ * $2.37 saved per call on the 175k-token cacheable portion.
+ */
+export async function assembleFullSystemPrompt(): Promise<SystemPromptBlocks> {
   const [base, library] = await Promise.all([getSystemPrompt(), getLibraryContextBlock()]);
-  return `${base}\n\n${library}`;
+  return [
+    {
+      type: 'text',
+      text: base,
+      cache_control: { type: 'ephemeral' },
+    },
+    {
+      type: 'text',
+      text: library,
+      cache_control: { type: 'ephemeral' },
+    },
+  ];
 }
 
 // ---------------------------------------------------------------------------

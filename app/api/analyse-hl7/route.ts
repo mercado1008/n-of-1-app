@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
   });
 
   // Assemble prompts.
-  let systemPrompt: string;
+  let systemPrompt: import('@/lib/build-prompt').SystemPromptBlocks;
   try {
     systemPrompt = await assembleFullSystemPrompt();
   } catch (err) {

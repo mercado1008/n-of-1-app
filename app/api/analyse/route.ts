@@ -214,7 +214,7 @@ export async function POST(req: NextRequest) {
   const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
 
   // 7. Assemble system + user prompts.
-  let systemPrompt: string;
+  let systemPrompt: import('@/lib/build-prompt').SystemPromptBlocks;
   try {
     systemPrompt = await assembleFullSystemPrompt();
   } catch (err) {
