@@ -1,0 +1,15 @@
+{
+  "practitioner_id": "P001-NATUROPATH",
+  "practitioner_type": "naturopath",
+  "practitioner_name": "Sample Practitioner",
+  "patient_pseudonym": "PT-2026-002",
+  "patient_age_years": 56,
+  "patient_sex_assigned_at_birth": "female",
+  "test_type": "Organic_Acids",
+  "test_lab_id": "26114-0341",
+  "test_collection_date": "2026-04-02",
+  "submission_id": "SUB-2026-002",
+  "panel_classes": [
+    "FBP"
+  ]
+}

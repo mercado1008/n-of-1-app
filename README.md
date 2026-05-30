@@ -1,6 +1,6 @@
 # N of 1 Precision Formulation
 
-A local-only, single-user precision formulation tool for practitioner-led Chinese herbal medicine dispensing.
+A local-only, single-user precision formulation tool for practitioner-led complementary medicine dispensing done under extemporaneous compounding.
 
 ## Status
 
@@ -39,3 +39,12 @@ This app helps a single practitioner:
 | 3 | AI-assisted clinical support |
 | 4 | Document generation |
 | 5 | Shopify integration |
+
+## Re-fire Code
+cd ~/n-of-1-app && npx tsx scripts/live-test.ts \
+  test-fixtures/sample-oat.pdf \
+  test-fixtures/sample-metadata-oat.json
+
+## Test Server Instructions
+ctrl-c to stop server
+npm run dev

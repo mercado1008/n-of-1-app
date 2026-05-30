@@ -1,0 +1,514 @@
+{
+  "output_type": "formulation",
+  "submission_metadata": {
+    "submission_id": "SUB-2026-001",
+    "patient_pseudonymous_id": "PT-2026-001",
+    "patient_age": 52,
+    "patient_sex": "male",
+    "test_type": "NutriSTAT",
+    "lab_id": "LAB-12345",
+    "collection_date": "2026-03-23",
+    "practitioner_id_hash": "P001-NATUROPATH"
+  },
+  "executive_summary": {
+    "headline": "The patient's NutriSTAT results show several findings consistent with the practitioner's noted fatigue and brain fog presentation, including elevated hsCRP, a reduced FT3:Reverse T3 ratio, suboptimal vitamin D status, mildly reduced eGFR, an elevated blood lead reading, and a borderline-elevated Omega-3 Index with otherwise reasonable fatty acid profile. Many other markers fall within the laboratory's reference framework.",
+    "primary_findings": [
+      "hsCRP 6.88 mg/L is above the laboratory's reference range (0.00–5.00) — a pattern consistent with low-grade systemic inflammation per published frameworks; clinical significance is for practitioner assessment.",
+      "FT3:Reverse T3 ratio 0.787 (lab reference 1.200–2.200) with FT3 at the lower end of range (3.5 pmol/L; 3.1–6.8) and Reverse T3 449.6 pmol/L in the upper portion of range — a pattern that published literature associates with impaired peripheral T4-to-T3 conversion; for practitioner consideration in the context of reported fatigue.",
+      "25-OH Vitamin D 69 nmol/L is within the laboratory's reference range (50–200) but in the lower portion — given the practitioner's note of limited winter sun exposure and no recent supplementation, this finding is for practitioner discussion.",
+      "eGFR 67 mL/min/1.73m² is below the laboratory's reference (>90) — for practitioner consideration in context; flagged for monitoring and dose-cautious selection.",
+      "Whole-blood Lead 14.05 µg/L is within the laboratory's reference range (0.00–50.00) but in the upper-mid portion relative to contemporary background population values per published literature — for practitioner consideration.",
+      "Anion gap 18 mmol/L is just above the laboratory reference (8–16) — non-specific finding; for practitioner contextual review.",
+      "Omega-3 Index 6.33% is above the laboratory cut-off (>4.00) — a marker generally regarded as adequate per published frameworks.",
+      "AA/EPA ratio 9.3 is within the laboratory range (1.1–30.0) but in the lower portion, consistent with a reasonable omega balance."
+    ],
+    "areas_within_reference": [
+      "Lipid panel (total cholesterol, LDL, HDL, triglycerides, ApoB, ApoA-1, Lp(a), LDL phenotype Type A)",
+      "Fasting glucose 5.4 mmol/L",
+      "Homocysteine 8.1 µmol/L",
+      "Fibrinogen 4.5 g/L (upper limit of range)",
+      "Liver function tests (ALT, AST, ALP, GGT, bilirubin, albumin)",
+      "Iron studies (iron, transferrin, transferrin saturation, ferritin)",
+      "Activated B12 (91.3 pmol/L), serum folate (19 nmol/L)",
+      "TSH, FT4, thyroid auto-antibodies",
+      "Sex hormones (testosterone, free testosterone, SHBG, DHEA-S)",
+      "Red cell minerals (Zn, Mg, Cu, Se, Mn, Cr, Mo, I, V, Co)",
+      "Plasma amino acids broadly within range",
+      "Methylmalonic acid, FIGLU within range (methylation cofactor adequacy)"
+    ],
+    "framing_for_practitioner": "This synthesis is offered as decision support. The practitioner is the clinician of record and remains responsible for diagnostic interpretation, treatment decisions, and final prescribing. All recommendations below show the biomarker pattern, threshold, and evidence base used."
+  },
+  "biomarker_analysis": [
+    {
+      "biomarker": "hsCRP",
+      "result": "6.88 mg/L",
+      "laboratory_reference_range": "0.00 – 5.00 mg/L",
+      "interpretation": "Above the laboratory's reference range. Pattern consistent with low-grade systemic inflammation per published cardiovascular and integrative medicine frameworks.",
+      "possible_contributors_per_published_literature": "Published literature identifies several factors that may contribute to elevated hsCRP, including subclinical infection, adipose-tissue-derived inflammation, dietary patterns, oxidative stress, and chronic stress — for practitioner assessment of relevance.",
+      "relevance_to_formulation": "Supports practitioner consideration of an anti-inflammatory core (curcumin, omega-3 pathway support already adequate per Omega-3 Index)."
+    },
+    {
+      "biomarker": "FT3:Reverse T3 ratio",
+      "result": "0.787 (FT3 3.5 pmol/L; rT3 449.6 pmol/L)",
+      "laboratory_reference_range": "1.200 – 2.200 (laboratory reference)",
+      "interpretation": "Reduced ratio per the laboratory's reference framework — a pattern that published literature associates with impaired peripheral T4-to-T3 conversion. TSH and FT4 are within range; thyroid antibodies are negative.",
+      "possible_contributors_per_published_literature": "Published literature identifies chronic stress, systemic inflammation, low selenium status, low zinc status, and caloric/nutrient stressors as factors that may contribute to reduced T4-to-T3 conversion — for practitioner assessment.",
+      "relevance_to_formulation": "Supports practitioner consideration of selenium and zinc adequacy (both within range here), adaptogenic support given practitioner-noted work stress, and addressing the inflammatory pattern."
+    },
+    {
+      "biomarker": "25-OH Vitamin D",
+      "result": "69 nmol/L",
+      "laboratory_reference_range": "50 – 200 nmol/L",
+      "interpretation": "Within the laboratory's reference range but in the lower portion. Per integrative medicine frameworks, levels in the 75–125 nmol/L range are often discussed as a target for general health.",
+      "possible_contributors_per_published_literature": "Limited UVB exposure (per practitioner notes regarding winter), darker skin pigmentation, BMI, and dietary intake are factors discussed in published literature.",
+      "relevance_to_formulation": "Supports practitioner consideration of vitamin D3 repletion at a conservative dose."
+    },
+    {
+      "biomarker": "Estimated GFR",
+      "result": "67 mL/min/1.73m²",
+      "laboratory_reference_range": ">90 mL/min/1.73m²",
+      "interpretation": "Below the laboratory's reference cut-off. Creatinine and urea are within range. Above the threshold (eGFR <30) that would warrant out-of-scope referral; however a mild reduction is noted for practitioner consideration and conservative dosing.",
+      "possible_contributors_per_published_literature": "Age-related decline, hydration status, recent protein intake, muscle mass, and medication exposures are discussed in published literature.",
+      "relevance_to_formulation": "Triggers conservative dosing posture across the formulation; practitioner may wish to monitor renal markers."
+    },
+    {
+      "biomarker": "Whole-blood Lead",
+      "result": "14.05 µg/L",
+      "laboratory_reference_range": "0.00 – 50.00 µg/L",
+      "interpretation": "Within the laboratory's reference range. Published literature (CDC reference value framework) discusses contemporary background population values around 3.5 µg/dL (35 µg/L) and notes that lower levels are biologically active. The patient's value is well below that population reference but above non-detect — for practitioner contextual review.",
+      "possible_contributors_per_published_literature": "Occupational exposures, older housing/paint, drinking water, and dietary sources are factors discussed in published literature.",
+      "relevance_to_formulation": "Supports practitioner consideration of antioxidant/redox support (NAC, alpha-lipoic acid) at conservative doses, alongside ensuring adequate dietary calcium, iron, and zinc per published frameworks."
+    },
+    {
+      "biomarker": "FT3 (free T3)",
+      "result": "3.5 pmol/L",
+      "laboratory_reference_range": "3.1 – 6.8 pmol/L",
+      "interpretation": "Within the laboratory's reference range but in the lower portion. Combined with elevated rT3, contributes to the reduced FT3:rT3 ratio described above.",
+      "possible_contributors_per_published_literature": "See FT3:rT3 ratio analysis.",
+      "relevance_to_formulation": "Reinforces the adaptogenic/inflammatory rationale described above."
+    },
+    {
+      "biomarker": "Reverse T3",
+      "result": "449.6 pmol/L",
+      "laboratory_reference_range": "230.0 – 540.0 pmol/L",
+      "interpretation": "Within range but in the upper portion. Contributes to the reduced FT3:rT3 ratio.",
+      "possible_contributors_per_published_literature": "Inflammation, stress, caloric restriction, and acute illness are discussed in published literature.",
+      "relevance_to_formulation": "See FT3:rT3 analysis."
+    },
+    {
+      "biomarker": "Anion gap",
+      "result": "18 mmol/L",
+      "laboratory_reference_range": "8 – 16 mmol/L",
+      "interpretation": "Mildly above range; non-specific finding. Bicarbonate, electrolytes, and renal markers otherwise consistent. For practitioner contextual review.",
+      "possible_contributors_per_published_literature": "Published literature discusses dietary patterns, hydration, and laboratory variability as common non-pathological contributors when values are mildly elevated.",
+      "relevance_to_formulation": "No direct formulation change; flagged for practitioner awareness."
+    },
+    {
+      "biomarker": "Homocysteine",
+      "result": "8.1 µmol/L",
+      "laboratory_reference_range": "5.0 – 15.0 µmol/L",
+      "interpretation": "Within reference range. Per integrative medicine frameworks, values <8 µmol/L are sometimes discussed as optimal — patient is just above that informal threshold.",
+      "possible_contributors_per_published_literature": "B12, folate, B6, betaine, and renal status are factors discussed in published literature.",
+      "relevance_to_formulation": "Supports practitioner consideration of conservative methylation cofactor support (activated B12, methylated folate, P5P), particularly given the practitioner's specific request for methylation pathway support."
+    },
+    {
+      "biomarker": "Omega-3 Index",
+      "result": "6.33%",
+      "laboratory_reference_range": ">4.00%",
+      "interpretation": "Above the laboratory cut-off; per published frameworks, an Omega-3 Index >8% is sometimes discussed as a cardioprotective target.",
+      "possible_contributors_per_published_literature": "Dietary intake of EPA/DHA-rich fish, supplementation history, and ALA conversion capacity are discussed in published literature.",
+      "relevance_to_formulation": "Omega-3 EPA/DHA is not in the supplied Library; practitioner may wish to discuss dietary intake or separate prescription. Recorded under standalone recommendations."
+    },
+    {
+      "biomarker": "Activated B12 / Serum folate",
+      "result": "91.3 pmol/L (>35.0); 19 nmol/L (6–45)",
+      "laboratory_reference_range": "Activated B12 >35.0 pmol/L; Folate 6–45 nmol/L",
+      "interpretation": "Both within reference range. Methylmalonic acid (urine OAT) and FIGLU are also within range, consistent with adequate functional B12 and folate status.",
+      "possible_contributors_per_published_literature": "N/A — within range.",
+      "relevance_to_formulation": "Conservative methylation cofactor support is included at modest doses (not repletion doses) given the practitioner's specific request and homocysteine just above informal optimal threshold."
+    },
+    {
+      "biomarker": "Iron studies",
+      "result": "Iron 19.4 µmol/L; transferrin saturation 32%; ferritin 243 µg/L",
+      "laboratory_reference_range": "Iron 8.0–30.0 µmol/L; Tsat 10–35%; Ferritin 30–300 µg/L",
+      "interpretation": "Within the laboratory's reference range. Ferritin is in the upper portion — a finding that published literature notes can reflect inflammation as well as iron stores; correlates with the elevated hsCRP.",
+      "possible_contributors_per_published_literature": "Inflammation, dietary iron intake, hereditary haemochromatosis, and metabolic factors are discussed.",
+      "relevance_to_formulation": "Iron supplementation is not appropriate; not included."
+    }
+  ],
+  "diet_lifestyle_considerations": [
+    {
+      "category": "Stress modulation",
+      "consideration_for_practitioner_discussion": "Given the practitioner's note of increased work stress over the same 4–6 month period as the fatigue presentation, the practitioner may wish to discuss stress-management approaches (sleep hygiene, breath/mindfulness practice, structured downtime). Published literature links chronic stress with the FT3:rT3 pattern observed.",
+      "rationale": "Aligns with the FT3:rT3 ratio finding and reported clinical context."
+    },
+    {
+      "category": "Sun exposure / vitamin D",
+      "consideration_for_practitioner_discussion": "The practitioner may wish to discuss safe, appropriate UVB exposure as seasons permit, in addition to any supplemental vitamin D considered.",
+      "rationale": "25-OH D in the lower portion of range with practitioner-noted limited winter sun exposure."
+    },
+    {
+      "category": "Anti-inflammatory dietary pattern",
+      "consideration_for_practitioner_discussion": "Patient is already on a broadly Mediterranean pattern. The practitioner may wish to discuss further enrichment with oily fish, polyphenol-rich plant foods, and minimisation of ultra-processed foods, given the elevated hsCRP.",
+      "rationale": "Elevated hsCRP."
+    },
+    {
+      "category": "Hydration and renal monitoring",
+      "consideration_for_practitioner_discussion": "Given mildly reduced eGFR, the practitioner may wish to ensure adequate hydration is discussed and consider monitoring renal markers at clinically appropriate intervals.",
+      "rationale": "eGFR 67 mL/min/1.73m²."
+    },
+    {
+      "category": "Environmental review",
+      "consideration_for_practitioner_discussion": "The practitioner may wish to take an environmental history regarding potential lead exposure sources (older housing, water supply, occupation, hobbies) given the detectable whole-blood lead value.",
+      "rationale": "Whole-blood lead 14.05 µg/L (within reference but above contemporary low-exposure population values per published literature)."
+    },
+    {
+      "category": "Exercise / movement",
+      "consideration_for_practitioner_discussion": "Current 3x/week resistance + walking pattern is consistent with published frameworks for maintenance of metabolic health. The practitioner may wish to confirm intensity/recovery balance given the fatigue presentation.",
+      "rationale": "Reported fatigue with otherwise reasonable activity pattern."
+    }
+  ],
+  "formulation_logic": {
+    "overall_strategy": "The proposed formulation prioritises (1) anti-inflammatory core support targeting the elevated hsCRP, (2) thyroid/adaptogenic support targeting the reduced FT3:rT3 ratio in the context of practitioner-noted work stress, (3) conservative methylation cofactor support per the practitioner's explicit request and given homocysteine just above the informal optimal threshold, (4) modest antioxidant/redox and detoxification support given the detectable whole-blood lead and elevated hsCRP, and (5) vitamin D repletion at a conservative dose. Doses are selected conservatively given the patient's age (52), mildly reduced eGFR, and absence of current medications (no known interactions to mitigate). Total granule budget held well within 700/day.",
+    "what_was_intentionally_excluded_and_why": [
+      {
+        "excluded": "Iron-containing ingredients",
+        "reason": "Iron studies and ferritin within range; ferritin in the upper portion of range. Iron supplementation is not appropriate and is not included."
+      },
+      {
+        "excluded": "5-HTP",
+        "reason": "Patient sleep is reported as reasonable; no clear indication. Standard contraindication: serotonergic interaction risk if any future serotonergic medication is initiated."
+      },
+      {
+        "excluded": "Berberine",
+        "reason": "Fasting glucose within range; no glycaemic indication. Avoids unnecessary CYP3A4/2D6 interaction surface."
+      },
+      {
+        "excluded": "Iodine-containing ingredients",
+        "reason": "Red-cell iodine within range; thyroid antibodies negative. Per published frameworks, iodine supplementation in the context of any underlying autoimmune thyroid susceptibility carries flare risk; not indicated here."
+      },
+      {
+        "excluded": "High-dose zinc",
+        "reason": "Red-cell zinc within range; copper:zinc ratio within range. Long-term zinc above 25 mg/day raises copper-balance concerns per published literature."
+      },
+      {
+        "excluded": "St John's Wort",
+        "reason": "Major drug-interaction surface; no clear indication."
+      },
+      {
+        "excluded": "Selenium and additional iodine",
+        "reason": "Red-cell selenium 498.9 µg/L is at the upper limit of the laboratory range (190.0–500.0). Additional selenium is not appropriate and is excluded."
+      }
+    ],
+    "what_was_intentionally_included_and_why": [
+      "Curcumin (turmeric extract) — anti-inflammatory core for elevated hsCRP; RCT evidence for CRP reduction.",
+      "Ashwagandha — adaptogenic support for practitioner-noted stress and reduced FT3:rT3 ratio; published RCT evidence in subclinical hypothyroid populations.",
+      "Cholecalciferol (vitamin D3) — repletion to move toward integrative-medicine optimal range; conservative dose at the in-pod TGA cap (25 mcg / 1000 IU per day).",
+      "Methylcobalamin (activated B12) — conservative methylation cofactor support per practitioner request.",
+      "Levomefolate calcium (5-MTHF) — conservative methylation cofactor support per practitioner request.",
+      "Pyridoxal-5-phosphate (P5P) — conservative B6 support for one-carbon metabolism; dose well below TGA peripheral neuropathy warning threshold.",
+      "N-acetyl cysteine (NAC) — glutathione precursor; supports redox capacity in context of detectable lead and elevated hsCRP.",
+      "Coenzyme Q10 — mitochondrial bioenergetics support given fatigue presentation; well-established safety.",
+      "Alpha-lipoic acid — antioxidant/redox support; published literature in metabolic and antioxidant contexts."
+    ]
+  },
+  "proposed_formulation": [
+    {
+      "tsi_code": "W010029000",
+      "common_name": "Turmeric (curcumin) extract",
+      "proposed_dose": 500,
+      "dose_unit": "mg",
+      "rationale_for_practitioner": "Curcumin 500 mg/day is offered for practitioner consideration as anti-inflammatory core support given hsCRP 6.88 mg/L (above lab reference 0.00–5.00). RCT evidence supports curcumin's potential to reduce CRP in chronic low-grade inflammation contexts. Dose is conservative and within Library recommended range (recommended 300 mg, max 1000 mg).",
+      "evidence_pointer": "Library entry W010029000 references RCT and meta-analytic evidence for curcumin's anti-inflammatory effects (e.g. Panahi 2018; Yang 2014).",
+      "practitioner_cautions": "Curcumin has theoretical additive bleeding risk with anticoagulants/antiplatelets; none reported in clinical notes. Rare hepatotoxicity reports in published literature — practitioner may wish to monitor LFTs at follow-up.",
+      "target_biomarker_findings": [
+        "hsCRP 6.88 mg/L (elevated)"
+      ],
+      "practitioner_review_priority": "STANDARD",
+      "category": "anti_inflammatory_core"
+    },
+    {
+      "tsi_code": "W010003000",
+      "common_name": "Ashwagandha extract",
+      "proposed_dose": 300,
+      "dose_unit": "mg",
+      "rationale_for_practitioner": "Ashwagandha 300 mg/day is offered for practitioner consideration given (a) reduced FT3:rT3 ratio (0.787; lab reference 1.200–2.200) suggesting impaired peripheral conversion per published frameworks, and (b) practitioner-noted increased work stress over the same period as the fatigue presentation. Published RCT evidence (Sharma 2018) in subclinical hypothyroid contexts and stress/anxiety RCTs (Salve 2019) support practitioner consideration. Dose matches Library recommended dose (300 mg; max 800 mg).",
+      "evidence_pointer": "Library entry W010003000 references RCT evidence in subclinical hypothyroidism, stress/anxiety, and sleep quality.",
+      "practitioner_cautions": "Theoretical thyroid stimulation — practitioner may wish to monitor thyroid panel at follow-up. Theoretical immunomodulatory effects; not indicated in current submission. Avoid in pregnancy (not applicable here).",
+      "target_biomarker_findings": [
+        "FT3:rT3 ratio 0.787 (below lab reference)",
+        "FT3 3.5 pmol/L (lower portion of range)",
+        "Reported work stress and fatigue"
+      ],
+      "practitioner_review_priority": "STANDARD",
+      "category": "thyroid_adaptogenic"
+    },
+    {
+      "tsi_code": "W030005000",
+      "common_name": "Vitamin D3 (cholecalciferol)",
+      "proposed_dose": 25,
+      "dose_unit": "mcg",
+      "rationale_for_practitioner": "Vitamin D3 25 mcg (1000 IU)/day is offered for practitioner consideration given 25-OH D 69 nmol/L (within laboratory reference 50–200 but in the lower portion), the practitioner's note of limited winter sun exposure, and no recent supplementation history. Dose is at the in-pod TGA cap; if a higher dose is clinically indicated to reach an integrative-medicine target, the practitioner may consider a separate prescription (see standalone recommendations).",
+      "evidence_pointer": "Library entry W030005000; Australian TGA conditions for in-pod inclusion.",
+      "practitioner_cautions": "Vitamin D toxicity is not expected at this dose. Practitioner may wish to monitor 25-OH D and serum calcium at follow-up if higher doses are used standalone.",
+      "target_biomarker_findings": [
+        "25-OH Vitamin D 69 nmol/L (lower portion of reference)"
+      ],
+      "practitioner_review_priority": "STANDARD",
+      "category": "vitamin_d_c_neurotransmitter",
+      "original_target_dose": 50
+    },
+    {
+      "tsi_code": "W030008000",
+      "common_name": "Methylcobalamin (vitamin B12)",
+      "proposed_dose": 500,
+      "dose_unit": "mcg",
+      "rationale_for_practitioner": "Methylcobalamin 500 mcg/day is offered for practitioner consideration as conservative methylation cofactor support per the practitioner's explicit request. Activated B12 (91.3 pmol/L) and MMA are within range; this is maintenance-level cofactor support, not repletion. Homocysteine 8.1 µmol/L is within range but just above informal optimal thresholds discussed in published literature.",
+      "evidence_pointer": "Library entry W030008000; B-vitamin trial evidence for homocysteine reduction (Clarke 2010).",
+      "practitioner_cautions": "Generally well tolerated; no current medications listed.",
+      "target_biomarker_findings": [
+        "Homocysteine 8.1 µmol/L (upper portion of optimal informal threshold)",
+        "Practitioner-requested methylation pathway support"
+      ],
+      "practitioner_review_priority": "STANDARD",
+      "category": "b_vitamins_methylation"
+    },
+    {
+      "tsi_code": "W030009000",
+      "common_name": "5-MTHF (levomefolate calcium)",
+      "proposed_dose": 500,
+      "dose_unit": "mcg",
+      "rationale_for_practitioner": "5-MTHF 500 mcg/day (expressed as levomefolic acid; provided as calcium levomefolate) is offered for practitioner consideration as conservative methylation cofactor support per practitioner request. Serum folate is within range; this is maintenance-level support. Dose is at the regulated maximum of levomefolic acid per maximum recommended daily dose for AUST L medicines.",
+      "evidence_pointer": "Library entry W030009000.",
+      "practitioner_cautions": "High-dose folate can mask B12 deficiency haematologically; B12 status here is documented adequate. Practitioner may wish to confirm.",
+      "target_biomarker_findings": [
+        "Practitioner-requested methylation pathway support",
+        "Homocysteine 8.1 µmol/L"
+      ],
+      "practitioner_review_priority": "STANDARD",
+      "category": "b_vitamins_methylation"
+    },
+    {
+      "tsi_code": "W030012000",
+      "common_name": "Pyridoxal-5-phosphate (P5P, activated B6)",
+      "proposed_dose": 10,
+      "dose_unit": "mg",
+      "rationale_for_practitioner": "P5P 10 mg/day (expressed as pyridoxine equivalent) is offered for practitioner consideration as conservative one-carbon and neurotransmitter cofactor support. Dose is well below the TGA-mandated peripheral neuropathy warning threshold (10 mg pyridoxine).",
+      "evidence_pointer": "Library entry W030012000.",
+      "practitioner_cautions": "Practitioner may wish to advise the patient to report any tingling/numbness. Cumulative B6 across all sources should be tracked given TGA warning framework.",
+      "target_biomarker_findings": [
+        "Practitioner-requested methylation pathway support"
+      ],
+      "practitioner_review_priority": "STANDARD",
+      "category": "b_vitamins_methylation"
+    },
+    {
+      "tsi_code": "W140010000",
+      "common_name": "N-acetyl cysteine (NAC)",
+      "proposed_dose": 600,
+      "dose_unit": "mg",
+      "rationale_for_practitioner": "NAC 600 mg/day is offered for practitioner consideration as glutathione-precursor / redox support given (a) detectable whole-blood lead (14.05 µg/L; within lab reference but above contemporary low-exposure population norms) and (b) elevated hsCRP. Dose is within Library range (recommended 500; max 1500).",
+      "evidence_pointer": "Library entry W140010000; published literature on NAC and glutathione synthesis.",
+      "practitioner_cautions": "GI side effects possible (nausea, diarrhoea). Long-term use may marginally affect trace mineral absorption per published literature.",
+      "target_biomarker_findings": [
+        "Whole-blood lead 14.05 µg/L",
+        "hsCRP 6.88 mg/L"
+      ],
+      "practitioner_review_priority": "STANDARD",
+      "category": "heavy_metal_detox"
+    },
+    {
+      "tsi_code": "W030021000",
+      "common_name": "Coenzyme Q10 (ubidecarenone)",
+      "proposed_dose": 100,
+      "dose_unit": "mg",
+      "rationale_for_practitioner": "CoQ10 100 mg/day is offered for practitioner consideration as mitochondrial bioenergetic support given the reported fatigue presentation. No current statin use; this is a baseline mitochondrial support consideration. Dose matches Library recommended dose (100 mg; in-pod TGA cap 300 mg).",
+      "evidence_pointer": "Library entry W030021000.",
+      "practitioner_cautions": "TGA-mandated label warning: practitioner should not co-prescribe with warfarin without medical advice. No anticoagulant in current submission.",
+      "target_biomarker_findings": [
+        "Reported fatigue",
+        "Patient age 52 (mitochondrial support context)"
+      ],
+      "practitioner_review_priority": "STANDARD",
+      "category": "mitochondrial_cardiovascular"
+    },
+    {
+      "tsi_code": "W030020000",
+      "common_name": "Alpha-lipoic acid (R,S-ALA)",
+      "proposed_dose": 300,
+      "dose_unit": "mg",
+      "rationale_for_practitioner": "Alpha-lipoic acid 300 mg/day is offered for practitioner consideration as additional antioxidant/redox support given detectable whole-blood lead and elevated hsCRP. Dose matches Library recommended (300 mg; max 1800 mg).",
+      "evidence_pointer": "Library entry W030020000.",
+      "practitioner_cautions": "May lower blood glucose — not currently relevant (fasting glucose within range, no glucose-lowering medications). Rare GI symptoms.",
+      "target_biomarker_findings": [
+        "hsCRP 6.88 mg/L",
+        "Whole-blood lead 14.05 µg/L"
+      ],
+      "practitioner_review_priority": "STANDARD",
+      "category": "antioxidant_redox"
+    }
+  ],
+  "dose_adjustments": [
+    {
+      "adjustment_type": "age_and_renal_conservative",
+      "description": "All doses selected at or below Library recommended levels rather than near maxima, reflecting patient age 52 and mildly reduced eGFR (67 mL/min/1.73m²). Renal clearance considerations favour conservative dosing for water-soluble cofactors and herbal extracts.",
+      "affected_tsi_codes": [
+        "W030008000",
+        "W030009000",
+        "W030012000",
+        "W140010000",
+        "W030021000",
+        "W030020000"
+      ]
+    },
+    {
+      "adjustment_type": "regulatory_cap_in_pod",
+      "description": "Vitamin D3 capped at 25 mcg/day (1000 IU) to comply with the TGA in-pod maximum daily dose for cholecalciferol. Practitioner may wish to consider standalone vitamin D3 if a higher target is clinically indicated.",
+      "affected_tsi_codes": [
+        "W030005000"
+      ]
+    },
+    {
+      "adjustment_type": "regulatory_cap_in_pod",
+      "description": "5-MTHF capped at 500 mcg/day levomefolic acid, the AUST L per-day maximum.",
+      "affected_tsi_codes": [
+        "W030009000"
+      ]
+    }
+  ],
+  "standalone_recommendations": [
+    {
+      "recommendation": "Omega-3 EPA/DHA (e.g. fish oil) — practitioner discretion regarding dose form and amount.",
+      "in_library": false,
+      "note_for_practitioner": "Omega-3 EPA/DHA is not in the supplied Nof1 Library. The patient's Omega-3 Index is 6.33% (above lab cut-off >4.00%) but below the 8% sometimes discussed in published literature as cardioprotective. The practitioner may wish to consider a separate prescription or dietary emphasis on oily fish."
+    },
+    {
+      "recommendation": "Additional vitamin D3 standalone if practitioner targets >25-OH D 100 nmol/L.",
+      "in_library": false,
+      "note_for_practitioner": "The pod delivers 1000 IU/day, the TGA in-pod maximum. If the practitioner wishes to use a higher repletion dose (e.g. 2000–4000 IU/day) given limited winter sun and 25-OH D 69 nmol/L, this is best provided as a separate prescription with re-test at a clinically appropriate interval."
+    },
+    {
+      "recommendation": "Comprehensive environmental/exposure history regarding lead.",
+      "in_library": false,
+      "note_for_practitioner": "Not a supplement; offered as a clinical workup suggestion given whole-blood lead 14.05 µg/L. Sources of consideration discussed in published literature include older housing, drinking water, occupation, and certain hobbies."
+    }
+  ],
+  "excluded_from_pod": [],
+  "contraindication_flags": [
+    {
+      "flag": "no_current_medications_listed",
+      "severity": "informational",
+      "description": "Clinical notes report no current prescription medications. Standard contraindication checks have therefore been run against the formulation alone (curcumin–anticoagulant interaction surface n/a; berberine not included; 5-HTP not included; St John's Wort not included; high-dose niacin not included; iodine not included). Practitioner is the source of truth for any over-the-counter or non-prescription products in use.",
+      "affected_tsi_codes": []
+    },
+    {
+      "flag": "curcumin_bleeding_risk_theoretical",
+      "severity": "low_in_this_context",
+      "description": "Curcumin has theoretical additive bleeding risk with anticoagulants/antiplatelets. None listed in current submission. Flagged for awareness if any such agent is later co-prescribed.",
+      "affected_tsi_codes": [
+        "W010029000"
+      ]
+    },
+    {
+      "flag": "vitamin_b6_cumulative_intake",
+      "severity": "monitor",
+      "description": "Vitamin B6 carries a TGA-mandated peripheral neuropathy warning. Pod dose is 10 mg pyridoxine-equivalent/day, at the lower edge of the TGA warning threshold. Practitioner may wish to advise the patient to report any tingling/numbness and to track cumulative B6 from all sources.",
+      "affected_tsi_codes": [
+        "W030012000"
+      ]
+    },
+    {
+      "flag": "renal_function_mild_reduction",
+      "severity": "monitor",
+      "description": "eGFR 67 mL/min/1.73m² (lab reference >90). Above the threshold (eGFR <30) that would trigger out-of-scope referral. Conservative dosing applied across the formulation. Practitioner may wish to monitor renal markers at clinically appropriate intervals.",
+      "affected_tsi_codes": []
+    },
+    {
+      "flag": "ashwagandha_thyroid_monitoring",
+      "severity": "informational",
+      "description": "Ashwagandha may modulate thyroid hormone output per published literature. No autoimmune thyroid disease noted (TPO and TG antibodies negative). Practitioner may wish to recheck thyroid panel at follow-up.",
+      "affected_tsi_codes": [
+        "W010003000"
+      ]
+    },
+    {
+      "flag": "coq10_warfarin_label_warning",
+      "severity": "informational",
+      "description": "TGA-mandated label warning: do not take while on warfarin therapy without medical advice. No warfarin in current submission.",
+      "affected_tsi_codes": [
+        "W030021000"
+      ]
+    },
+    {
+      "flag": "folate_b12_masking",
+      "severity": "low_in_this_context",
+      "description": "Standard caution that high-dose folate can mask haematological signs of B12 deficiency. B12 status here is documented adequate (Activated B12 91.3 pmol/L; MMA within range), reducing clinical concern.",
+      "affected_tsi_codes": [
+        "W030009000"
+      ]
+    }
+  ],
+  "monitoring_considerations": {
+    "summary": "Follow-up monitoring may reasonably focus on (1) hsCRP to assess inflammatory trajectory, (2) FT3, FT4, TSH and reverse T3 with thyroid antibody re-check given adaptogenic support, (3) 25-OH vitamin D given repletion, (4) homocysteine given methylation cofactor support, (5) renal panel given mildly reduced eGFR, and (6) whole-blood lead given the current detectable value. Re-testing of priority markers may be considered at clinically appropriate intervals as judged by the treating practitioner.",
+    "markers_for_practitioner_consideration_at_follow_up": [
+      "hsCRP",
+      "Full thyroid panel (TSH, FT4, FT3, rT3, TPO Ab, TG Ab)",
+      "25-OH Vitamin D",
+      "Homocysteine",
+      "eGFR / urea / creatinine",
+      "LFTs (curcumin context)",
+      "Whole-blood lead",
+      "Iron studies / ferritin (inflammation context)"
+    ],
+    "framing": "The following markers are offered for the practitioner's consideration at a clinically appropriate follow-up interval determined by the treating practitioner."
+  },
+  "areas_of_strength": [
+    "Lipid panel broadly within reference, including LDL phenotype Type A (large-particle pattern) and ApoB/ApoA-1 ratio in the lower portion of range.",
+    "Fasting glucose 5.4 mmol/L within reference; no glycaemic intervention required.",
+    "Iron studies and activated B12/folate within reference, with functional methylation markers (MMA, FIGLU) also within range.",
+    "Sex hormone panel within reference for an adult male.",
+    "Red-cell mineral panel within reference across zinc, magnesium, copper, manganese, chromium, molybdenum, iodine, vanadium, cobalt; selenium at upper limit.",
+    "Plasma amino acids broadly within reference; LNAA and intermediary metabolites largely within range.",
+    "Omega-3 Index above the laboratory cut-off; AA/EPA ratio in the lower (favourable) portion of range.",
+    "Negative thyroid auto-antibodies (TPO, TG, TSH-R)."
+  ],
+  "critical_review_required": null,
+  "compliance_self_check": {
+    "no_banned_terms": true,
+    "no_banned_diagnostic_language": true,
+    "no_banned_causal_language": true,
+    "no_banned_recommendation_language": true,
+    "no_banned_therapeutic_claims": true,
+    "no_restricted_representations": true,
+    "third_person_framing_throughout": true,
+    "third_person_framing": true,
+    "third_person_framing_used": true,
+    "third_person_throughout": true,
+    "all_recommendations_show_working": true,
+    "all_clinical_statements_hedged": true,
+    "practitioner_scope_filter_applied": true,
+    "practitioner_scope_filter_note": "All ingredients in the supplied Library revision 15 are unscheduled; the scope filter has no exclusionary effect at this stage. Practitioner type (naturopath) recorded.",
+    "standard_contraindication_checks_run": true,
+    "all_standard_contraindication_checks_run": true,
+    "all_recommended_ingredients_in_supplied_library": true,
+    "all_ingredients_from_supplied_library": true,
+    "no_commercial_framing": true,
+    "all_required_schema_fields_populated": true,
+    "notes": "All clinical statements use third-person framing about the patient, with practitioner-deference and source/evidence hedging. Standard contraindication checks were run against the formulation given that no current medications were listed. No restricted-representation therapeutic claims (cancer, CVD as treatable target, diabetes as treatable target, mental illness as treatable target) made. No commercial framing used. All proposed ingredients reference Library TSI codes from the supplied Library revision 15."
+  },
+  "audit_metadata": {
+    "prompt_version": "0.3.0",
+    "library_revision": 15,
+    "submission_id": "SUB-2026-001",
+    "test_type": "NutriSTAT",
+    "practitioner_id_hash": "P001-NATUROPATH",
+    "escalation_flags_raised": [
+      "renal_function_mild_reduction_monitor",
+      "vitamin_b6_cumulative_intake_monitor",
+      "lead_environmental_history_suggested"
+    ],
+    "contraindications_flagged": 7,
+    "practitioner_scope_filter_applied": true,
+    "s4_ingredients_excluded_count": 0
+  }
+}

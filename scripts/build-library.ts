@@ -7,6 +7,21 @@
  * Contract documented in docs/library-build.md (to be created in Phase 2).
  *
  * Run via: npm run build:library
+ *
+ * v0.4.0 (Phase 4): Added per-granule loading data (TGA Label Expression
+ * Lines 1-3 + their units). This is the data Claude needs to compute
+ * granules-per-ingredient and stay within the 700-granule pod budget.
+ *
+ * Source columns mapped:
+ *   Col 18 → dose_per_granule       (TGA Label Expression Quantity Line 1)
+ *   Col 19 → dose_per_granule_unit  (Unit of Measure Line 1)
+ *   Col 20 → equivalent_line_2_quantity (e.g. dry herb equivalent)
+ *   Col 21 → equivalent_line_2_unit
+ *   Col 22 → equivalent_line_3_quantity (e.g. standardised marker)
+ *   Col 23 → equivalent_line_3_unit
+ *
+ * Line 1 is the primary, formulation-relevant quantity. Lines 2/3 are
+ * equivalents shown on the label for TGA compliance and are informational.
  */
 
 import ExcelJS from "exceljs";
@@ -48,6 +63,15 @@ const IngredientSchema = z.object({
   standardisation: z.string().optional(),
   label_expression: z.string().optional(),
   granule_weight_mg: z.number().optional(),
+  // v0.4.0 — per-granule loading. Required for granule-count math.
+  dose_per_granule: z.number().optional(),
+  dose_per_granule_unit: z.string().optional(),
+  // Lines 2/3 are equivalents (e.g. dry herb equivalent, standardised marker).
+  // Informational only — Claude should propose doses in dose_per_granule_unit.
+  equivalent_line_2_quantity: z.number().optional(),
+  equivalent_line_2_unit: z.string().optional(),
+  equivalent_line_3_quantity: z.number().optional(),
+  equivalent_line_3_unit: z.string().optional(),
   max_dose: z.string().optional(),
   recommended_dose: z.string().optional(),
   unit_of_measure: z.string().optional(),
@@ -190,6 +214,7 @@ async function main() {
   let skippedNoIngredient = 0;
   let skippedUnavailable = 0;
   let withClinical = 0;
+  let withDosePerGranule = 0;
 
   ingredientSheet.eachRow((row, rowNum) => {
     if (rowNum === 1) return; // metadata / header row
@@ -220,8 +245,15 @@ async function main() {
 
     // Build ingredient record
     const granuleWeightRaw = cellNum(row, 28);
+    const dosePerGranuleRaw = cellNum(row, 18);
+    const dosePerGranuleUnit = cellStr(row, 19) || undefined;
+    const eqLine2Qty = cellNum(row, 20);
+    const eqLine2Unit = cellStr(row, 21) || undefined;
+    const eqLine3Qty = cellNum(row, 22);
+    const eqLine3Unit = cellStr(row, 23) || undefined;
     const clinical = clinicalMap.get(tsiCode);
     if (clinical) withClinical++;
+    if (dosePerGranuleRaw !== undefined) withDosePerGranule++;
 
     const ingredient: Ingredient = {
       tsi_code: tsiCode,
@@ -238,6 +270,13 @@ async function main() {
       standardisation: cellStr(row, 14) || undefined,
       label_expression: cellStr(row, 17) || undefined,
       granule_weight_mg: granuleWeightRaw,
+      // v0.4.0 — per-granule loading
+      dose_per_granule: dosePerGranuleRaw,
+      dose_per_granule_unit: dosePerGranuleUnit,
+      ...(eqLine2Qty !== undefined ? { equivalent_line_2_quantity: eqLine2Qty } : {}),
+      ...(eqLine2Unit ? { equivalent_line_2_unit: eqLine2Unit } : {}),
+      ...(eqLine3Qty !== undefined ? { equivalent_line_3_quantity: eqLine3Qty } : {}),
+      ...(eqLine3Unit ? { equivalent_line_3_unit: eqLine3Unit } : {}),
       max_dose: cellStr(row, 29) || undefined,
       recommended_dose: cellStr(row, 30) || undefined,
       unit_of_measure: cellStr(row, 19) || undefined,
@@ -289,6 +328,7 @@ async function main() {
   console.log(`Skipped (unavailable):     ${skippedUnavailable}`);
   console.log(`Ingredients in output:     ${ingredients.length}`);
   console.log(`With clinical details:     ${withClinical}`);
+  console.log(`With dose_per_granule:     ${withDosePerGranule} / ${ingredients.length}`);
   console.log(`Output:                    ${OUTPUT_FILE}`);
   console.log("---------------------\n");
 }
