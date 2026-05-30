@@ -404,7 +404,7 @@ function buildSummarySheet(
   const sheet = workbook.addWorksheet('Summary');
 
   sheet.columns = [
-    { header: '', key: 'label', width: 36 },
+    { header: '', key: 'label', width: 48 },
     { header: '', key: 'value', width: 22 },
   ];
 

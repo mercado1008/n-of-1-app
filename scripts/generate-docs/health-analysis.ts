@@ -358,15 +358,19 @@ async function buildDocumentHeader(): Promise<Paragraph[]> {
 // SUBMISSION METADATA TABLE
 // ===========================================================================
 
-function buildMetadataTable(meta?: SubmissionMetadata, audit?: AuditMetadata): Table {
+function buildMetadataTable(meta?: SubmissionMetadata, audit?: AuditMetadata, routeAudit?: RouteAuditBlock): Table {
   const m = meta ?? {};
   const a = audit ?? {};
+  const r = routeAudit ?? {};
 
   const labelCol = 2700;
   const valueCol = 1900;
 
-  const generatedAt = a.generated_at_iso
-    ? new Date(a.generated_at_iso).toLocaleString('en-AU', {
+  // Prefer the route-side generated_at_iso (always populated) over Claude's
+  // narrow audit_metadata field (rarely populated).
+  const generatedIso = r.generated_at_iso ?? a.generated_at_iso;
+  const generatedAt = generatedIso
+    ? new Date(generatedIso).toLocaleString('en-AU', {
         dateStyle: 'medium',
         timeStyle: 'short',
       })
@@ -1170,7 +1174,7 @@ export async function generateHealthAnalysis(
   };
 
   const headerElements = await buildDocumentHeader();
-  const metadataTable = buildMetadataTable(mergedSubmissionMetadata, output.audit_metadata);
+  const metadataTable = buildMetadataTable(mergedSubmissionMetadata, output.audit_metadata, opts.routeAudit);
   const executiveSummary = buildExecutiveSummary(output);
   const allSections = buildAllSections(output, opts.tsiResolver);
   const referencesSection = buildReferencesSection(output);
