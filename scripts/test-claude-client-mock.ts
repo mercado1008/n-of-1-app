@@ -21,6 +21,8 @@
  *  24.    HL7 path — callClaudeForAnalysisFromText parses a valid formulation.
  *  25-30. HL7 parser and adapter — segment splitting, field/comp accessors,
  *         line endings, PID extraction, NM/FT separation, OBR fields.
+ *  31-34. HMP panel class — ["HMP"] accepted, HMP patterns round-trip,
+ *         ["FBP","HMP"] combined refused, hormone_metabolism category accepted.
  *
  * Run with:  npx tsx scripts/test-claude-client-mock.ts
  *
@@ -242,8 +244,8 @@ const VALID_REFUSAL = {
   },
 };
 
-// v0.4.1 — refusal for an unsupported panel class. The panel_classes array
-// can contain any of FBP/HMP/GP/MP/TP/RIP — non-FBP triggers this refusal.
+// v0.4.1 / v0.5.0 — refusal for an unsupported panel class.
+// FBP and HMP are now supported; GP/MP/TP/RIP still refuse.
 const VALID_REFUSAL_PANEL_CLASS = {
   ...VALID_REFUSAL,
   submission_metadata: {
@@ -414,6 +416,74 @@ const FORMULATION_WITH_REFERENCES = {
       citation: 'Holick MF et al. (2011). Evaluation, treatment, and prevention of vitamin D deficiency. J Clin Endocrinol Metab.',
     },
   ],
+};
+
+// v0.5.0 — HMP formulation fixture. panel_classes: ["HMP"], hormone_metabolism category,
+// HMP-specific recognised_patterns (16-OH dominant, COMT insufficiency, HPA-hypocortisolism).
+const VALID_HMP_FORMULATION = {
+  ...VALID_FORMULATION,
+  panel_classes: ['HMP'],
+  recognised_patterns: [
+    {
+      pattern_name: '16-OH dominant (low 2:16 ratio)',
+      supporting_findings: ['2:16 ratio 0.60 (ref 1.10–5.60)', '2-OH Estrone 0.04 ug/gCR (ref 0.10–1.88)'],
+      rationale: 'A pattern consistent with 16-OH oestrogen pathway dominance — for practitioner consideration.',
+    },
+    {
+      pattern_name: 'COMT-insufficiency / poor methylator',
+      supporting_findings: ['2-MeO-Estrone 0.01 ug/gCR (ref 0.02–0.20)'],
+      rationale: 'Low 2-methoxy output relative to 2-OH substrate — for practitioner consideration.',
+    },
+    {
+      pattern_name: 'HPA-hypocortisolism',
+      supporting_findings: ['Total 24hr Cortisol 24.91 ug/gCR (ref 50–200)'],
+      rationale: 'Low urinary cortisol consistent with HPA-hypocortisolism — for practitioner consideration.',
+    },
+  ],
+  granule_budget_allocation_plan: [
+    {
+      category: 'hormone_metabolism',
+      granules_allocated: 100,
+      priority: 'primary',
+      findings_addressed: ['2:16 ratio 0.60', '2-OH Estrone low'],
+      rationale: 'Oestrogen pathway support: DIM to shift toward 2-OH, calcium D-glucarate for glucuronidation.',
+    },
+  ],
+  proposed_formulation: [
+    {
+      tsi_code: 'W140019000',
+      common_name: 'DIM (3,3\'-diindolylmethane)',
+      proposed_dose: 150,
+      dose_unit: 'mg',
+      rationale_for_practitioner:
+        'DIM is proposed to support the 2-OH oestrogen pathway given the low 2:16 ratio — for practitioner consideration.',
+      evidence_pointer: 'Dalessandri et al. (2004). Effect of DIM on urinary hormone metabolites. Nutrition and Cancer.',
+      practitioner_cautions: 'May transiently increase urinary 2-OH-E1 before stabilising.',
+      target_biomarker_findings: ['2:16 ratio 0.60', '2-OH Estrone 0.04'],
+      practitioner_review_priority: 'STANDARD',
+      category: 'hormone_metabolism',
+    },
+  ],
+};
+
+// v0.5.0 — refusal for combined ["FBP", "HMP"] (multi-class not yet supported).
+const HMP_COMBINED_REFUSAL = {
+  ...VALID_REFUSAL,
+  submission_metadata: {
+    ...VALID_REFUSAL.submission_metadata,
+    submission_id: 'SUB-2026-HMP-COMBINED',
+    test_type: 'EndoSCAN',
+  },
+  panel_classes: ['FBP', 'HMP'],
+  refusal_trigger: 'panel_class_not_yet_supported',
+  refusal_explanation:
+    'Submission contains panel classes FBP and HMP together. Multi-class combinations are not yet supported. Resubmit as a single panel class.',
+  audit_metadata: {
+    ...VALID_REFUSAL.audit_metadata,
+    submission_id: 'SUB-2026-HMP-COMBINED',
+    panel_classes: ['FBP', 'HMP'],
+    escalation_flags_raised: ['panel_class_not_yet_supported'],
+  },
 };
 
 // Minimal HL7 v2.3.1 ORU^R01 message for parser/adapter tests.
@@ -1154,6 +1224,99 @@ const tests: Test[] = [
       }
       if (parsed.numeric_findings[0].abnormal_flag !== 'H') {
         throw new Error(`First NM flag expected H, got ${parsed.numeric_findings[0].abnormal_flag}`);
+      }
+    },
+  },
+  // HMP panel class tests (v0.5.0)
+  {
+    name: 'HMP: panel_classes ["HMP"] accepted as formulation (not refused)',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system',
+        pdfBase64: 'AAAA',
+        userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use',
+          usage: { input_tokens: 100, output_tokens: 200 },
+          content: [
+            { type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: VALID_HMP_FORMULATION } },
+          ],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error(`Expected formulation, got ${result.output.output_type}`);
+      const pcs = (result.output as { panel_classes: string[] }).panel_classes;
+      if (!Array.isArray(pcs) || pcs[0] !== 'HMP') throw new Error(`panel_classes expected ["HMP"], got ${JSON.stringify(pcs)}`);
+    },
+  },
+  {
+    name: 'HMP: recognised_patterns round-trip (16-OH dominant, COMT insufficiency, HPA-hypocortisolism)',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system',
+        pdfBase64: 'AAAA',
+        userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use',
+          usage: { input_tokens: 100, output_tokens: 200 },
+          content: [
+            { type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: VALID_HMP_FORMULATION } },
+          ],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const patterns = (result.output as { recognised_patterns: { pattern_name: string }[] }).recognised_patterns;
+      if (!Array.isArray(patterns) || patterns.length !== 3) throw new Error(`Expected 3 HMP patterns, got ${patterns?.length}`);
+      const names = patterns.map(p => p.pattern_name);
+      if (!names.some(n => n.includes('16-OH'))) throw new Error('Expected 16-OH pattern');
+      if (!names.some(n => n.includes('COMT'))) throw new Error('Expected COMT pattern');
+      if (!names.some(n => n.includes('HPA'))) throw new Error('Expected HPA pattern');
+    },
+  },
+  {
+    name: 'HMP: ["FBP","HMP"] combined is refused with panel_class_not_yet_supported',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system',
+        pdfBase64: 'AAAA',
+        userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use',
+          usage: { input_tokens: 100, output_tokens: 50 },
+          content: [
+            { type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: HMP_COMBINED_REFUSAL } },
+          ],
+        }),
+      });
+      if (result.output.output_type !== 'refusal') throw new Error(`Expected refusal, got ${result.output.output_type}`);
+      if (result.output.refusal_trigger !== 'panel_class_not_yet_supported') {
+        throw new Error(`Expected panel_class_not_yet_supported, got ${result.output.refusal_trigger}`);
+      }
+      const pcs = (result.output as { panel_classes: string[] }).panel_classes;
+      if (!Array.isArray(pcs) || pcs.length !== 2) throw new Error(`Expected 2 panel classes, got ${JSON.stringify(pcs)}`);
+    },
+  },
+  {
+    name: 'HMP: hormone_metabolism category accepted in proposed_formulation',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system',
+        pdfBase64: 'AAAA',
+        userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use',
+          usage: { input_tokens: 100, output_tokens: 200 },
+          content: [
+            { type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: VALID_HMP_FORMULATION } },
+          ],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const ingredient = result.output.proposed_formulation[0];
+      if (ingredient.category !== 'hormone_metabolism') {
+        throw new Error(`Expected hormone_metabolism category, got ${ingredient.category}`);
+      }
+      if (ingredient.tsi_code !== 'W140019000') {
+        throw new Error(`Expected W140019000 (DIM), got ${ingredient.tsi_code}`);
       }
     },
   },
