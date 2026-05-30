@@ -1,8 +1,8 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-05-30, end of session — prompt caching, fill reliability fixes
-**Current versions:** prompt v0.4.6, schema v0.4.7, library revision 15
-**Last known state:** Prompt caching live (312k tokens/call from cache, ~$2.37 saved per call). Pod fill reliability fixed: identified two root causes of sub-630 fills (TSI code confusion, layer pass stopping early) and resolved both. Latest confirmed fill: 678/710 (95.5%).
+**Last updated:** 2026-05-31, end of session — HMP panel class (EndoSCAN), mock test expansion, document polish, fill reliability, prompt caching
+**Current versions:** prompt v0.5.3, schema v0.4.7, library revision 15
+**Last known state:** HMP panel class (EndoSCAN) fully operational. FBP fill reliability stabilised. Prompt caching live. Mock tests expanded to 30. Document polish complete. Two panel classes now supported end-to-end.
 
 ---
 
@@ -29,7 +29,20 @@ A separate document generation pipeline (`scripts/generate-docs/`) reads the JSO
 
 ---
 
-## Most recent green live-fire (2026-05-30, Patient P000065 OAT via HL7)
+## Most recent green live-fire (2026-05-31, Patient P000066 EndoSCAN via PDF — HMP class)
+
+Test panel: NutriPath EndoSCAN (24h urinary hormone profiling), 53-year-old male.
+
+- HTTP 200, ~4.5 min total (formulation + citations), system_prompt_version: 0.5.3
+- 3 patterns: HPA-hypocortisolism (cortisol 24.91 ug/gCR vs ref 50–200) / 16-OH dominant oestrogen (2:16 ratio 0.60 vs ref 1.10–5.60) / Low 2-OH substrate with preserved COMT capacity
+- 20 ingredients, **682/710 granules (96.1% fill)**
+- Key ingredients: DIM, Calcium D-glucarate, Milk thistle, Resveratrol, Ashwagandha, Rhodiola, Panax ginseng, CoQ10 (mitochondrial/adrenal), full B-vitamin complex, Magnesium, Zinc, NAC, Quercetin, Vitamin C, Vitamin D3
+- 1 binding exclusion: Iodine (thyroid antibody status not assessed)
+- 20 citations generated
+- 0 phantom W codes
+- Documents: `Nof1_HealthAnalysis_SUB-2026-004_DRAFT.docx` (45.4 KB), `Nof1_FormulationSchedule_SUB-2026-004_DRAFT.xlsx` (15.7 KB)
+
+## Previous green live-fire (2026-05-30, Patient P000065 OAT via HL7 — FBP class)
 
 Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 input.
 
@@ -93,6 +106,36 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 
 ---
 
+## What changed in this session (2026-05-31)
+
+### HMP panel class — EndoSCAN (complete)
+1. **`prompts/system-prompt.md` v0.5.0–v0.5.3** — HMP unlocked. Panel classes section updated: `["HMP"]` now processes through; combined `["FBP","HMP"]` still refused. Full HMP interpretation section added covering:
+   - What EndoSCAN measures (Phase I hydroxylation: 2-OH/4-OH/16-OH; Phase II methylation: 2-MeO; ratios: 2:16, COMT, cortisol:cortisone)
+   - 8 recognised patterns (16-OH dominant, 4-OH dominant, COMT insufficiency, androgen excess/insufficiency, HPA-hypocortisolism, HPA-hypercortisolism, oestrogen dominant, progesterone insufficiency)
+   - HMP-specific binding exclusions (phytoestrogens, high-dose zinc in androgen excess)
+   - HMP formulation axes with specific ingredient/TSI code guidance (DIM W140019000, Saw palmetto W010043000, Vitex W010067000, CoQ10 W030021000 for adrenal support)
+   - Explicit ingredient list for a complete HMP layer pass (15–20 ingredients for 3-pattern male HMP)
+2. **`test-fixtures/sample-endoscan-p000066.pdf`** — Mark Martin EndoSCAN March 2026 (PT-2026-004)
+3. **`test-fixtures/sample-metadata-endoscan-p000066.json`** — SUB-2026-004, 53M, collection 2026-03-10, lab ID 6463011
+4. **Documents** — `Nof1_HealthAnalysis_SUB-2026-004_DRAFT.docx` + `Nof1_FormulationSchedule_SUB-2026-004_DRAFT.xlsx`
+
+### Pod fill — layer pass targeting change
+5. **Step 4 rewritten** — changed from "cycle until total EXCEEDS 710 then back out" to "cycle until ESTIMATE reaches 650–695 then stop." The back-out strategy was unreliable (Claude can't remove items from JSON it has already written). New target: self-estimate 650–695 → route arithmetic adds ~1–2gr per ingredient → final fill 660–710.
+6. **Step 5 rewritten** — from "back out last ingredient" to "trim highest-cost ingredient in lowest-priority category by 15–25% if estimate is above 700." More actionable for sequential text generation.
+7. **Allocation plan target** — changed from "sum to 680–710" to "sum to 670–700" to align with the new step 4 target.
+
+### Mock tests (21 → 30)
+8. **`scripts/test-claude-client-mock.ts`** — 9 new tests added: v0.4.7 `references` field (round-trip and optional), `callClaudeForAnalysisFromText` (HL7 path), HL7 parser (segment splitting, field/comp accessors, CRLF/LF), HL7 adapter (PID, NM/FT OBX, OBR). All 30/30 pass.
+
+### Document polish
+9. **`buildMetadataTable()` in health-analysis.ts** — accepts `RouteAuditBlock` as third parameter; falls through to `routeAudit.generated_at_iso` when Claude's `audit_metadata.generated_at_iso` is absent. Fixes "Generated: —" on page 1.
+10. **xlsx Summary label column** — widened from 36 to 48 characters. "Mitochondrial / Cardiovascular (secondary)" no longer clips in print preview.
+
+### Gitignore
+11. **`.gitignore`** — added `generated-docs/~$*` to prevent Office temp/lock files from being committed.
+
+---
+
 ## What changed in this session (2026-05-30, second pass)
 
 ### Prompt caching
@@ -122,14 +165,19 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - **`panel_classes` is required at the request level**, not inferred from test_type.
 - **OAT is FBP-class** — explicit decision.
 
-### Formulation construction (locked as of 2026-05-30)
+### Formulation construction (locked as of 2026-05-31)
 - **Pod ceiling: 710 granules** (route enforces; raised from 700 on 2026-05-30).
-- **Six-step procedure:** (1) rank areas, (2) identify foundationals + layers, (3) foundational pass all areas, (4) layer pass cycling to overfill, (5) back out last ingredient, (6) verify 630–710.
+- **Six-step procedure:** (1) rank areas, (2) identify foundationals + layers, (3) foundational pass all areas, (4) layer pass cycling until self-estimate 650–695, (5) trim highest-cost ingredient if estimate > 700, (6) verify 630–710.
+- **Layer pass target: self-estimate 650–695** — not "exceed 710 then back out" (unreliable). Route arithmetic adds ~1–2 gr/ingredient → final fill 660–710.
 - **Foundational dose floor:** ≥75% of clinical target (primary + secondary); ≥50% (supportive).
 - **Layer dose floor:** ≥50% of clinical target.
-- **Back-out preferred over trim for layer ingredients on overage.**
 - **Catalyst-layer threshold:** ≥1000 granules at foundational-pass total.
 - **Target fill zone:** 630–710 granules. Sub-630 on a multi-pattern panel is a formulation error.
+
+### Panel classes (as of 2026-05-31)
+- **FBP (Functional Biomarker Panel):** NutriSTAT, Organic Acids, Cardiovascular Comprehensive, etc. Full pattern catalogue calibrated against NutriSTAT; OAT panels work but flag `critical_review_required`.
+- **HMP (Hormone Metabolism Panel):** EndoSCAN (24h urinary hormones). Full interpretation section added. Other HMP panels (Neurotransmitters Profile) flag `critical_review_required`. Combined FBP+HMP still refused.
+- **GP, MP, TP, RIP:** refused with `panel_class_not_yet_supported`.
 
 ### Input paths (locked as of 2026-05-30)
 - **PDF path (`/api/analyse`):** accepts pathology PDF as document attachment.
@@ -167,13 +215,19 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 ## What's working now (high confidence)
 
 ### Clinical reasoning
-- **Panel-class routing.** FBP (NutriSTAT, OAT) processes correctly; non-FBP refuses cleanly.
-- **Pattern recognition.** 4–5 patterns on OAT panel consistently.
+- **Panel-class routing.** FBP (NutriSTAT, OAT) and HMP (EndoSCAN) process correctly; non-FBP/HMP refuses cleanly.
+- **Pattern recognition.** 3–6 patterns on FBP panels; 3 patterns correctly identified on first HMP live-fire.
 - **Library accuracy.** Zero phantom W codes across all recent runs.
 - **Granule arithmetic.** Route-computed, deterministic. 710-granule ceiling enforced.
-- **Pod fill.** New six-step procedure landing 630–710 consistently on OAT panel.
+- **Pod fill.** FBP: reliably 630–710. HMP first fire: 682/710 (96.1%). TSI code disambiguation note prevents CoQ10/Vitamin E confusion.
 - **Standalone routing.** Library gaps correctly routed to `standalone_recommendations`.
-- **Binding exclusions.** Fire correctly on missing data.
+- **Binding exclusions.** Fire correctly. HMP-specific exclusions (iodine, phytoestrogens) working.
+
+### HMP panel class
+- **EndoSCAN interpretation.** Phase I hydroxylation (2-OH/4-OH/16-OH), Phase II methylation (COMT), adrenal/cortisol, androgens — all correctly extracted and reasoned.
+- **8 HMP patterns.** 16-OH dominant, 4-OH dominant, COMT insufficiency, androgen excess/insufficiency, HPA-hypocortisolism, HPA-hypercortisolism, oestrogen dominant, progesterone insufficiency.
+- **HMP ingredient set.** DIM (W140019000), Saw palmetto (W010043000), Vitex (W010067000), CoQ10 (W030021000) all correctly deployed for HMP patterns.
+- **Mark Martin (PT-2026-004):** confirmed green. 682/710 fill, 3 patterns, 20 ingredients, 20 citations.
 
 ### HL7 input path
 - **Parser.** 193 NM + 141 FT OBX segments correctly extracted from NutriPath HL7 v2.3.1.
@@ -243,9 +297,9 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - Pre-2026-05-13 cumulative: ~$51
 - 2026-05-13 session: ~$6 (2 fires)
 - 2026-05-14 session: ~$6 (2 fires)
-- 2026-05-30 session (first pass — HL7/audit/citations/six-step): ~14 fires × ~$3 + citation passes ~$4 = ~$46
-- **2026-05-30 session (second pass — caching/fill):** ~8 fires × ~$1.90 (cached) + ~2 cache-write fires × ~$3 = **~$21**
-- **Cumulative: ~$130**
+- 2026-05-30 session (HL7/audit/citations/six-step/caching/fill): ~$67
+- **2026-05-31 session (HMP/mock tests/polish):** ~6 HMP fires × ~$3 + citation passes ~$2 = **~$20**
+- **Cumulative: ~$150**
 
 ---
 
@@ -262,13 +316,24 @@ npx tsx scripts/test-claude-client-mock.ts
 ```
 21/21 green expected. Does not yet cover HL7 path or v0.4.7 schema.
 
-### Run live-fire — PDF path (OAT, P000065)
+### Run live-fire — PDF path (OAT, P000065, FBP)
 ```bash
 npx tsx scripts/live-test.ts \
   test-fixtures/sample-oat.pdf \
   test-fixtures/sample-metadata-oat.json
 ```
 Writes to `live-test-output.json`.
+
+### Run live-fire — PDF path (EndoSCAN, P000066, HMP)
+```bash
+npx tsx scripts/live-test.ts \
+  test-fixtures/sample-endoscan-p000066.pdf \
+  test-fixtures/sample-metadata-endoscan-p000066.json
+```
+Writes to `live-test-output.json`. Generate docs with:
+```bash
+npx tsx scripts/generate-docs/index.ts ./live-test-output.json ./generated-docs ./test-fixtures/sample-metadata-endoscan-p000066.json
+```
 
 ### Run live-fire — HL7 path (OAT, P000065)
 ```bash
@@ -310,14 +375,14 @@ console.log('input_source:', d.audit?.input_source);
 
 ### Strategic options for next session
 
-**A — HMP panel class (EndoSCAN):** Second panel class. Mark Martin EndoSCAN test on file. ~3–4h, ~$9–12 in live-fires.
+**A — Persistence + frontend stub:** Move toward a real deployable service. Multi-day.
 
-**B — Library extension:** Add L-carnitine, glycine, vanadium. Revision 16. Modest scope, immediate formulation density improvement.
+**B — Shopify Admin API "My Formulation" upload:** Destination integration. Not started.
 
-**C — Mock test update:** Update 21 mock tests to cover HL7 path, v0.4.7 schema (`references` field), `panel_classes`. No Claude spend.
+**C — Combined FBP+HMP panel support:** Currently refused. Multi-class orchestration design needed.
 
-**D — Document polish:** Fix "Generated: —" metadata table bug, xlsx label column width, vestigial catalyst-layer escalation flag. ~2h, no Claude spend.
+**D — GP panel class (myDNA):** Third panel class. SNP/genotype; modifier-only, drives methylation and B-vitamin allocations.
 
-**E — Prompt caching:** 75% cost reduction on cached system-prompt + library. Significant for ongoing iteration cost.
+**E — Mock tests for HMP:** Add mock tests covering HMP routing, refusal triggers, pattern fixtures. No Claude spend.
 
-**F — Persistence + frontend stub:** Move toward a real service. Multi-day.
+**F — Vestigial "catalyst-layer pod strategy" escalation flag:** Still occasionally appearing in outputs despite healthy pod fill. Minor prompt cleanup.
