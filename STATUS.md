@@ -1,8 +1,8 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-05-31, end of session — symptom matrix integration (input stream 2)
+**Last updated:** 2026-05-31, end of session — frontend + persistence
 **Current versions:** prompt v0.5.8, schema v0.4.7, library revision 15
-**Last known state:** Symptom matrix ingestion live. All three stream-2 degradations resolved: axes now activate from symptom category scores, licorice and iodine binding exclusions fire from symptom severity, executive summary references symptom findings. 658/710 (92.7%) on EndoSCAN with 2 symptom-driven binding exclusions and 5 patterns (2 symptom-only).
+**Last known state:** Frontend operational at http://localhost:3000. Submission form, results display, and history list all rendering. File-based persistence live — both routes save request + response JSON to data/submissions/{id}/.
 
 ---
 
@@ -115,6 +115,28 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
     - All 700-granule references updated to 710 throughout the prompt
 21. **Self-check items** — Updated to v0.4.5: explicit numeric check ("write the sum in notes, if <630 with ≥2 patterns this FAILS"); allocation plan consistency check removed; layer pass verification added.
 22. **`scripts/live-test.ts` and `scripts/live-test-hl7.ts`** — undici global dispatcher added for 600s headersTimeout/bodyTimeout. Display strings updated from `/ 700` to `/ 710`.
+
+---
+
+## What changed in this session (2026-05-31, third pass — frontend + persistence)
+
+### Frontend (complete)
+1. **`app/layout.tsx`** — branded root layout: Forest green header, Gold/Cloud palette, Geist font, nav links (New Submission, History), draft disclaimer footer.
+2. **`app/page.tsx`** — home page hosting the submission form.
+3. **`src/components/SubmissionForm.tsx`** — client component: PDF/HL7 input toggle, all RequestMetadata fields (practitioner ID/type/name, patient pseudonym/age/sex, test type, lab ID, collection date, panel classes checkboxes, clinical notes), auto-generated submission ID, 4-minute loading spinner, error display, redirect to results on success.
+4. **`app/submissions/page.tsx`** — history list: table of all saved submissions (patient pseudonym, test type, panel classes, pod fill %, date, ingredient count or "Refusal" badge).
+5. **`app/submissions/[id]/page.tsx`** — results display: headline, pod fill progress bar, recognised patterns (with supporting findings), ingredient table (route-computed granules), binding exclusions, standalone recommendations, citations list, audit footer (prompt/schema/library versions, generated timestamp).
+6. **Tailwind config** — brand colors added (forest, gold, sage, cloud); content paths updated to cover `./app/**` and `./src/**`.
+
+### Persistence (complete)
+7. **`lib/submissions.ts`** — `saveSubmission()` writes `request.json` + `response.json` to `data/submissions/{submission_id}/`. `getSubmission()` reads a single submission. `listSubmissions()` reads all directories and returns sorted summaries. All I/O wrapped in try/catch — persistence failure never blocks the API response.
+8. **Both API routes** (`/api/analyse` and `/api/analyse-hl7`) — call `saveSubmission()` after successful granule verification. Wrapped in try/catch.
+9. **`.gitignore`** — `data/submissions/` excluded (contains patient pseudonym data).
+
+### Notes
+- Frontend renders correctly at `http://localhost:3000`. The `./app/` directory takes precedence over `./src/app/` in Next.js routing; pages placed in `./app/` directly.
+- Submissions history will populate on first live-fire through the form.
+- Document download (docx/xlsx) not yet wired to the frontend — deferred.
 
 ---
 
@@ -260,6 +282,13 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 ---
 
 ## What's working now (high confidence)
+
+### Frontend and persistence
+- **`http://localhost:3000/`** — submission form: PDF/HL7 toggle, all metadata fields, panel class checkboxes, loading spinner.
+- **`http://localhost:3000/submissions`** — history list (populates after first form submission).
+- **`http://localhost:3000/submissions/{id}`** — results: headline, pod fill bar, patterns, ingredient table, binding exclusions, citations, audit footer.
+- **File persistence:** `data/submissions/{id}/request.json` + `response.json` written by both routes after success. `data/submissions/` gitignored.
+- **Document download** not yet wired to frontend — use CLI generator scripts for now.
 
 ### Clinical reasoning
 - **Panel-class routing.** FBP (NutriSTAT, OAT) and HMP (EndoSCAN) process correctly; non-FBP/HMP refuses cleanly.
@@ -424,12 +453,14 @@ console.log('input_source:', d.audit?.input_source);
 
 ### Strategic options for next session
 
-**A — Mock tests for symptom matrix:** Add mock tests for symptom-driven axis activation and binding exclusion logic. No Claude spend.
+**A — Test frontend end-to-end:** Run a live-fire through the submission form, verify results page, verify history list. ~$3.
 
-**B — Combined FBP+HMP panel support:** Currently refused. Multi-class orchestration design needed.
+**B — Document download from frontend:** Wire the document generator into the results page — generate docx/xlsx server-side and provide download links. No Claude spend.
 
-**C — GP panel class (myDNA):** Third panel class. SNP/genotype; modifier-only.
+**C — Mock tests for symptom matrix:** Add mock tests for symptom-driven axis activation and binding exclusion logic. No Claude spend.
 
-**D — Persistence + frontend stub:** Move toward a real deployable service. Multi-day.
+**D — Combined FBP+HMP panel support:** Currently refused. Multi-class orchestration design needed.
 
-**E — Shopify Admin API "My Formulation" upload:** Destination integration. Not started.
+**E — GP panel class (myDNA):** Third panel class. SNP/genotype; modifier-only.
+
+**F — Shopify Admin API "My Formulation" upload:** Destination integration. Not started.
