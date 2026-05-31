@@ -35,8 +35,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# audit log (per-submission JSONL, not for version control)
+# audit log and submission data (per-submission, not for version control)
 /logs/
+/data/submissions/
 
 # Office temp/lock files created when documents are open
 generated-docs/~$*

@@ -1,4 +1,4 @@
-import SubmissionForm from "../components/SubmissionForm";
+import SubmissionForm from "@/src/components/SubmissionForm";
 
 export default function Home() {
   return (

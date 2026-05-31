@@ -79,6 +79,7 @@ import { verifyGranuleCounts, type LibraryFileForGranules } from '@/lib/granule-
 import { computeAuditReference } from '@/lib/audit-ref';
 import { appendAuditLog } from '@/lib/audit-log';
 import { generateCitations } from '@/lib/generate-citations';
+import { saveSubmission } from '@/lib/submissions';
 
 // Force the Node.js runtime — we use Buffer, crypto, and the Anthropic SDK,
 // none of which run in the Edge runtime.
@@ -339,6 +340,27 @@ export async function POST(req: NextRequest) {
       });
     } catch (logErr) {
       console.error('[audit-log] Failed to write audit log entry:', logErr);
+    }
+
+    const responseBody = {
+      ok: true as const,
+      output: outputWithCitations as Record<string, unknown>,
+      audit,
+      usage: result.usage,
+      stop_reason: result.stop_reason,
+      granule_verification: {
+        computed_total_granules: verification.computed_total_granules,
+        computed_total_pod_weight_mg: verification.computed_total_pod_weight_mg,
+        pod_budget_used: verification.pod_budget_used,
+        computed_per_ingredient: verification.computed_per_ingredient,
+        claude_granule_discrepancy_count: verification.claude_granule_discrepancy_count,
+      },
+    };
+
+    try {
+      await saveSubmission(metadata, responseBody);
+    } catch (saveErr) {
+      console.error('[submissions] Failed to save submission:', saveErr);
     }
 
     return NextResponse.json(
