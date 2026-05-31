@@ -424,14 +424,12 @@ console.log('input_source:', d.audit?.input_source);
 
 ### Strategic options for next session
 
-**A — Validate symptom matrix on NutriSTAT:** The OAT PDF (NutriPath US BioTek) has no symptom matrix — confirmed by direct PDF inspection. NutriSTAT may have one; deferred until needed.
+**A — Mock tests for symptom matrix:** Add mock tests for symptom-driven axis activation and binding exclusion logic. No Claude spend.
 
-**B — Persistence + frontend stub:** Move toward a real deployable service. Multi-day.
+**B — Combined FBP+HMP panel support:** Currently refused. Multi-class orchestration design needed.
 
-**C — Shopify Admin API "My Formulation" upload:** Destination integration. Not started.
+**C — GP panel class (myDNA):** Third panel class. SNP/genotype; modifier-only.
 
-**D — Combined FBP+HMP panel support:** Currently refused. Multi-class orchestration design needed.
+**D — Persistence + frontend stub:** Move toward a real deployable service. Multi-day.
 
-**E — GP panel class (myDNA):** Third panel class. SNP/genotype; modifier-only.
-
-**F — Mock tests for symptom matrix:** Add mock tests for symptom-driven axis activation and binding exclusion logic. No Claude spend.
+**E — Shopify Admin API "My Formulation" upload:** Destination integration. Not started.
