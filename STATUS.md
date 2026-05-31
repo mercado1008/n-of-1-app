@@ -313,6 +313,7 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 ### HL7 path
 - **NutriPath local code → display name:** OBX-3.2 display names used as-is from HL7. Some are truncated (e.g. `4_HYDROXYBENZOIC_ACI`). Sufficient for clinical reasoning.
 - **Apples-to-apples comparison not yet done.** P000065 available in both PDF and HL7 formats; not yet compared in the same session.
+- **OAT PDF has no symptom matrix.** Confirmed via direct PDF read: NutriPath US BioTek OAT is a pure biomarker report (23 pages, no patient-reported symptom section). Symptom matrix is specific to NutriPath panels that include patient questionnaires (e.g. EndoSCAN). Validating symptom integration on OAT would not exercise stream 2.
 - **Q3, Q4, Q7, Q8 from NutriPath still open** (push/pull, sandbox, corrections, per-test cost).
 - **Other adjacent TSI code pairs may exist** beyond W030021000/W030022000. The disambiguation note covers the known confusion; further code confusions may surface in future runs.
 
@@ -423,7 +424,7 @@ console.log('input_source:', d.audit?.input_source);
 
 ### Strategic options for next session
 
-**A — Validate symptom matrix on FBP panel (OAT):** Re-fire P000065 OAT to confirm symptom integration works correctly on FBP-class panels, not just HMP. No new fixtures needed. ~$3.
+**A — Validate symptom matrix on NutriSTAT:** The OAT PDF (NutriPath US BioTek) has no symptom matrix — confirmed by direct PDF inspection. NutriSTAT may have one; deferred until needed.
 
 **B — Persistence + frontend stub:** Move toward a real deployable service. Multi-day.
 
