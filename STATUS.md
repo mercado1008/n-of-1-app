@@ -1,8 +1,8 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-05-31, end of session — HMP panel class (EndoSCAN), mock test expansion, document polish, fill reliability, prompt caching
-**Current versions:** prompt v0.5.3, schema v0.4.7, library revision 15
-**Last known state:** HMP panel class (EndoSCAN) fully operational. FBP fill reliability stabilised. Prompt caching live. Mock tests expanded to 30. Document polish complete. Two panel classes now supported end-to-end.
+**Last updated:** 2026-05-31, end of session — symptom matrix integration (input stream 2)
+**Current versions:** prompt v0.5.8, schema v0.4.7, library revision 15
+**Last known state:** Symptom matrix ingestion live. All three stream-2 degradations resolved: axes now activate from symptom category scores, licorice and iodine binding exclusions fire from symptom severity, executive summary references symptom findings. 658/710 (92.7%) on EndoSCAN with 2 symptom-driven binding exclusions and 5 patterns (2 symptom-only).
 
 ---
 
@@ -29,7 +29,19 @@ A separate document generation pipeline (`scripts/generate-docs/`) reads the JSO
 
 ---
 
-## Most recent green live-fire (2026-05-31, Patient P000066 EndoSCAN via PDF — HMP class)
+## Most recent green live-fire (2026-05-31, Patient P000066 EndoSCAN — symptom matrix v0.5.8)
+
+Test panel: NutriPath EndoSCAN, 53-year-old male, system_prompt_version: 0.5.8.
+
+- HTTP 200, ~5.5 min total (formulation + citations)
+- 5 patterns: HPA-hypocortisolism / 16-OH dominant oestrogen / Phase II substrate-limited methylation / **Cardiometabolic symptom burden (Metabolic Syndrome 36.67%)** / **Autonomic-arousal symptom overlay (High Cortisol 29.82%)**
+- 18 ingredients, **658/710 granules (92.7% fill)**
+- 2 symptom-driven binding exclusions: Licorice (High blood pressure MODERATE) + High-dose iodine (Hypometabolism 29.17% + unknown antibody status)
+- Berberine (W010026000) included for `blood_glucose_insulin` axis activated by Metabolic Syndrome 36.67% symptom category — no biomarker driver needed
+- Executive summary explicitly references symptom matrix burden
+- 0 phantom W codes; escalation flags include `symptom_only_cardiometabolic_axis`
+
+## Previous green live-fire (2026-05-31, Patient P000066 EndoSCAN — HMP v0.5.3)
 
 Test panel: NutriPath EndoSCAN (24h urinary hormone profiling), 53-year-old male.
 
@@ -106,6 +118,32 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 
 ---
 
+## What changed in this session (2026-05-31, second pass — symptom matrix)
+
+### Symptom matrix integration — input stream 2 (complete)
+1. **`prompts/system-prompt.md` v0.5.4–v0.5.8** — new "Symptom matrix — input stream 2" section added. Covers:
+   - **Form A (Symptom Categories):** named categories with % scores (e.g. "Metabolic Syndrome 36.67%"). Category score ≥25% activates the corresponding therapeutic axis even when biomarkers are in-range.
+   - **Form B (Symptom Score matrix):** three-column MILD/MODERATE/SEVERE severity placement. Symptom's column is its severity rating — no per-symptom numeric scores.
+   - **Axis activation priority:** symptom-only axes are supportive; biomarker-confirmed axes are primary/secondary. Prevents symptom load from displacing biomarker-confirmed axes.
+   - **Budget discipline with many axes:** when >6 axes active, lowest-priority symptom axes may receive 1 layer ingredient only or be deferred.
+   - **Symptom-driven binding exclusions:** Licorice excluded when "high blood pressure" MODERATE/SEVERE or cardiovascular category ≥30%. High-dose iodine excluded when thyroid symptom category ≥20% AND antibody status unknown.
+   - **Executive summary and `biomarker_analysis`:** must reference symptom findings ≥25%.
+2. **Symptom-to-axis mapping table** — 15 category name patterns mapped to therapeutic axes.
+3. **Fill calibration through v0.5.4–v0.5.8** — resolved bidirectional overshoot (711-963) and undershoot (578-620):
+   - Self-check gate: **630 ≤ sum ≤ 690** (both floors enforced)
+   - Allocation plan target: **650–670 minimum**
+   - Step 4 layer pass: **target 650–680, centre ~665**
+   - Step 5 trim: fires when estimate > 680
+   - Explicit overhead note: ~1 granule per ingredient from ceil() arithmetic; 20 ingredients = ~20 granule overhead
+
+### PDF symptom format confirmed
+4. Read Mark Martin EndoSCAN PDF via direct Claude API call. Confirmed format:
+   - Page 5, headings "Symptom Categories" (Form A) and "Symptom Score" (Form B)
+   - 8 categories with % scores (range 23.81%–36.67% for this patient)
+   - "High blood pressure" appears at MODERATE severity → licorice binding exclusion trigger confirmed
+
+---
+
 ## What changed in this session (2026-05-31)
 
 ### HMP panel class — EndoSCAN (complete)
@@ -167,12 +205,21 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 
 ### Formulation construction (locked as of 2026-05-31)
 - **Pod ceiling: 710 granules** (route enforces; raised from 700 on 2026-05-30).
-- **Six-step procedure:** (1) rank areas, (2) identify foundationals + layers, (3) foundational pass all areas, (4) layer pass cycling until self-estimate 650–695, (5) trim highest-cost ingredient if estimate > 700, (6) verify 630–710.
-- **Layer pass target: self-estimate 650–695** — not "exceed 710 then back out" (unreliable). Route arithmetic adds ~1–2 gr/ingredient → final fill 660–710.
+- **Six-step procedure:** (1) rank areas, (2) identify foundationals + layers, (3) foundational pass all areas, (4) layer pass cycles until self-estimate reaches 650–680, (5) trim highest-cost ingredient if estimate > 680, (6) verify self-check gate 630–690.
+- **Self-check gate: 630 ≤ estimate ≤ 690.** Route adds ~1 gr/ingredient; 690 estimate + 20 ingredients ≈ 710 route-computed.
+- **Allocation plan target: 650–670 minimum.**
 - **Foundational dose floor:** ≥75% of clinical target (primary + secondary); ≥50% (supportive).
 - **Layer dose floor:** ≥50% of clinical target.
 - **Catalyst-layer threshold:** ≥1000 granules at foundational-pass total.
-- **Target fill zone:** 630–710 granules. Sub-630 on a multi-pattern panel is a formulation error.
+- **Target fill zone:** 630–710 granules (route-computed). Sub-630 on a multi-pattern panel is a formulation error.
+
+### Symptom matrix (locked as of 2026-05-31)
+- **Input stream 2 is mandatory.** Symptom matrix must be read and used alongside biomarker tables for all NutriPath panels.
+- **Form A (Symptom Categories):** category score ≥25% activates corresponding therapeutic axis. Symptom-only axes are supportive priority; biomarker-confirmed axes are primary/secondary.
+- **Form B (Symptom Score):** MILD/MODERATE/SEVERE column placement is the severity rating — no per-symptom numeric score.
+- **Licorice binding exclusion** fires when "high blood pressure" is MODERATE or SEVERE in symptom matrix, or cardiovascular symptom category ≥30%.
+- **High-dose iodine binding exclusion** fires when thyroid symptom category ≥20% AND antibody status unknown on the panel.
+- **Executive summary and `biomarker_analysis`** must reference symptom category scores ≥25%.
 
 ### Panel classes (as of 2026-05-31)
 - **FBP (Functional Biomarker Panel):** NutriSTAT, Organic Acids, Cardiovascular Comprehensive, etc. Full pattern catalogue calibrated against NutriSTAT; OAT panels work but flag `critical_review_required`.
@@ -298,8 +345,9 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - 2026-05-13 session: ~$6 (2 fires)
 - 2026-05-14 session: ~$6 (2 fires)
 - 2026-05-30 session (HL7/audit/citations/six-step/caching/fill): ~$67
-- **2026-05-31 session (HMP/mock tests/polish):** ~6 HMP fires × ~$3 + citation passes ~$2 = **~$20**
-- **Cumulative: ~$150**
+- 2026-05-31 session (HMP/mock tests/polish): ~$20
+- **2026-05-31 session (symptom matrix):** ~7 fires × ~$3 + PDF read ~$0.50 = **~$22**
+- **Cumulative: ~$172**
 
 ---
 
@@ -375,14 +423,14 @@ console.log('input_source:', d.audit?.input_source);
 
 ### Strategic options for next session
 
-**A — Persistence + frontend stub:** Move toward a real deployable service. Multi-day.
+**A — Validate symptom matrix on FBP panel (OAT):** Re-fire P000065 OAT to confirm symptom integration works correctly on FBP-class panels, not just HMP. No new fixtures needed. ~$3.
 
-**B — Shopify Admin API "My Formulation" upload:** Destination integration. Not started.
+**B — Persistence + frontend stub:** Move toward a real deployable service. Multi-day.
 
-**C — Combined FBP+HMP panel support:** Currently refused. Multi-class orchestration design needed.
+**C — Shopify Admin API "My Formulation" upload:** Destination integration. Not started.
 
-**D — GP panel class (myDNA):** Third panel class. SNP/genotype; modifier-only, drives methylation and B-vitamin allocations.
+**D — Combined FBP+HMP panel support:** Currently refused. Multi-class orchestration design needed.
 
-**E — Mock tests for HMP:** Add mock tests covering HMP routing, refusal triggers, pattern fixtures. No Claude spend.
+**E — GP panel class (myDNA):** Third panel class. SNP/genotype; modifier-only.
 
-**F — Vestigial "catalyst-layer pod strategy" escalation flag:** Still occasionally appearing in outputs despite healthy pod fill. Minor prompt cleanup.
+**F — Mock tests for symptom matrix:** Add mock tests for symptom-driven axis activation and binding exclusion logic. No Claude spend.
