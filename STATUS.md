@@ -1,8 +1,8 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-05-31, end of session — frontend + persistence
+**Last updated:** 2026-05-31, end of session — frontend end-to-end validated
 **Current versions:** prompt v0.5.8, schema v0.4.7, library revision 15
-**Last known state:** Frontend operational at http://localhost:3000. Submission form, results display, and history list all rendering. File-based persistence live — both routes save request + response JSON to data/submissions/{id}/.
+**Last known state:** Frontend fully validated end-to-end. Form → API → persistence → results page → history list confirmed working. Two submissions in data/submissions/ (SUB-2026-004 EndoSCAN seeded, SUB-2026-005 OAT live-fired through form). Document download not yet wired to frontend.
 
 ---
 
@@ -115,6 +115,19 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
     - All 700-granule references updated to 710 throughout the prompt
 21. **Self-check items** — Updated to v0.4.5: explicit numeric check ("write the sum in notes, if <630 with ≥2 patterns this FAILS"); allocation plan consistency check removed; layer pass verification added.
 22. **`scripts/live-test.ts` and `scripts/live-test-hl7.ts`** — undici global dispatcher added for 600s headersTimeout/bodyTimeout. Display strings updated from `/ 700` to `/ 710`.
+
+---
+
+## What changed in this session (2026-05-31, fourth pass — end-to-end validation)
+
+### Frontend end-to-end test (complete)
+1. **Seeded SUB-2026-004** from existing EndoSCAN live-fire output to `data/submissions/SUB-2026-004/` — verified history list and results page render correctly without a live-fire.
+2. **Live-fired SUB-2026-005** through the form endpoint — OAT P000065 (FBP), 598/710 granules (84.2%), 6 patterns, 20 ingredients, 20 citations, 320 seconds.
+3. **Persistence confirmed:** both `request.json` and `response.json` written to `data/submissions/SUB-2026-005/`.
+4. **History list confirmed:** both SUB-2026-004 (EndoSCAN 92.7%) and SUB-2026-005 (Organic Acids 84.2%) appear correctly.
+5. **Results page confirmed:** patient pseudonym, granule count, patterns, ingredient table, binding exclusions, citations all rendering correctly for SUB-2026-005.
+
+**Full loop confirmed:** form submission → `/api/analyse` → granule verification → citations → persistence → `/submissions/{id}` results page → `/submissions` history list.
 
 ---
 
@@ -376,8 +389,9 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - 2026-05-14 session: ~$6 (2 fires)
 - 2026-05-30 session (HL7/audit/citations/six-step/caching/fill): ~$67
 - 2026-05-31 session (HMP/mock tests/polish): ~$20
-- **2026-05-31 session (symptom matrix):** ~7 fires × ~$3 + PDF read ~$0.50 = **~$22**
-- **Cumulative: ~$172**
+- 2026-05-31 session (symptom matrix): ~$22
+- **2026-05-31 session (frontend validation):** 1 OAT fire × ~$3 + citations ~$0.20 = **~$3**
+- **Cumulative: ~$175**
 
 ---
 
@@ -453,9 +467,7 @@ console.log('input_source:', d.audit?.input_source);
 
 ### Strategic options for next session
 
-**A — Test frontend end-to-end:** Run a live-fire through the submission form, verify results page, verify history list. ~$3.
-
-**B — Document download from frontend:** Wire the document generator into the results page — generate docx/xlsx server-side and provide download links. No Claude spend.
+**A — Document download from frontend:** Wire the document generator into the results page — generate docx/xlsx server-side and provide download links. No Claude spend.
 
 **C — Mock tests for symptom matrix:** Add mock tests for symptom-driven axis activation and binding exclusion logic. No Claude spend.
 
