@@ -48,7 +48,8 @@ import { verifyGranuleCounts, type LibraryFileForGranules } from '@/lib/granule-
 import { computeAuditReference } from '@/lib/audit-ref';
 import { appendAuditLog } from '@/lib/audit-log';
 import { generateCitations } from '@/lib/generate-citations';
-import { saveSubmission } from '@/lib/submissions';
+import { saveSubmission, saveDocuments } from '@/lib/submissions';
+import { generateDocuments } from '@/lib/generate-documents';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -269,6 +270,26 @@ export async function POST(req: NextRequest) {
       await saveSubmission(metadata, responseBody);
     } catch (saveErr) {
       console.error('[submissions] Failed to save submission:', saveErr);
+    }
+
+    if (result.output.output_type === 'formulation') {
+      try {
+        const docs = await generateDocuments({
+          output: outputWithCitations as Record<string, unknown>,
+          routeAudit: audit,
+          metadata,
+          granuleVerification: {
+            computed_total_granules: verification.computed_total_granules,
+            computed_total_pod_weight_mg: verification.computed_total_pod_weight_mg,
+            pod_budget_used: verification.pod_budget_used,
+            computed_per_ingredient: verification.computed_per_ingredient,
+            claude_granule_discrepancy_count: verification.claude_granule_discrepancy_count,
+          },
+        });
+        await saveDocuments(metadata.submission_id, docs.healthAnalysis, docs.formulationSchedule);
+      } catch (docErr) {
+        console.error('[documents] Failed to generate or save documents:', docErr);
+      }
     }
 
     return NextResponse.json(

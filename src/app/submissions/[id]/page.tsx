@@ -1,4 +1,4 @@
-import { getSubmission } from "@/lib/submissions";
+import { getSubmission, hasDocuments } from "@/lib/submissions";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
@@ -6,7 +6,10 @@ const s = (v: unknown): string => (v == null ? "" : String(v));
 
 export default async function ResultsPage({ params }: { params: { id: string } }) {
   const { id } = params;
-  const sub = await getSubmission(id);
+  const [sub, docsAvailable] = await Promise.all([
+    getSubmission(id),
+    hasDocuments(id),
+  ]);
   if (!sub) notFound();
 
   const { request, response } = sub;
@@ -42,6 +45,26 @@ export default async function ResultsPage({ params }: { params: { id: string } }
           ← History
         </Link>
       </div>
+
+      {/* Download links */}
+      {docsAvailable && isFormulation && (
+        <div className="flex gap-3">
+          <a
+            href={`/api/submissions/${id}/documents/health-analysis`}
+            className="flex items-center gap-2 px-4 py-2 bg-forest text-white text-sm rounded hover:bg-forest/90 transition-colors"
+            download
+          >
+            ↓ Health Analysis (.docx)
+          </a>
+          <a
+            href={`/api/submissions/${id}/documents/formulation-schedule`}
+            className="flex items-center gap-2 px-4 py-2 bg-gold/80 text-forest text-sm rounded hover:bg-gold transition-colors"
+            download
+          >
+            ↓ Formulation Schedule (.xlsx)
+          </a>
+        </div>
+      )}
 
       {/* Headline */}
       {executive?.headline != null && (

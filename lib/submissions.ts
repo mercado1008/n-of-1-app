@@ -9,7 +9,7 @@
  * This is dev-only file persistence. No database, no auth.
  */
 
-import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, readdir, access } from 'node:fs/promises';
 import path from 'node:path';
 import type { RequestMetadata } from './request-schema';
 import type { AuditBlock } from './build-prompt';
@@ -48,6 +48,44 @@ export interface SubmissionSummary {
   granules: number;
   pattern_count: number;
   ingredient_count: number;
+}
+
+export const DOCUMENT_NAMES = {
+  healthAnalysis: 'health-analysis.docx',
+  formulationSchedule: 'formulation-schedule.xlsx',
+} as const;
+
+export async function saveDocuments(
+  submissionId: string,
+  healthAnalysis: Buffer,
+  formulationSchedule: Buffer,
+): Promise<void> {
+  const dir = path.join(SUBMISSIONS_DIR, submissionId);
+  await mkdir(dir, { recursive: true });
+  await Promise.all([
+    writeFile(path.join(dir, DOCUMENT_NAMES.healthAnalysis), healthAnalysis),
+    writeFile(path.join(dir, DOCUMENT_NAMES.formulationSchedule), formulationSchedule),
+  ]);
+}
+
+export async function hasDocuments(submissionId: string): Promise<boolean> {
+  try {
+    const dir = path.join(SUBMISSIONS_DIR, submissionId);
+    await Promise.all([
+      access(path.join(dir, DOCUMENT_NAMES.healthAnalysis)),
+      access(path.join(dir, DOCUMENT_NAMES.formulationSchedule)),
+    ]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function getDocumentPath(
+  submissionId: string,
+  type: keyof typeof DOCUMENT_NAMES,
+): Promise<string> {
+  return path.join(SUBMISSIONS_DIR, submissionId, DOCUMENT_NAMES[type]);
 }
 
 export async function saveSubmission(
