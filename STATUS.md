@@ -1,8 +1,8 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-05-31, end of session — frontend end-to-end validated
-**Current versions:** prompt v0.5.8, schema v0.4.7, library revision 15
-**Last known state:** Frontend fully validated end-to-end. Form → API → persistence → results page → history list confirmed working. Two submissions in data/submissions/ (SUB-2026-004 EndoSCAN seeded, SUB-2026-005 OAT live-fired through form). Document download not yet wired to frontend.
+**Last updated:** 2026-06-01, end of session — GP panel class (myDNA Longevity), jsonrepair
+**Current versions:** prompt v0.6.2, schema v0.4.7, library revision 15
+**Last known state:** Three panel classes operational (FBP, HMP, GP). GP first green fire: 668/710 (94.1%), 4 patterns, myDNA Longevity. jsonrepair added as robust JSON normalisation fallback for malformed long outputs.
 
 ---
 
@@ -115,6 +115,36 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
     - All 700-granule references updated to 710 throughout the prompt
 21. **Self-check items** — Updated to v0.4.5: explicit numeric check ("write the sum in notes, if <630 with ≥2 patterns this FAILS"); allocation plan consistency check removed; layer pass verification added.
 22. **`scripts/live-test.ts` and `scripts/live-test-hl7.ts`** — undici global dispatcher added for 600s headersTimeout/bodyTimeout. Display strings updated from `/ 700` to `/ 710`.
+
+---
+
+## What changed in this session (2026-06-01 — GP panel class + jsonrepair)
+
+### GP panel class — myDNA Longevity (complete)
+1. **`prompts/system-prompt.md` v0.6.0–v0.6.2** — GP unlocked. `["GP"]` now processes through (combined multi-class still refused). Full GP interpretation section added:
+   - **What myDNA Longevity measures:** 18 gene modules, two result scales (longevity outcome: Exceptional/Average/Reduced; nutrient priority: Average/Medium/High Priority)
+   - **Axis activation rules:** HIGH PRIORITY → secondary, MEDIUM PRIORITY → supportive, AVERAGE PRIORITY → no intervention
+   - **Required `category` mapping table** for all GP axes (added v0.6.2 after early fires returned missing category → schema rejection)
+   - **8 recognised GP patterns:** antioxidant-depleted, methylation-modifier, mitochondrial-support, COMT catecholamine clearance, APOE e4, FOXO3 pathway, choline-deficient, metabolic syndrome risk
+   - **GP binding exclusion:** selenomethionine conservative dose when no red-cell selenium biomarker data
+   - **Always:** `critical_review_required: true`, escalation flag `gp_modifier_only_no_biomarker_integration`
+2. **`test-fixtures/sample-mydna.pdf`** — myDNA Longevity report (PT-2026-006, PNR42Y46)
+3. **`test-fixtures/sample-metadata-mydna-p000067.json`** — SUB-2026-006, 44F, collection 2026-04-07
+
+### jsonrepair — robust JSON normalisation (complete)
+4. **`lib/claude-client.ts`** — `normaliseToolInput()` now has three levels:
+   1. Direct `JSON.parse` — well-formed string
+   2. Trailing-comma strip then parse — fast fix for common case
+   3. `jsonrepair` then parse — handles malformed JSON in very long outputs (unquoted keys, truncated content, nested syntax errors)
+   - `jsonrepair@3.14.0` added to `package.json`
+   - Fixes the recurring "result is string not object" schema error on large outputs
+
+### Panel class scorecard (as of 2026-06-01)
+| Panel | Test | Fill | Notes |
+|---|---|---|---|
+| FBP | OAT P000065 | ~94% | Primary calibration panel |
+| HMP | EndoSCAN P000066 | 92.7% | 24h urinary hormones |
+| GP | myDNA P000067 | 94.1% | Genomic modifier-only |
 
 ---
 
@@ -256,10 +286,11 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - **High-dose iodine binding exclusion** fires when thyroid symptom category ≥20% AND antibody status unknown on the panel.
 - **Executive summary and `biomarker_analysis`** must reference symptom category scores ≥25%.
 
-### Panel classes (as of 2026-05-31)
+### Panel classes (as of 2026-06-01)
 - **FBP (Functional Biomarker Panel):** NutriSTAT, Organic Acids, Cardiovascular Comprehensive, etc. Full pattern catalogue calibrated against NutriSTAT; OAT panels work but flag `critical_review_required`.
-- **HMP (Hormone Metabolism Panel):** EndoSCAN (24h urinary hormones). Full interpretation section added. Other HMP panels (Neurotransmitters Profile) flag `critical_review_required`. Combined FBP+HMP still refused.
-- **GP, MP, TP, RIP:** refused with `panel_class_not_yet_supported`.
+- **HMP (Hormone Metabolism Panel):** EndoSCAN (24h urinary hormones). Full interpretation section. Other HMP panels (Neurotransmitters Profile) flag `critical_review_required`. Combined FBP+HMP still refused.
+- **GP (Genomic Panel):** myDNA Longevity. Modifier-only — genotype-driven, no biomarker data. Always `critical_review_required` + `gp_modifier_only_no_biomarker_integration` escalation. Other GP panels not yet calibrated.
+- **MP, TP, RIP:** refused with `panel_class_not_yet_supported`.
 
 ### Input paths (locked as of 2026-05-30)
 - **PDF path (`/api/analyse`):** accepts pathology PDF as document attachment.
@@ -390,8 +421,9 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - 2026-05-30 session (HL7/audit/citations/six-step/caching/fill): ~$67
 - 2026-05-31 session (HMP/mock tests/polish): ~$20
 - 2026-05-31 session (symptom matrix): ~$22
-- **2026-05-31 session (frontend validation):** 1 OAT fire × ~$3 + citations ~$0.20 = **~$3**
-- **Cumulative: ~$175**
+- 2026-05-31 session (frontend validation): ~$3
+- **2026-06-01 session (GP panel class):** ~5 GP fires × ~$3 + PDF read ~$0.50 = **~$16**
+- **Cumulative: ~$191**
 
 ---
 
@@ -469,10 +501,10 @@ console.log('input_source:', d.audit?.input_source);
 
 **A — Document download from frontend:** Wire the document generator into the results page — generate docx/xlsx server-side and provide download links. No Claude spend.
 
-**C — Mock tests for symptom matrix:** Add mock tests for symptom-driven axis activation and binding exclusion logic. No Claude spend.
+**B — Mock tests for GP + symptom matrix:** Add mock tests for GP axis activation, GP binding exclusion (selenium conservative), GP refusal (multi-class), and symptom-driven binding exclusion logic. No Claude spend.
 
-**D — Combined FBP+HMP panel support:** Currently refused. Multi-class orchestration design needed.
+**C — Combined panel support (FBP+HMP or FBP+GP):** Currently refused. Multi-class orchestration design needed.
 
-**E — GP panel class (myDNA):** Third panel class. SNP/genotype; modifier-only.
+**D — MP panel class (Advanced Microbiome Mapping):** Fourth panel class. Drives `gastrointestinal` axis.
 
-**F — Shopify Admin API "My Formulation" upload:** Destination integration. Not started.
+**E — Shopify Admin API "My Formulation" upload:** Destination integration. Not started.
