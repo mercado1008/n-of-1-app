@@ -1,8 +1,8 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-06-01, end of session — GP panel class (myDNA Longevity), jsonrepair
+**Last updated:** 2026-06-01, end of session — document download from frontend
 **Current versions:** prompt v0.6.2, schema v0.4.7, library revision 15
-**Last known state:** Three panel classes operational (FBP, HMP, GP). GP first green fire: 668/710 (94.1%), 4 patterns, myDNA Longevity. jsonrepair added as robust JSON normalisation fallback for malformed long outputs.
+**Last known state:** Document download live. Results page shows ↓ Health Analysis (.docx) and ↓ Formulation Schedule (.xlsx) buttons when documents exist. Documents generated automatically after each successful analysis.
 
 ---
 
@@ -115,6 +115,17 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
     - All 700-granule references updated to 710 throughout the prompt
 21. **Self-check items** — Updated to v0.4.5: explicit numeric check ("write the sum in notes, if <630 with ≥2 patterns this FAILS"); allocation plan consistency check removed; layer pass verification added.
 22. **`scripts/live-test.ts` and `scripts/live-test-hl7.ts`** — undici global dispatcher added for 600s headersTimeout/bodyTimeout. Display strings updated from `/ 700` to `/ 710`.
+
+---
+
+## What changed in this session (2026-06-01, second pass — document download)
+
+### Document download from frontend (complete)
+1. **`lib/generate-documents.ts`** — NEW. `generateDocuments()` orchestrates both generators programmatically: loads Library, builds TSI resolver, calls `generateHealthAnalysis()` and `generateFormulationSchedule()` in parallel, returns `{healthAnalysis: Buffer, formulationSchedule: Buffer}`.
+2. **`lib/submissions.ts`** — `saveDocuments()` writes `health-analysis.docx` + `formulation-schedule.xlsx` to `data/submissions/{id}/`. `hasDocuments()` checks if both files exist. `getDocumentPath()` resolves file path for the download route.
+3. **`app/api/submissions/[id]/documents/[type]/route.ts`** — NEW download endpoint. Serves `health-analysis` (docx) or `formulation-schedule` (xlsx) with correct MIME types and `Content-Disposition: attachment` headers.
+4. **Both API routes** — call `generateDocuments()` + `saveDocuments()` after successful granule verification. Wrapped in try/catch — document failure never blocks the formulation response.
+5. **Results page** — shows ↓ Health Analysis (.docx) and ↓ Formulation Schedule (.xlsx) download buttons when documents exist. Buttons hidden on refusal outputs. Forest green for docx, Gold for xlsx.
 
 ---
 
@@ -332,7 +343,7 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - **`http://localhost:3000/submissions`** — history list (populates after first form submission).
 - **`http://localhost:3000/submissions/{id}`** — results: headline, pod fill bar, patterns, ingredient table, binding exclusions, citations, audit footer.
 - **File persistence:** `data/submissions/{id}/request.json` + `response.json` written by both routes after success. `data/submissions/` gitignored.
-- **Document download** not yet wired to frontend — use CLI generator scripts for now.
+- **Document download** wired to frontend. Results page shows download buttons; documents generated automatically after each analysis and persisted to `data/submissions/{id}/`.
 
 ### Clinical reasoning
 - **Panel-class routing.** FBP (NutriSTAT, OAT) and HMP (EndoSCAN) process correctly; non-FBP/HMP refuses cleanly.
@@ -422,7 +433,8 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - 2026-05-31 session (HMP/mock tests/polish): ~$20
 - 2026-05-31 session (symptom matrix): ~$22
 - 2026-05-31 session (frontend validation): ~$3
-- **2026-06-01 session (GP panel class):** ~5 GP fires × ~$3 + PDF read ~$0.50 = **~$16**
+- 2026-06-01 session (GP panel class): ~$16
+- **2026-06-01 session (document download):** no Claude spend
 - **Cumulative: ~$191**
 
 ---
@@ -499,11 +511,9 @@ console.log('input_source:', d.audit?.input_source);
 
 ### Strategic options for next session
 
-**A — Document download from frontend:** Wire the document generator into the results page — generate docx/xlsx server-side and provide download links. No Claude spend.
+**A — Mock tests for GP + symptom matrix:** Add mock tests for GP axis activation, GP binding exclusion (selenium conservative), GP refusal (multi-class), and symptom-driven binding exclusion logic. No Claude spend.
 
-**B — Mock tests for GP + symptom matrix:** Add mock tests for GP axis activation, GP binding exclusion (selenium conservative), GP refusal (multi-class), and symptom-driven binding exclusion logic. No Claude spend.
-
-**C — Combined panel support (FBP+HMP or FBP+GP):** Currently refused. Multi-class orchestration design needed.
+**B — Combined panel support (FBP+HMP or FBP+GP):** Currently refused. Multi-class orchestration design needed.
 
 **D — MP panel class (Advanced Microbiome Mapping):** Fourth panel class. Drives `gastrointestinal` axis.
 
