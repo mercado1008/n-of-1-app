@@ -1,8 +1,8 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-06-01, end of session — document download from frontend
+**Last updated:** 2026-06-01, end of session — mock tests expanded to 40
 **Current versions:** prompt v0.6.2, schema v0.4.7, library revision 15
-**Last known state:** Document download live. Results page shows ↓ Health Analysis (.docx) and ↓ Formulation Schedule (.xlsx) buttons when documents exist. Documents generated automatically after each successful analysis.
+**Last known state:** 40/40 mock tests passing. GP panel class, symptom matrix, document download, and all prior features covered.
 
 ---
 
@@ -115,6 +115,16 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
     - All 700-granule references updated to 710 throughout the prompt
 21. **Self-check items** — Updated to v0.4.5: explicit numeric check ("write the sum in notes, if <630 with ≥2 patterns this FAILS"); allocation plan consistency check removed; layer pass verification added.
 22. **`scripts/live-test.ts` and `scripts/live-test-hl7.ts`** — undici global dispatcher added for 600s headersTimeout/bodyTimeout. Display strings updated from `/ 700` to `/ 710`.
+
+---
+
+## What changed in this session (2026-06-01, third pass — mock tests 34→40)
+
+### Mock tests expanded (complete)
+1. **`scripts/test-claude-client-mock.ts`** — 6 new tests added (34→40). All 40/40 pass.
+   - **GP (3):** `["GP"]` accepted as formulation with `antioxidant_redox` category; `gp_modifier_only_no_biomarker_integration` escalation flag present; `["FBP","GP"]` combined refused with `panel_class_not_yet_supported`.
+   - **Symptom matrix (3):** licorice binding exclusion with "High blood pressure MODERATE" trigger round-trips; symptom-only Cardiometabolic pattern in `recognised_patterns`; symptom-activated `blood_glucose_insulin` axis with Metabolic Syndrome 36.67% in allocation plan.
+2. **New fixtures:** `VALID_GP_FORMULATION`, `GP_COMBINED_REFUSAL`, `FORMULATION_WITH_SYMPTOM_BINDING_EXCLUSION`, `FORMULATION_WITH_SYMPTOM_PATTERN`.
 
 ---
 
@@ -511,9 +521,7 @@ console.log('input_source:', d.audit?.input_source);
 
 ### Strategic options for next session
 
-**A — Mock tests for GP + symptom matrix:** Add mock tests for GP axis activation, GP binding exclusion (selenium conservative), GP refusal (multi-class), and symptom-driven binding exclusion logic. No Claude spend.
-
-**B — Combined panel support (FBP+HMP or FBP+GP):** Currently refused. Multi-class orchestration design needed.
+**A — Combined panel support (FBP+HMP or FBP+GP):** Currently refused. Multi-class orchestration design needed.
 
 **D — MP panel class (Advanced Microbiome Mapping):** Fourth panel class. Drives `gastrointestinal` axis.
 
