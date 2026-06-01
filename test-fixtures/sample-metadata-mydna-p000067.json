@@ -1,0 +1,12 @@
+{
+  "submission_id": "SUB-2026-006",
+  "practitioner_id": "P001-NATUROPATH",
+  "practitioner_type": "naturopath",
+  "patient_pseudonym": "PT-2026-006",
+  "patient_age_years": 44,
+  "patient_sex_assigned_at_birth": "female",
+  "test_type": "myDNA_Longevity",
+  "test_lab_id": "PNR42Y46",
+  "test_collection_date": "2026-04-07",
+  "panel_classes": ["GP"]
+}

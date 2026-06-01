@@ -53,6 +53,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { z } from 'zod';
+import { jsonrepair } from 'jsonrepair';
 
 import {
   ClaudeOutputSchema,
@@ -168,14 +169,22 @@ function normaliseToolInput(rawInput: unknown): unknown {
 
   let parsedResult = tryParse(resultString);
   if (parsedResult === null) {
-    // Strip trailing commas before } or ] (with optional whitespace) and retry.
+    // First attempt: strip trailing commas (narrow, fast fix for the common case).
     const cleaned = resultString.replace(/,(\s*[}\]])/g, '$1');
     parsedResult = tryParse(cleaned);
   }
+  if (parsedResult === null) {
+    // Second attempt: jsonrepair — handles trailing commas, unquoted keys,
+    // truncated strings, and other malformations that appear in very long outputs.
+    try {
+      parsedResult = JSON.parse(jsonrepair(resultString));
+    } catch {
+      parsedResult = null;
+    }
+  }
 
   if (parsedResult === null) {
-    // Both attempts failed. Return original; Zod will report a clear error
-    // (the caller sees `result` typed as string when an object is expected).
+    // All repair attempts failed. Return original; Zod will report a clear error.
     return rawInput;
   }
 
