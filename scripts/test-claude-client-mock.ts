@@ -23,6 +23,11 @@
  *         line endings, PID extraction, NM/FT separation, OBR fields.
  *  31-34. HMP panel class — ["HMP"] accepted, HMP patterns round-trip,
  *         ["FBP","HMP"] combined refused, hormone_metabolism category accepted.
+ *  35-37. GP panel class — ["GP"] accepted, gp_modifier_only escalation flag,
+ *         ["FBP","GP"] combined refused.
+ *  38-40. Symptom matrix — symptom-driven binding exclusion round-trips,
+ *         symptom-only recognised pattern round-trips, symptom category in
+ *         allocation plan round-trips.
  *
  * Run with:  npx tsx scripts/test-claude-client-mock.ts
  *
@@ -484,6 +489,115 @@ const HMP_COMBINED_REFUSAL = {
     panel_classes: ['FBP', 'HMP'],
     escalation_flags_raised: ['panel_class_not_yet_supported'],
   },
+};
+
+// v0.6.0 — GP formulation fixture. panel_classes: ["GP"], antioxidant_redox category,
+// gp_modifier_only_no_biomarker_integration escalation flag.
+const VALID_GP_FORMULATION = {
+  ...VALID_FORMULATION,
+  panel_classes: ['GP'],
+  recognised_patterns: [
+    {
+      pattern_name: 'Antioxidant-depleted genotype (GP-class)',
+      supporting_findings: ['SOD2 HIGH PRIORITY (homozygous)', 'GSTM1/GSTP1 MEDIUM PRIORITY'],
+      rationale: 'A pattern consistent with reduced mitochondrial antioxidant capacity per published genotype frameworks — for practitioner consideration.',
+    },
+  ],
+  audit_metadata: {
+    ...VALID_FORMULATION.audit_metadata,
+    escalation_flags_raised: ['gp_modifier_only_no_biomarker_integration'],
+  },
+  granule_budget_allocation_plan: [
+    {
+      category: 'antioxidant_redox',
+      granules_allocated: 2,
+      priority: 'primary',
+      findings_addressed: ['SOD2 HIGH PRIORITY'],
+      rationale: 'Antioxidant axis for SOD2 genotype.',
+    },
+  ],
+  proposed_formulation: [
+    {
+      tsi_code: 'W140010000',
+      common_name: 'N-acetyl cysteine (NAC)',
+      proposed_dose: 600,
+      dose_unit: 'mg',
+      rationale_for_practitioner:
+        'NAC provides cysteine for glutathione synthesis, supporting GSTM1/GSTP1 reduced-function genotype — for practitioner consideration.',
+      evidence_pointer: 'Rushworth GF & Megson IL (2014). Existing and potential therapeutic uses for N-acetylcysteine. Pharmacol Ther.',
+      practitioner_cautions: 'Take with food.',
+      target_biomarker_findings: ['GSTM1/GSTP1 MEDIUM PRIORITY'],
+      practitioner_review_priority: 'STANDARD',
+      category: 'antioxidant_redox',
+    },
+  ],
+};
+
+// v0.6.0 — refusal for combined ["FBP", "GP"] (multi-class not yet supported).
+const GP_COMBINED_REFUSAL = {
+  ...VALID_REFUSAL,
+  submission_metadata: {
+    ...VALID_REFUSAL.submission_metadata,
+    submission_id: 'SUB-2026-GP-COMBINED',
+    test_type: 'myDNA_Longevity',
+  },
+  panel_classes: ['FBP', 'GP'],
+  refusal_trigger: 'panel_class_not_yet_supported',
+  refusal_explanation:
+    'Submission contains panel classes FBP and GP together. Multi-class combinations are not yet supported. Resubmit as a single panel class.',
+  audit_metadata: {
+    ...VALID_REFUSAL.audit_metadata,
+    submission_id: 'SUB-2026-GP-COMBINED',
+    panel_classes: ['FBP', 'GP'],
+    escalation_flags_raised: ['panel_class_not_yet_supported'],
+  },
+};
+
+// Symptom matrix — formulation with a symptom-driven binding exclusion (licorice).
+const FORMULATION_WITH_SYMPTOM_BINDING_EXCLUSION = {
+  ...VALID_FORMULATION,
+  binding_exclusions_applied: [
+    {
+      ingredient_name: 'Licorice / Glycyrrhiza (all forms)',
+      panel_finding_that_triggered:
+        "Symptom matrix: 'High blood pressure' rated MODERATE severity",
+      practitioner_note:
+        'Licorice excluded per symptom-driven binding exclusion rule — mineralocorticoid effect would elevate blood pressure further. Confirmed by symptom matrix, not biomarker data.',
+    },
+  ],
+  audit_metadata: {
+    ...VALID_FORMULATION.audit_metadata,
+    binding_exclusions_count: 1,
+    escalation_flags_raised: ['symptom_driven_binding_exclusion_licorice'],
+  },
+};
+
+// Symptom matrix — formulation with a symptom-only recognised pattern.
+const FORMULATION_WITH_SYMPTOM_PATTERN = {
+  ...VALID_FORMULATION,
+  recognised_patterns: [
+    ...VALID_FORMULATION.recognised_patterns,
+    {
+      pattern_name: 'Cardiometabolic symptom burden (biomarker-untested on this panel)',
+      supporting_findings: [
+        'Metabolic Syndrome symptom category 36.67%',
+        'SEVERE waist weight gain',
+        'MODERATE high blood pressure',
+      ],
+      rationale:
+        'Symptom category score ≥25% activates blood_glucose_insulin and mitochondrial_cardiovascular axes per stream-2 protocol — for practitioner consideration.',
+    },
+  ],
+  granule_budget_allocation_plan: [
+    ...VALID_FORMULATION.granule_budget_allocation_plan,
+    {
+      category: 'blood_glucose_insulin',
+      granules_allocated: 19,
+      priority: 'supportive',
+      findings_addressed: ['Metabolic Syndrome symptom category 36.67%'],
+      rationale: 'Symptom-activated axis — Metabolic Syndrome 36.67% ≥25% threshold.',
+    },
+  ],
 };
 
 // Minimal HL7 v2.3.1 ORU^R01 message for parser/adapter tests.
@@ -1317,6 +1431,115 @@ const tests: Test[] = [
       }
       if (ingredient.tsi_code !== 'W140019000') {
         throw new Error(`Expected W140019000 (DIM), got ${ingredient.tsi_code}`);
+      }
+    },
+  },
+  // GP panel class tests (v0.6.0)
+  {
+    name: 'GP: panel_classes ["GP"] accepted as formulation with antioxidant_redox category',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system', pdfBase64: 'AAAA', userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 200 },
+          content: [{ type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: VALID_GP_FORMULATION } }],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const pcs = (result.output as { panel_classes: string[] }).panel_classes;
+      if (!Array.isArray(pcs) || pcs[0] !== 'GP') throw new Error(`Expected ["GP"], got ${JSON.stringify(pcs)}`);
+      const ingredient = result.output.proposed_formulation[0];
+      if (ingredient.category !== 'antioxidant_redox') throw new Error(`Expected antioxidant_redox, got ${ingredient.category}`);
+    },
+  },
+  {
+    name: 'GP: gp_modifier_only_no_biomarker_integration escalation flag present',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system', pdfBase64: 'AAAA', userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 200 },
+          content: [{ type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: VALID_GP_FORMULATION } }],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const flags = (result.output.audit_metadata as { escalation_flags_raised?: string[] }).escalation_flags_raised ?? [];
+      if (!flags.includes('gp_modifier_only_no_biomarker_integration')) {
+        throw new Error(`Expected gp_modifier_only escalation flag, got ${JSON.stringify(flags)}`);
+      }
+    },
+  },
+  {
+    name: 'GP: ["FBP","GP"] combined is refused with panel_class_not_yet_supported',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system', pdfBase64: 'AAAA', userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 50 },
+          content: [{ type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: GP_COMBINED_REFUSAL } }],
+        }),
+      });
+      if (result.output.output_type !== 'refusal') throw new Error(`Expected refusal, got ${result.output.output_type}`);
+      if (result.output.refusal_trigger !== 'panel_class_not_yet_supported') {
+        throw new Error(`Expected panel_class_not_yet_supported, got ${result.output.refusal_trigger}`);
+      }
+      const pcs = (result.output as { panel_classes: string[] }).panel_classes;
+      if (pcs.length !== 2) throw new Error(`Expected 2 panel classes, got ${JSON.stringify(pcs)}`);
+    },
+  },
+  // Symptom matrix tests (v0.5.4)
+  {
+    name: 'Symptom matrix: symptom-driven binding exclusion (licorice/high BP) round-trips',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system', pdfBase64: 'AAAA', userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 200 },
+          content: [{ type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: FORMULATION_WITH_SYMPTOM_BINDING_EXCLUSION } }],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const exclusions = (result.output as { binding_exclusions_applied: { ingredient_name: string; panel_finding_that_triggered: string }[] }).binding_exclusions_applied;
+      if (!Array.isArray(exclusions) || exclusions.length !== 1) throw new Error(`Expected 1 binding exclusion, got ${exclusions?.length}`);
+      if (!exclusions[0].ingredient_name.toLowerCase().includes('licorice')) throw new Error('Expected licorice exclusion');
+      if (!exclusions[0].panel_finding_that_triggered.toLowerCase().includes('high blood pressure')) {
+        throw new Error('Expected high blood pressure trigger');
+      }
+    },
+  },
+  {
+    name: 'Symptom matrix: symptom-only recognised pattern round-trips',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system', pdfBase64: 'AAAA', userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 200 },
+          content: [{ type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: FORMULATION_WITH_SYMPTOM_PATTERN } }],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const patterns = (result.output as { recognised_patterns: { pattern_name: string }[] }).recognised_patterns;
+      if (!Array.isArray(patterns) || patterns.length < 2) throw new Error(`Expected ≥2 patterns, got ${patterns?.length}`);
+      const symptomPattern = patterns.find(p => p.pattern_name.includes('Cardiometabolic'));
+      if (!symptomPattern) throw new Error('Symptom-driven Cardiometabolic pattern not found');
+    },
+  },
+  {
+    name: 'Symptom matrix: symptom-activated blood_glucose_insulin axis in allocation plan round-trips',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system', pdfBase64: 'AAAA', userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 200 },
+          content: [{ type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: FORMULATION_WITH_SYMPTOM_PATTERN } }],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const plan = (result.output as { granule_budget_allocation_plan: { category: string; findings_addressed: string[] }[] }).granule_budget_allocation_plan;
+      const symptomAxis = plan.find(p => p.category === 'blood_glucose_insulin');
+      if (!symptomAxis) throw new Error('blood_glucose_insulin axis not found in allocation plan');
+      if (!symptomAxis.findings_addressed.some(f => f.includes('Metabolic Syndrome'))) {
+        throw new Error('Expected Metabolic Syndrome in findings_addressed');
       }
     },
   },
