@@ -41,7 +41,7 @@ The granule pod is compounded by a separately-licensed pharmacy on the practitio
 │   ├── claude-client.ts              # Anthropic SDK wrapper; callClaudeForAnalysis (PDF) + callClaudeForAnalysisFromText (HL7)
 │   ├── build-prompt.ts               # buildUserPrompt (PDF) + buildHL7UserPrompt (HL7), audit block
 │   ├── request-schema.ts             # Zod schemas for incoming requests
-│   ├── granule-calc.ts               # Deterministic granule arithmetic (710-granule ceiling)
+│   ├── granule-calc.ts               # Deterministic granule arithmetic (720-granule ceiling)
 │   ├── audit-ref.ts                  # computeAuditReference — shared between routes and generator
 │   ├── audit-log.ts                  # appendAuditLog → logs/audit.jsonl
 │   ├── generate-citations.ts         # Second-pass Claude call: one study citation per ingredient
@@ -78,7 +78,7 @@ The granule pod is compounded by a separately-licensed pharmacy on the practitio
 ## Locked design decisions (do not re-debate)
 
 ### Architecture
-- **Route owns granule arithmetic, not Claude.** Claude proposes doses; the route computes granules deterministically and enforces the 710-granule pod ceiling. Do not change.
+- **Route owns granule arithmetic, not Claude.** Claude proposes doses; the route computes granules deterministically and enforces the 720-granule pod ceiling. Do not change.
 - **Schema is the structural floor; prompt carries clinical-routing policy.** Clinical rules go in the prompt, not the schema, unless they're true structural invariants.
 - **Panel-class architecture is extensibility-locked.** Schema supports FBP/HMP/GP/MP/TP/RIP enum; currently only FBP is fully implemented. Other classes return `panel_class_not_yet_supported`. Do not refuse on unknown classes — extend instead.
 - **`panel_classes` is a required field on every request.** Not inferred from `test_type`.
@@ -93,14 +93,14 @@ The granule pod is compounded by a separately-licensed pharmacy on the practitio
 - **Copper:** BINDING EXCLUSION when Cu:Zn>1.50 OR plasma upper third OR %free>25%. Low zinc does NOT override.
 - **OAT is FBP-class.** Don't route to HMP/MP even though it has methylation/metabolic markers.
 
-### Formulation construction (the six-step procedure — v0.4.5)
-1. **Rank** therapeutic areas by priority (primary / secondary / supportive)
+### Formulation construction (the six-step procedure — v0.6.3)
+1. **Rank** therapeutic areas by priority (primary / secondary / supportive) — including axes activated by practitioner clinical notes
 2. **Identify** the foundational ingredient and ordered layer ingredients for each area
 3. **Foundational pass:** place one foundational per area in priority order — ALL areas before any layers. Primary + secondary foundationals at ≥75%; supportive at ≥50%.
-4. **Layer pass:** cycle through areas in priority order, adding one layer ingredient per area per cycle at ≥50%, until the running total exceeds 710. Do not stop early.
-5. **Back out the last ingredient** that caused the overage — entirely, no trimming. Record in `excluded_from_pod`.
-6. **Verify:** compute the sum; confirm 630–710. Write sum in `compliance_self_check.notes`.
-- **Pod ceiling: 710 granules** (route enforces). Target fill zone: 630–710.
+4. **Layer pass:** cycle through areas in priority order adding one layer ingredient per area per cycle at ≥50%, until estimate reaches 660–690. Expect 2–4 cycles.
+5. **Trim** if estimate >670: reduce the highest-granule-cost ingredient in the lowest-priority category until estimate ≤670.
+6. **Verify:** compute the sum; confirm 630–720. Write sum in `compliance_self_check.notes`.
+- **Pod ceiling: 720 granules** (route enforces). Target fill zone: 630–720.
 - **Catalyst-layer threshold:** ≥1000 granules at the foundational-pass total.
 
 ### Document conventions

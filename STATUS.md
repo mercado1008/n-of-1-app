@@ -1,8 +1,8 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-06-01, end of session — mock tests expanded to 40
-**Current versions:** prompt v0.6.2, schema v0.4.7, library revision 15
-**Last known state:** 40/40 mock tests passing. GP panel class, symptom matrix, document download, and all prior features covered.
+**Last updated:** 2026-07-14, end of session — pod ceiling raised to 720, underfill fixes, clinical notes as input stream
+**Current versions:** prompt v0.6.3, schema v0.4.7, library revision 15
+**Last known state:** 40/40 mock tests passing. Pod ceiling 720. Clinical notes now activate therapeutic axes. Underfill anti-patterns addressed.
 
 ---
 
@@ -115,6 +115,39 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
     - All 700-granule references updated to 710 throughout the prompt
 21. **Self-check items** — Updated to v0.4.5: explicit numeric check ("write the sum in notes, if <630 with ≥2 patterns this FAILS"); allocation plan consistency check removed; layer pass verification added.
 22. **`scripts/live-test.ts` and `scripts/live-test-hl7.ts`** — undici global dispatcher added for 600s headersTimeout/bodyTimeout. Display strings updated from `/ 700` to `/ 710`.
+
+---
+
+## What changed in this session (2026-07-14 — pod ceiling 720, underfill fixes, clinical notes)
+
+### Pod ceiling raised 710 → 720 (complete)
+1. **`lib/granule-calc.ts`** — overage check `> 710` → `> 720`, budget ratio `/ 710` → `/ 720`, error message updated.
+2. **`scripts/live-test.ts`**, **`scripts/live-test-hl7.ts`** — display strings updated to `/ 720`.
+3. **`app/submissions/[id]/page.tsx`** — pod fill display updated to `/ 720 granules`.
+4. **`prompts/system-prompt.md` v0.6.3** — all 710 ceiling references updated. Estimate targets shifted: Step 4 stop range 660–690 (was 650–680), Step 5 trim threshold >670 (was >660), self-check gate ≤700 (was ≤690), allocation plan target 660–680 (was 650–670).
+5. **`CLAUDE.md`** — locked design decisions updated to 720 throughout.
+6. **`prompts/prompt-version.json`** — system_prompt_version bumped 0.6.2 → 0.6.3.
+
+### Pod underfill root causes fixed — prompt v0.6.3 (complete)
+Identified via SUB-2026-221 (249/720 gr, 2 patterns) and SUB-2026-352 (425/720 gr, 4 patterns).
+
+**Root cause 1 — "clinical discipline" escape hatch:** Claude was rationalising sub-630 fills in `compliance_self_check.notes` and passing its own self-check. Fix: self-check enforcement language strengthened; self-check gate failure requires adding ingredients, not writing a justification.
+
+**Root cause 2 — binding exclusions treated as axis blockers:** Claude was citing copper/iodine/5-HTP exclusions as the reason for underfill on entire axes. Fix: **Anti-pattern C** added — each binding exclusion blocks only the specific excluded ingredient; it never reduces fill obligation on the axis or the pod.
+
+**Root cause 3 — "genuinely exhausted" definition too loose:** Claude was treating "I addressed the primary findings" as Library exhaustion. Fix: definition now requires explicitly naming every evaluated candidate and its specific contraindication. A concrete fallback ingredient list (Vitamin C, Vitamin D3, Quercetin, Turmeric, Rhodiola, Thiamine, Nicotinamide) is provided for use when fill is below target.
+
+**Root cause 4 — stale v0.4.5 self-check item:** Still referenced the old "cycle until >710, back out last ingredient" procedure. Updated to match the current stop-at-660–690 + trim approach.
+
+### Clinical notes as a formal input stream — prompt v0.6.3 (complete)
+Previously, practitioner free-text clinical notes were only used for refusal checks and contraindication lookups. They are now a direct input to axis activation:
+
+- **Formulation philosophy step 1** — rewritten to explicitly include clinical notes alongside biomarker patterns. Symptom language in notes (fatigue, brain fog, poor sleep, joint pain, digestive discomfort, etc.) activates corresponding therapeutic axes at supportive priority, or secondary if biomarkers corroborate.
+- **Six-step procedure step 1** — updated: "From the recognised patterns **and the practitioner's clinical notes**..." Every axis activated by a note must appear in the allocation plan with a `findings_addressed` entry referencing the note.
+- **Symptom-to-axis mapping** — explicit table added covering common note language patterns (fatigue → `thyroid_adaptogenic` / `mitochondrial_cardiovascular`, poor sleep → `minerals` / `b_vitamins_methylation`, joint pain → `anti_inflammatory_core`, etc.).
+
+### Mock tests
+- 40/40 still passing after all prompt and code changes.
 
 ---
 
@@ -289,15 +322,17 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - **`panel_classes` is required at the request level**, not inferred from test_type.
 - **OAT is FBP-class** — explicit decision.
 
-### Formulation construction (locked as of 2026-05-31)
-- **Pod ceiling: 710 granules** (route enforces; raised from 700 on 2026-05-30).
-- **Six-step procedure:** (1) rank areas, (2) identify foundationals + layers, (3) foundational pass all areas, (4) layer pass cycles until self-estimate reaches 650–680, (5) trim highest-cost ingredient if estimate > 680, (6) verify self-check gate 630–690.
-- **Self-check gate: 630 ≤ estimate ≤ 690.** Route adds ~1 gr/ingredient; 690 estimate + 20 ingredients ≈ 710 route-computed.
-- **Allocation plan target: 650–670 minimum.**
+### Formulation construction (updated 2026-07-14)
+- **Pod ceiling: 720 granules** (route enforces; raised from 710 on 2026-07-14).
+- **Six-step procedure:** (1) rank areas (including clinical-note-activated axes), (2) identify foundationals + layers, (3) foundational pass all areas, (4) layer pass cycles until self-estimate reaches 660–690, (5) trim highest-cost ingredient if estimate > 670, (6) verify self-check gate 630–700.
+- **Self-check gate: 630 ≤ estimate ≤ 700.** Route adds ~1 gr/ingredient; 700 estimate + 20 ingredients ≈ 720 route-computed.
+- **Allocation plan target: 660–680 minimum.**
 - **Foundational dose floor:** ≥75% of clinical target (primary + secondary); ≥50% (supportive).
 - **Layer dose floor:** ≥50% of clinical target.
 - **Catalyst-layer threshold:** ≥1000 granules at foundational-pass total.
-- **Target fill zone:** 630–710 granules (route-computed). Sub-630 on a multi-pattern panel is a formulation error.
+- **Target fill zone:** 630–720 granules (route-computed). Sub-630 on a multi-pattern panel is a formulation error.
+- **Clinical notes are a direct input stream.** Practitioner free-text notes activate therapeutic axes using the same priority logic as the symptom matrix. Note-activated axes appear in the allocation plan and `biomarker_analysis`.
+- **Binding exclusions block specific ingredients only.** They do not reduce fill obligation on the axis or the pod (Anti-pattern C, v0.6.3).
 
 ### Symptom matrix (locked as of 2026-05-31)
 - **Input stream 2 is mandatory.** Symptom matrix must be read and used alongside biomarker tables for all NutriPath panels.
@@ -412,11 +447,12 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
 - **Other adjacent TSI code pairs may exist** beyond W030021000/W030022000. The disambiguation note covers the known confusion; further code confusions may surface in future runs.
 
 ### Pod fill
-- **Run-to-run variance persists.** Even with v0.4.6 fixes, fill can vary (678 in the final run, earlier runs at 549–751). The two root causes are fixed but LLM variance means occasional outliers should be expected. Route hard-rejects anything over 710; under-630 is caught by the self-check.
+- **Run-to-run variance persists.** LLM property — occasional outlier fills (sub-630 or near-720) should be expected despite prompt fixes. Route hard-rejects anything over 720; sub-630 self-check enforcement strengthened in v0.6.3.
+- **Clinical note axis integration not yet validated by live-fire.** The v0.6.3 prompt change is untested on real submissions. First live-fire after this session should check that note-reported symptoms appear in `biomarker_analysis` and the allocation plan.
 - **Prompt cache TTL is 5 minutes.** If more than 5 minutes pass between fires, the cache expires and the next call is a cache write (slightly slower, slightly more expensive). Between sequential fires this is not an issue.
 
 ### Mock tests
-- **21 mock tests don't cover HL7 path, v0.4.7 schema changes, or `references` field.** Should be updated.
+- **Mock tests don't cover clinical-note axis activation or the 720 ceiling.** The 40 existing tests still pass but don't exercise the v0.6.3 changes. Worth adding in a future session.
 
 ### Cost
 - **Each HL7 live-fire:** ~$3 (formulation) + ~$0.20 (citations) = ~$3.20 total.

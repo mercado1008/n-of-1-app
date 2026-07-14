@@ -80,7 +80,7 @@ export default async function ResultsPage({ params }: { params: { id: string } }
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-forest">Pod fill</span>
               <span className="text-sm font-mono text-forest">
-                {gv.computed_total_granules} / 710 granules ({fillPct}%)
+                {gv.computed_total_granules} / 720 granules ({fillPct}%)
               </span>
             </div>
             <div className="h-2 bg-cloud rounded-full overflow-hidden">

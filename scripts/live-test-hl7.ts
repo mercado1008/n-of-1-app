@@ -124,7 +124,7 @@ function summariseFormulation(
     console.log(`  - ${tsi} ${p.common_name}: ${p.proposed_dose}${p.dose_unit} = ${granulesShown}`);
   }
   if (granuleVerification) {
-    console.log(`  Total granules (route): ${granuleVerification.computed_total_granules} / 710`);
+    console.log(`  Total granules (route): ${granuleVerification.computed_total_granules} / 720`);
     console.log(`  Pod fill: ${(granuleVerification.pod_budget_used * 100).toFixed(1)}%`);
     console.log(`  Pod weight: ${granuleVerification.computed_total_pod_weight_mg.toFixed(0)} mg`);
   }
@@ -223,7 +223,7 @@ async function main() {
     console.log(`Code:    ${body.error.code}`);
     console.log(`Message: ${body.error.message}`);
     if (body.error.code === 'granule_verification_failed') {
-      console.log(`Computed total: ${body.error.computed_total_granules ?? '?'} / 710`);
+      console.log(`Computed total: ${body.error.computed_total_granules ?? '?'} / 720`);
       if (body.error.pod_overage) console.log('Pod overage: YES');
       for (const issue of body.error.issues ?? []) {
         console.log(`  - ${issue.tsi_code}: ${issue.reason}`);

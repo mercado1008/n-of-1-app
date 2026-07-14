@@ -12,7 +12,7 @@
  * The only hard failures this module surfaces are:
  *   - Unit mismatch: Claude proposed in a unit that doesn't match the
  *     library's `dose_per_granule_unit`. Strict equality required.
- *   - Pod overage: computed total > 710 granules.
+ *   - Pod overage: computed total > 720 granules.
  *   - Library lookup miss: TSI code not present in supplied Library.
  *   - Bad library data: dose_per_granule missing or non-positive.
  */
@@ -106,8 +106,8 @@ export interface GranuleVerificationResult {
   computed_per_ingredient: ComputedGranulesPerIngredient[];
   computed_total_granules: number;
   computed_total_pod_weight_mg: number;
-  pod_budget_used: number;        // computed_total_granules / 710
-  pod_overage: boolean;            // computed_total_granules > 710
+  pod_budget_used: number;        // computed_total_granules / 720
+  pod_overage: boolean;            // computed_total_granules > 720
   /** Number of ingredients where Claude's reported granules disagreed with the recompute. */
   claude_granule_discrepancy_count: number;
 }
@@ -199,11 +199,11 @@ export function verifyGranuleCounts(args: {
     }
   }
 
-  const podOverage = computedTotalGranules > 710;
+  const podOverage = computedTotalGranules > 720;
   if (podOverage) {
     issues.push({
       tsi_code: '(total)',
-      reason: `pod overage: computed total ${computedTotalGranules} exceeds 710-granule budget`,
+      reason: `pod overage: computed total ${computedTotalGranules} exceeds 720-granule budget`,
     });
   }
 
@@ -213,7 +213,7 @@ export function verifyGranuleCounts(args: {
     computed_per_ingredient: computedPerIngredient,
     computed_total_granules: computedTotalGranules,
     computed_total_pod_weight_mg: computedTotalPodWeightMg,
-    pod_budget_used: computedTotalGranules / 710,
+    pod_budget_used: computedTotalGranules / 720,
     pod_overage: podOverage,
     claude_granule_discrepancy_count: claudeDiscrepancyCount,
   };

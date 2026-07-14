@@ -155,7 +155,7 @@ function summariseFormulation(
       })`,
     );
   }
-  console.log(`  Plan total: ${planTotal} / 710 granules`);
+  console.log(`  Plan total: ${planTotal} / 720 granules`);
   console.log('');
 
   // Proposed formulation with granule counts (route-authoritative)
@@ -245,7 +245,7 @@ function summariseGranuleVerification(
   v: NonNullable<ApiSuccessResponse['granule_verification']>,
 ) {
   console.log('--- Granule verification (deterministic recompute) ---');
-  console.log(`Computed total:     ${v.computed_total_granules} / 710 granules`);
+  console.log(`Computed total:     ${v.computed_total_granules} / 720 granules`);
   console.log(`Pod budget used:    ${(v.pod_budget_used * 100).toFixed(1)}%`);
   console.log(`Pod weight:         ${v.computed_total_pod_weight_mg.toFixed(0)} mg`);
   if (v.claude_granule_discrepancy_count !== undefined && v.claude_granule_discrepancy_count > 0) {
@@ -326,7 +326,7 @@ async function main() {
       console.log('');
       console.log('--- Granule verification issues ---');
       if (body.error.computed_total_granules !== undefined) {
-        console.log(`Computed total:     ${body.error.computed_total_granules} / 710 granules`);
+        console.log(`Computed total:     ${body.error.computed_total_granules} / 720 granules`);
       }
       if (body.error.pod_overage) {
         console.log(`Pod overage:        YES (exceeds 700-granule budget)`);
