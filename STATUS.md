@@ -325,12 +325,12 @@ Previously, practitioner free-text clinical notes were only used for refusal che
 ### Formulation construction (updated 2026-07-14)
 - **Pod ceiling: 720 granules** (route enforces; raised from 710 on 2026-07-14).
 - **Six-step procedure:** (1) rank areas (including clinical-note-activated axes), (2) identify foundationals + layers, (3) foundational pass all areas, (4) layer pass cycles until self-estimate reaches 660–690, (5) trim highest-cost ingredient if estimate > 670, (6) verify self-check gate 630–700.
-- **Self-check gate: 630 ≤ estimate ≤ 700.** Route adds ~1 gr/ingredient; 700 estimate + 20 ingredients ≈ 720 route-computed.
+- **Self-check gate: 600 ≤ estimate ≤ 700.** Route adds ~1 gr/ingredient; 700 estimate + 20 ingredients ≈ 720 route-computed.
 - **Allocation plan target: 660–680 minimum.**
 - **Foundational dose floor:** ≥75% of clinical target (primary + secondary); ≥50% (supportive).
 - **Layer dose floor:** ≥50% of clinical target.
 - **Catalyst-layer threshold:** ≥1000 granules at foundational-pass total.
-- **Target fill zone:** 630–720 granules (route-computed). Sub-630 on a multi-pattern panel is a formulation error.
+- **Target fill zone:** 600–720 granules (route-computed). Sub-600 on a multi-pattern panel is a formulation error.
 - **Clinical notes are a direct input stream.** Practitioner free-text notes activate therapeutic axes using the same priority logic as the symptom matrix. Note-activated axes appear in the allocation plan and `biomarker_analysis`.
 - **Binding exclusions block specific ingredients only.** They do not reduce fill obligation on the axis or the pod (Anti-pattern C, v0.6.3).
 

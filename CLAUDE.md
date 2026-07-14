@@ -99,8 +99,8 @@ The granule pod is compounded by a separately-licensed pharmacy on the practitio
 3. **Foundational pass:** place one foundational per area in priority order — ALL areas before any layers. Primary + secondary foundationals at ≥75%; supportive at ≥50%.
 4. **Layer pass:** cycle through areas in priority order adding one layer ingredient per area per cycle at ≥50%, until estimate reaches 660–690. Expect 2–4 cycles.
 5. **Trim** if estimate >670: reduce the highest-granule-cost ingredient in the lowest-priority category until estimate ≤670.
-6. **Verify:** compute the sum; confirm 630–720. Write sum in `compliance_self_check.notes`.
-- **Pod ceiling: 720 granules** (route enforces). Target fill zone: 630–720.
+6. **Verify:** compute the sum; confirm 600–720. Write sum in `compliance_self_check.notes`.
+- **Pod ceiling: 720 granules** (route enforces). Target fill zone: 600–720.
 - **Catalyst-layer threshold:** ≥1000 granules at the foundational-pass total.
 
 ### Document conventions
