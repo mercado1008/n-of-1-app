@@ -1,8 +1,8 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-07-14, end of session — pod ceiling raised to 720, underfill fixes, clinical notes as input stream
-**Current versions:** prompt v0.6.3, schema v0.4.7, library revision 15
-**Last known state:** 40/40 mock tests passing. Pod ceiling 720. Clinical notes now activate therapeutic axes. Underfill anti-patterns addressed.
+**Last updated:** 2026-07-20, end of session — underfill retry backstop + prompt v0.6.5 loophole closures
+**Current versions:** prompt v0.6.5, schema v0.4.7, library revision 15
+**Last known state:** 46/46 mock tests passing. Underfill retry backstop live on both routes — deterministic fallback for the v0.6.3/v0.6.4 self-check-justification failure mode. Validated via 2 live-fires: one clean retry-success (550→602/720), one safe retry-fallback (retry itself failed structurally, original 574/720 result kept).
 
 ---
 
@@ -29,7 +29,25 @@ A separate document generation pipeline (`scripts/generate-docs/`) reads the JSO
 
 ---
 
-## Most recent green live-fire (2026-05-31, Patient P000066 EndoSCAN — symptom matrix v0.5.8)
+## Most recent green live-fire (2026-07-20, NutriSTAT — underfill retry backstop v0.6.5)
+
+Two consecutive fires against NutriSTAT/FBP panels, back-to-back within the 5-minute prompt-cache window.
+
+**SUB-2026-352** (test_lab_id 978913429-H-H900, same lab report that produced the SUB-2026-796 bug) — the clean validation case:
+- 5 patterns recognised, 23 ingredients
+- First-pass estimate: 550/720 granules (under the 600 floor) → underfill retry fired automatically
+- Retry succeeded: **602/720 granules (83.6%)** — clears the floor
+- `retry_info.underfill_retry_outcome: "succeeded"`, `pre_retry_granules_computed: 550`
+
+**SUB-2026-001** (`test-fixtures/sample-nutristat.pdf` + `sample-notes.txt`, fatigue/brain-fog clinical notes) — the safe-fallback case:
+- 3 patterns recognised, 21 ingredients
+- First-pass estimate: 574/720 granules (79.7% — already far better than SUB-2026-796's 39%, from the prompt-only loophole closures alone)
+- Retry fired (574 < 600) but the retry's own output failed the route's structural check (likely pod overage from overcorrecting) — route discarded the invalid retry and kept the original, structurally-valid 574-granule result
+- `retry_info.underfill_retry_outcome: "retry_failed"` — practitioner still got a usable draft, no crash, no broken response
+
+See "Underfill retry backstop" session write-up below for the full root-cause chain and code changes.
+
+## Previous green live-fire (2026-05-31, Patient P000066 EndoSCAN — symptom matrix v0.5.8)
 
 Test panel: NutriPath EndoSCAN, 53-year-old male, system_prompt_version: 0.5.8.
 
@@ -115,6 +133,44 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
     - All 700-granule references updated to 710 throughout the prompt
 21. **Self-check items** — Updated to v0.4.5: explicit numeric check ("write the sum in notes, if <630 with ≥2 patterns this FAILS"); allocation plan consistency check removed; layer pass verification added.
 22. **`scripts/live-test.ts` and `scripts/live-test-hl7.ts`** — undici global dispatcher added for 600s headersTimeout/bodyTimeout. Display strings updated from `/ 700` to `/ 710`.
+
+---
+
+## What changed in this session (2026-07-20 — underfill retry backstop)
+
+### Root cause: SUB-2026-796 (complete diagnosis)
+
+Practitioner reported that a NutriSTAT formulation "did not address clinical notes." Investigation of `data/submissions/SUB-2026-796/` found the ingredient-to-note mapping was structurally present (4 axes correctly activated by the notes) but the depth behind it was thin — the pod landed at **281/720 granules (39%)** despite 5 recognised patterns, well under the 600-granule floor. Root cause chain:
+
+1. `compliance_self_check.notes` acknowledged the sub-600 fill and wrote a prose justification ("clinical discipline was prioritised over pod-fill maximisation... no clear biomarker abnormalities driving high-dose interventions") — the exact failure mode system-prompt.md's own "HARD STOP" rule (Step 4) already banned in v0.6.4. Prose-only reinforcement wasn't holding.
+2. Claude's own `granule_budget_allocation_plan` totalled 600 granules across categories, but the actual `proposed_formulation` delivered only 281 — a ~53% execution gap between plan and output, meaning the Step 4 layer pass was abandoned after roughly one thin cycle instead of the required 2–4.
+3. Found a real secondary bug while diagnosing this: `prompts/system-prompt.md` line 1's header comment said "v0.6.4" while the inline `# Version:` line still said "0.6.3" — this explains why SUB-2026-796's self-reported `audit_metadata.prompt_version` (0.6.3) didn't match the route's authoritative audit block (0.6.4). Fixed as part of this session's version bump.
+
+### Prompt fix — v0.6.4 → v0.6.5 (complete)
+
+Closed the two specific loopholes Claude used to rationalise the underfill, in `prompts/system-prompt.md`:
+- **"Biomarkers within reference range" is not a valid reason to underfill** — added directly after the pod-sizing definition. States explicitly that the 600 floor is triggered by pattern/note-axis count, not biomarker severity, and calls out the exact rationalisation phrases from SUB-2026-796's self-check as the banned pattern.
+- **Conservative dosing is not a reason to include fewer ingredients** — added in Step 4. A mild panel should add MORE moderate-dose ingredients for breadth, not fewer ingredients at higher individual doses.
+- `prompts/prompt-version.json` bumped `system_prompt_version` 0.6.4 → 0.6.5. Header/inline version lines in system-prompt.md now agree.
+
+### Retry backstop — new deterministic fallback (complete)
+
+Prompt-only reinforcement had already been escalated across v0.6.2–v0.6.4 and still failed on SUB-2026-796, so this session adds a route-level backstop rather than relying solely on prose:
+
+1. **`lib/underfill-retry.ts`** — NEW. `multiPatternFloorApplies(output, clinicalNotes)` mirrors the prompt's own floor trigger (2+ recognised patterns, or 1+ pattern with clinical notes present). `isUnderfilled(verification)` checks the route's deterministic total against the 600 floor. `buildUnderfillRetryAddendum({output, verification})` builds the corrective retry prompt — quotes the exact shortfall, per-category planned-vs-delivered gap, and the same three rules as the prompt fix, back at the model with concrete numbers rather than another abstract reminder.
+2. **Both routes** (`app/api/analyse/route.ts`, `app/api/analyse-hl7/route.ts`) — after the first structural granule verification passes, check `multiPatternFloorApplies && isUnderfilled`. If true, fire exactly one retry call (same system prompt + PDF/HL7 content, original user prompt + addendum appended). Re-verify the retry's output:
+   - If the retry passes structural verification, use it as the final result (regardless of whether it still underfills — capped at one retry to bound cost).
+   - If the retry itself fails structural verification (e.g. overcorrects past 720), discard it and keep the original structurally-valid-but-underfilled result rather than fail the whole request. Now logs `retryVerification.issues` via `console.error` so the reason is diagnosable (added after SUB-2026-001's live-fire retry failed with no visibility into why — see below).
+   - Token usage from both calls is summed (`totalUsage`) for accurate cost tracking in `logs/audit.jsonl` and the saved submission.
+3. **`lib/audit-log.ts`** — `AuditLogEntry.outcome` gains `underfill_retry_attempted`, `underfill_retry_outcome` (`succeeded` | `still_underfilled` | `retry_failed`), `pre_retry_granules_computed`.
+4. **`lib/submissions.ts`** — `SubmissionResponse` gains optional `retry_info` block, populated only when the retry fired.
+5. **Both routes** — the final `NextResponse.json(...)` return simplified to reuse the already-built `responseBody` instead of duplicating the same fields a second time (pre-existing duplication, cleaned up incidentally while wiring usage/retry_info through).
+
+### Mock tests (40 → 46)
+6. **`scripts/test-claude-client-mock.ts`** — 6 new tests: `multiPatternFloorApplies` true for 2+ patterns, false for 1 pattern with no notes, true for 1 pattern with notes, false for refusal outputs; `isUnderfilled` true below 600 / false at 600; `buildUnderfillRetryAddendum` includes the shortfall total, the per-category planned vs. delivered breakdown, and the floor number. All 46/46 pass. No Claude spend.
+
+### Live-fire validation (complete — see "Most recent green live-fire" above)
+7. Two live-fires against NutriSTAT/FBP panels confirmed both branches of the retry logic: a clean retry-success (SUB-2026-352, 550→602/720) and a safe retry-fallback where the retry itself was structurally invalid and got discarded (SUB-2026-001, stayed at 574/720). First-pass fill rates in both cases (550, 574) were already roughly double SUB-2026-796's 281 — evidence the prompt-only loophole closures are doing real work independent of the retry backstop.
 
 ---
 
@@ -333,6 +389,8 @@ Previously, practitioner free-text clinical notes were only used for refusal che
 - **Target fill zone:** 600–720 granules (route-computed). Sub-600 on a multi-pattern panel is a formulation error.
 - **Clinical notes are a direct input stream.** Practitioner free-text notes activate therapeutic axes using the same priority logic as the symptom matrix. Note-activated axes appear in the allocation plan and `biomarker_analysis`.
 - **Binding exclusions block specific ingredients only.** They do not reduce fill obligation on the axis or the pod (Anti-pattern C, v0.6.3).
+- **"Within reference range" and "conservative dosing" are not valid underfill excuses** (v0.6.5, `lib/underfill-retry.ts`). The 600 floor is triggered by pattern/note-axis count, not biomarker severity or dose caution — closed after SUB-2026-796 (281/720, 39% fill) rationalised both in its self-check.
+- **Underfill retry backstop is a deterministic route-level fallback, not prompt-only.** After v0.6.2–v0.6.4 prose reinforcement still failed on SUB-2026-796, the route now fires one corrective retry when `multiPatternFloorApplies && isUnderfilled`, using the model's own shortfall numbers in the retry prompt. Falls back safely to the original result if the retry itself is structurally invalid.
 
 ### Symptom matrix (locked as of 2026-05-31)
 - **Input stream 2 is mandatory.** Symptom matrix must be read and used alongside biomarker tables for all NutriPath panels.
@@ -447,12 +505,13 @@ Previously, practitioner free-text clinical notes were only used for refusal che
 - **Other adjacent TSI code pairs may exist** beyond W030021000/W030022000. The disambiguation note covers the known confusion; further code confusions may surface in future runs.
 
 ### Pod fill
-- **Run-to-run variance persists.** LLM property — occasional outlier fills (sub-630 or near-720) should be expected despite prompt fixes. Route hard-rejects anything over 720; sub-630 self-check enforcement strengthened in v0.6.3.
-- **Clinical note axis integration not yet validated by live-fire.** The v0.6.3 prompt change is untested on real submissions. First live-fire after this session should check that note-reported symptoms appear in `biomarker_analysis` and the allocation plan.
-- **Prompt cache TTL is 5 minutes.** If more than 5 minutes pass between fires, the cache expires and the next call is a cache write (slightly slower, slightly more expensive). Between sequential fires this is not an issue.
+- **Run-to-run variance persists.** LLM property — occasional outlier fills (sub-630 or near-720) should be expected despite prompt fixes. Route hard-rejects anything over 720; sub-630 self-check enforcement strengthened in v0.6.3, backstopped by the v0.6.5 underfill retry.
+- **Underfill retry has only been exercised on FBP/NutriSTAT panels (2 live-fires).** HMP and GP panels haven't hit this path yet — no reason to expect different behaviour, but unconfirmed.
+- **SUB-2026-001's retry failed structurally with no diagnosed cause.** Most likely overcorrection past 720 (pod overage) after being told to add more ingredients, but the retry's raw output isn't persisted when it's discarded, so this is inferred, not confirmed. `retryVerification.issues` is now logged via `console.error` on this path (added this session) — check server logs next time this fires to confirm.
+- **Prompt cache TTL is 5 minutes.** If more than 5 minutes pass between fires, the cache expires and the next call is a cache write (slightly slower, slightly more expensive). Between sequential fires this is not an issue. The underfill retry's second call benefits from this — it lands well within the TTL of the first call.
 
 ### Mock tests
-- **Mock tests don't cover clinical-note axis activation or the 720 ceiling.** The 40 existing tests still pass but don't exercise the v0.6.3 changes. Worth adding in a future session.
+- **Mock tests don't cover the HL7 path's underfill retry branch specifically** (only the shared `lib/underfill-retry.ts` helpers are unit-tested, and only via the PDF-path fixtures). Both routes share the same helper functions so behaviour should be identical, but no route-level integration test exists for either path — consistent with the rest of this test file, which tests `lib/` modules directly rather than the Next.js routes.
 
 ### Cost
 - **Each HL7 live-fire:** ~$3 (formulation) + ~$0.20 (citations) = ~$3.20 total.
@@ -481,7 +540,9 @@ Previously, practitioner free-text clinical notes were only used for refusal che
 - 2026-05-31 session (frontend validation): ~$3
 - 2026-06-01 session (GP panel class): ~$16
 - **2026-06-01 session (document download):** no Claude spend
-- **Cumulative: ~$191**
+- **Cumulative through 2026-06-01: ~$191**
+- *(2026-06-01 third-pass mock-test session and 2026-07-14 pod-ceiling session not logged here — gap in this tracking, not a claim of zero spend.)*
+- 2026-07-20 session (underfill retry backstop validation): ~$16 (2 live-fires, each including one automatic retry call + citations; SUB-2026-001 ≈$10.5 with a cache-write retry, SUB-2026-352 ≈$4.7 all-cache-read since it ran within the 5-min TTL of the first)
 
 ---
 
@@ -496,7 +557,7 @@ npm run dev
 ```bash
 npx tsx scripts/test-claude-client-mock.ts
 ```
-21/21 green expected. Does not yet cover HL7 path or v0.4.7 schema.
+46/46 green expected. Covers HL7 path, v0.4.7 `references` field, and the v0.6.5 underfill retry helpers.
 
 ### Run live-fire — PDF path (OAT, P000065, FBP)
 ```bash

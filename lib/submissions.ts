@@ -34,6 +34,12 @@ export interface SubmissionResponse {
     computed_per_ingredient: unknown[];
     claude_granule_discrepancy_count: number;
   };
+  /** Present only when the underfill retry backstop fired — see lib/underfill-retry.ts. */
+  retry_info?: {
+    underfill_retry_attempted: boolean;
+    underfill_retry_outcome?: 'succeeded' | 'still_underfilled' | 'retry_failed';
+    pre_retry_granules_computed?: number;
+  };
 }
 
 export interface SubmissionSummary {

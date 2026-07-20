@@ -28,6 +28,8 @@
  *  38-40. Symptom matrix — symptom-driven binding exclusion round-trips,
  *         symptom-only recognised pattern round-trips, symptom category in
  *         allocation plan round-trips.
+ *  41-47. Underfill retry backstop (v0.6.5) — multiPatternFloorApplies and
+ *         isUnderfilled trigger conditions, buildUnderfillRetryAddendum content.
  *
  * Run with:  npx tsx scripts/test-claude-client-mock.ts
  *
@@ -40,6 +42,12 @@ import {
 } from '../lib/claude-client';
 import { parseHL7Message, field, comp } from '../lib/hl7-parser';
 import { adaptHL7Message } from '../lib/hl7-adapter';
+import {
+  multiPatternFloorApplies,
+  isUnderfilled,
+  buildUnderfillRetryAddendum,
+} from '../lib/underfill-retry';
+import type { GranuleVerificationResult } from '../lib/granule-calc';
 // ---------------------------------------------------------------------------
 // Fake Anthropic client
 // ---------------------------------------------------------------------------
@@ -1553,6 +1561,88 @@ const tests: Test[] = [
       if (parsed.collection_datetime !== '20260406000000+1000') {
         throw new Error(`collection_datetime expected 20260406000000+1000, got ${parsed.collection_datetime}`);
       }
+    },
+  },
+  // Underfill retry backstop tests (v0.6.5) — see lib/underfill-retry.ts.
+  // SUB-2026-796 landed at 281/720 granules on a 5-pattern, clinical-note-
+  // activated panel despite the prompt already banning this in prose.
+  {
+    name: 'Underfill retry: multiPatternFloorApplies is true for 2+ recognised patterns',
+    run: async () => {
+      if (!multiPatternFloorApplies(FORMULATION_WITH_SYMPTOM_PATTERN as never, '')) {
+        throw new Error('Expected floor to apply for a 2-pattern formulation');
+      }
+    },
+  },
+  {
+    name: 'Underfill retry: multiPatternFloorApplies is false for 1 pattern with no clinical notes',
+    run: async () => {
+      if (multiPatternFloorApplies(VALID_FORMULATION as never, '')) {
+        throw new Error('Expected floor NOT to apply for a 1-pattern formulation with no notes');
+      }
+    },
+  },
+  {
+    name: 'Underfill retry: multiPatternFloorApplies is true for 1 pattern WITH clinical notes',
+    run: async () => {
+      if (!multiPatternFloorApplies(VALID_FORMULATION as never, 'Patient reports fatigue and poor sleep.')) {
+        throw new Error('Expected floor to apply when clinical notes are present, per system-prompt.md Step 1');
+      }
+    },
+  },
+  {
+    name: 'Underfill retry: multiPatternFloorApplies is false for a refusal output',
+    run: async () => {
+      if (multiPatternFloorApplies(VALID_REFUSAL as never, 'irrelevant notes')) {
+        throw new Error('Expected floor NOT to apply to a refusal output');
+      }
+    },
+  },
+  {
+    name: 'Underfill retry: isUnderfilled is true below 600 and false at/above 600',
+    run: async () => {
+      const under: GranuleVerificationResult = {
+        ok: true, issues: [], computed_per_ingredient: [], computed_total_granules: 281,
+        computed_total_pod_weight_mg: 0, pod_budget_used: 281 / 720, pod_overage: false,
+        claude_granule_discrepancy_count: 0,
+      };
+      const atFloor: GranuleVerificationResult = { ...under, computed_total_granules: 600, pod_budget_used: 600 / 720 };
+      if (!isUnderfilled(under)) throw new Error('Expected 281 granules to be underfilled');
+      if (isUnderfilled(atFloor)) throw new Error('Expected 600 granules to satisfy the floor');
+    },
+  },
+  {
+    name: 'Underfill retry: buildUnderfillRetryAddendum quotes the shortfall and per-category gap',
+    run: async () => {
+      const verification: GranuleVerificationResult = {
+        ok: true,
+        issues: [],
+        computed_per_ingredient: [
+          { tsi_code: 'W010003000', common_name: 'Ashwagandha', proposed_dose: 300, dose_unit: 'mg', computed_granules: 30 },
+        ],
+        computed_total_granules: 281,
+        computed_total_pod_weight_mg: 0,
+        pod_budget_used: 281 / 720,
+        pod_overage: false,
+        claude_granule_discrepancy_count: 0,
+      };
+      const output = {
+        ...VALID_FORMULATION,
+        proposed_formulation: [
+          { ...VALID_FORMULATION.proposed_formulation[0], tsi_code: 'W010003000', category: 'thyroid_adaptogenic' },
+        ],
+        granule_budget_allocation_plan: [
+          {
+            category: 'thyroid_adaptogenic', granules_allocated: 165, priority: 'primary',
+            findings_addressed: ['TSH upper-half'], rationale: 'test fixture',
+          },
+        ],
+      };
+      const addendum = buildUnderfillRetryAddendum({ output: output as never, verification });
+      if (!addendum.includes('281 granules')) throw new Error('Expected the shortfall total to appear');
+      if (!addendum.includes('planned 165 granules')) throw new Error('Expected the planned allocation to appear');
+      if (!addendum.includes('actually delivered 30 granules')) throw new Error('Expected the delivered total to appear');
+      if (!addendum.includes('600')) throw new Error('Expected the 600-granule floor to be named');
     },
   },
 ];

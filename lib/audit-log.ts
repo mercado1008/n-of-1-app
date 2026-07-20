@@ -11,6 +11,10 @@ export interface AuditLogEntry {
     pod_budget_used?: number;
     ingredient_count?: number;
     stop_reason?: string | null;
+    /** Underfill retry backstop (see lib/underfill-retry.ts) — omitted when the floor didn't apply. */
+    underfill_retry_attempted?: boolean;
+    underfill_retry_outcome?: 'succeeded' | 'still_underfilled' | 'retry_failed';
+    pre_retry_granules_computed?: number;
   };
   usage?: {
     input_tokens: number;

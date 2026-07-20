@@ -50,6 +50,11 @@ import { appendAuditLog } from '@/lib/audit-log';
 import { generateCitations } from '@/lib/generate-citations';
 import { saveSubmission, saveDocuments } from '@/lib/submissions';
 import { generateDocuments } from '@/lib/generate-documents';
+import {
+  multiPatternFloorApplies,
+  isUnderfilled,
+  buildUnderfillRetryAddendum,
+} from '@/lib/underfill-retry';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -168,7 +173,7 @@ export async function POST(req: NextRequest) {
 
   // Call Claude (text-only, no PDF attachment).
   try {
-    const result = await callClaudeForAnalysisFromText({ systemPrompt, userPrompt });
+    let result = await callClaudeForAnalysisFromText({ systemPrompt, userPrompt });
 
     // Load library for deterministic granule computation.
     const libraryPath = path.join(process.cwd(), 'data', 'library-built', 'ingredients-library.json');
@@ -180,7 +185,7 @@ export async function POST(req: NextRequest) {
       return serverConfigError(`Could not load library for granule verification: ${(err as Error).message}`);
     }
 
-    const verification = verifyGranuleCounts({ output: result.output, library });
+    let verification = verifyGranuleCounts({ output: result.output, library });
     if (!verification.ok) {
       try {
         await appendAuditLog({
@@ -211,6 +216,54 @@ export async function POST(req: NextRequest) {
         },
         { status: 502 },
       );
+    }
+
+    // Underfill retry backstop (see lib/underfill-retry.ts). Mirrors the
+    // PDF route (/api/analyse) — see there for full rationale.
+    let totalUsage = { ...result.usage };
+    let underfillRetryAttempted = false;
+    let underfillRetryOutcome: 'succeeded' | 'still_underfilled' | 'retry_failed' | undefined;
+    let preRetryGranules: number | undefined;
+
+    if (
+      result.output.output_type === 'formulation' &&
+      multiPatternFloorApplies(result.output, clinicalNotes) &&
+      isUnderfilled(verification)
+    ) {
+      underfillRetryAttempted = true;
+      preRetryGranules = verification.computed_total_granules;
+      try {
+        const retryAddendum = buildUnderfillRetryAddendum({
+          output: result.output,
+          verification,
+        });
+        const retryResult = await callClaudeForAnalysisFromText({
+          systemPrompt,
+          userPrompt: userPrompt + '\n' + retryAddendum,
+        });
+        const retryVerification = verifyGranuleCounts({ output: retryResult.output, library });
+
+        totalUsage = {
+          input_tokens: totalUsage.input_tokens + retryResult.usage.input_tokens,
+          output_tokens: totalUsage.output_tokens + retryResult.usage.output_tokens,
+          cache_creation_input_tokens:
+            (totalUsage.cache_creation_input_tokens ?? 0) + (retryResult.usage.cache_creation_input_tokens ?? 0),
+          cache_read_input_tokens:
+            (totalUsage.cache_read_input_tokens ?? 0) + (retryResult.usage.cache_read_input_tokens ?? 0),
+        };
+
+        if (retryVerification.ok) {
+          result = retryResult;
+          verification = retryVerification;
+          underfillRetryOutcome = isUnderfilled(retryVerification) ? 'still_underfilled' : 'succeeded';
+        } else {
+          console.error('[underfill-retry] Retry produced a structurally invalid result, keeping original:', retryVerification.issues);
+          underfillRetryOutcome = 'retry_failed';
+        }
+      } catch (retryErr) {
+        console.error('[underfill-retry] Retry call failed:', retryErr);
+        underfillRetryOutcome = 'retry_failed';
+      }
     }
 
     // Second pass: generate citations for each formulation ingredient.
@@ -244,8 +297,11 @@ export async function POST(req: NextRequest) {
           pod_budget_used: verification.pod_budget_used,
           ingredient_count: result.output.output_type === 'formulation' ? result.output.proposed_formulation.length : undefined,
           stop_reason: result.stop_reason,
+          underfill_retry_attempted: underfillRetryAttempted || undefined,
+          underfill_retry_outcome: underfillRetryOutcome,
+          pre_retry_granules_computed: preRetryGranules,
         },
-        usage: result.usage,
+        usage: totalUsage,
       });
     } catch (logErr) {
       console.error('[audit-log] Failed to write audit log entry:', logErr);
@@ -255,7 +311,7 @@ export async function POST(req: NextRequest) {
       ok: true as const,
       output: outputWithCitations as Record<string, unknown>,
       audit,
-      usage: result.usage,
+      usage: totalUsage,
       stop_reason: result.stop_reason,
       granule_verification: {
         computed_total_granules: verification.computed_total_granules,
@@ -264,6 +320,15 @@ export async function POST(req: NextRequest) {
         computed_per_ingredient: verification.computed_per_ingredient,
         claude_granule_discrepancy_count: verification.claude_granule_discrepancy_count,
       },
+      ...(underfillRetryAttempted
+        ? {
+            retry_info: {
+              underfill_retry_attempted: true,
+              underfill_retry_outcome: underfillRetryOutcome,
+              pre_retry_granules_computed: preRetryGranules,
+            },
+          }
+        : {}),
     };
 
     try {
@@ -292,23 +357,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json(
-      {
-        ok: true,
-        output: outputWithCitations,
-        audit,
-        usage: result.usage,
-        stop_reason: result.stop_reason,
-        granule_verification: {
-          computed_total_granules: verification.computed_total_granules,
-          computed_total_pod_weight_mg: verification.computed_total_pod_weight_mg,
-          pod_budget_used: verification.pod_budget_used,
-          computed_per_ingredient: verification.computed_per_ingredient,
-          claude_granule_discrepancy_count: verification.claude_granule_discrepancy_count,
-        },
-      },
-      { status: 200 },
-    );
+    return NextResponse.json(responseBody, { status: 200 });
   } catch (err) {
     if (err instanceof ClaudeUpstreamError) return upstreamError(err);
     if (err instanceof ClaudeOutputShapeError) return shapeError(err);
