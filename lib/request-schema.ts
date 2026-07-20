@@ -27,6 +27,13 @@ export const SupportedTestType = z.enum([
   'Advanced_Thyroid',
   'Cardiovascular_Risk',
   'Food_Intolerance',
+  // Generic FBP-class catch-all for comprehensive panels that aren't a named
+  // NutriPath product (e.g. a standard GP-ordered panel covering haematology,
+  // iron studies, lipids, electrolytes, eGFR, vitamin D, thyroid, cortisol,
+  // micronutrients). panel_classes: ["FBP"] still drives the actual clinical
+  // routing — this is a labelling fix so documents don't say "NutriSTAT" for
+  // a non-NutriPath panel.
+  'General_Comprehensive_Panel',
 ]);
 export type SupportedTestType = z.infer<typeof SupportedTestType>;
 

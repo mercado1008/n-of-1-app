@@ -21,6 +21,7 @@ const TEST_TYPES = [
   { value: "Comprehensive_Stool_Analysis", label: "Comprehensive Stool Analysis" },
   { value: "Food_Intolerance", label: "Food Intolerance" },
   { value: "myDNA_Longevity", label: "myDNA Longevity" },
+  { value: "General_Comprehensive_Panel", label: "General Comprehensive Panel (non-NutriPath)" },
 ];
 
 const PANEL_CLASSES = [
