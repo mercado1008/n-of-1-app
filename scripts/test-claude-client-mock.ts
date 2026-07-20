@@ -30,6 +30,12 @@
  *         allocation plan round-trips.
  *  41-47. Underfill retry backstop (v0.6.5) — multiPatternFloorApplies and
  *         isUnderfilled trigger conditions, buildUnderfillRetryAddendum content.
+ *  48-58. SPP panel class + questionnaire path (v0.6.7) — ["SPP"] accepted,
+ *         spp_modifier_only_no_biomarker_data flag, ["FBP","SPP"] combined
+ *         refused; QuestionnaireAnswersSchema validation (valid, missing
+ *         category, invalid severity, unrecognised category); hasAnyClinicalContent;
+ *         buildQuestionnaireUserPrompt formatting (table omits "none" rows,
+ *         safety block reflects only flagged items, notes fallback).
  *
  * Run with:  npx tsx scripts/test-claude-client-mock.ts
  *
@@ -48,6 +54,14 @@ import {
   buildUnderfillRetryAddendum,
 } from '../lib/underfill-retry';
 import type { GranuleVerificationResult } from '../lib/granule-calc';
+import {
+  QuestionnaireAnswersSchema,
+  hasAnyClinicalContent,
+  SymptomCategory,
+  type QuestionnaireAnswers,
+} from '../lib/questionnaire-schema';
+import { buildQuestionnaireUserPrompt } from '../lib/build-prompt';
+import type { RequestMetadata } from '../lib/request-schema';
 // ---------------------------------------------------------------------------
 // Fake Anthropic client
 // ---------------------------------------------------------------------------
@@ -559,6 +573,104 @@ const GP_COMBINED_REFUSAL = {
     panel_classes: ['FBP', 'GP'],
     escalation_flags_raised: ['panel_class_not_yet_supported'],
   },
+};
+
+// v0.6.7 — SPP (Symptom Presentation Panel) formulation fixture. panel_classes:
+// ["SPP"], no biomarker data — modifier-only, symptom-driven. Every activated
+// axis is necessarily supportive priority per the SPP-class prompt section.
+const VALID_SPP_FORMULATION = {
+  ...VALID_FORMULATION,
+  panel_classes: ['SPP'],
+  recognised_patterns: [
+    {
+      pattern_name: 'Symptom-driven HPA burden (no biomarker data — SPP)',
+      supporting_findings: ['Sleep / Mood / Anxiety category: SEVERE', 'Low Cortisol / Adrenal Fatigue category: MODERATE'],
+      rationale: 'Practitioner-submitted symptom questionnaire indicates HPA-axis burden; no pathology test attached to corroborate — for practitioner consideration.',
+    },
+  ],
+  granule_budget_allocation_plan: [
+    {
+      category: 'thyroid_adaptogenic',
+      granules_allocated: 60,
+      priority: 'supportive',
+      findings_addressed: ['Sleep / Mood / Anxiety category: SEVERE'],
+      rationale: 'Symptom-activated axis, no biomarker to corroborate — supportive priority per SPP-class rules.',
+    },
+  ],
+  proposed_formulation: [
+    {
+      tsi_code: 'W010003000',
+      common_name: 'Ashwagandha',
+      proposed_dose: 300,
+      dose_unit: 'mg',
+      rationale_for_practitioner:
+        'Symptom questionnaire indicates severe sleep/mood/anxiety burden and moderate low-cortisol/adrenal-fatigue burden. No biomarker data attached (SPP submission) — for practitioner consideration.',
+      evidence_pointer: 'Salve 2019',
+      practitioner_cautions: 'No biomarker confirmation available on this submission type.',
+      target_biomarker_findings: ['Sleep / Mood / Anxiety category: SEVERE'],
+      practitioner_review_priority: 'STANDARD',
+      category: 'thyroid_adaptogenic',
+    },
+  ],
+  audit_metadata: {
+    ...VALID_FORMULATION.audit_metadata,
+    panel_classes: ['SPP'],
+    escalation_flags_raised: ['spp_modifier_only_no_biomarker_data'],
+  },
+};
+
+// v0.6.7 — refusal for combined ["FBP", "SPP"] (multi-class not yet supported).
+const SPP_COMBINED_REFUSAL = {
+  ...VALID_REFUSAL,
+  submission_metadata: {
+    ...VALID_REFUSAL.submission_metadata,
+    submission_id: 'SUB-2026-SPP-COMBINED',
+    test_type: 'Practitioner_Symptom_Questionnaire',
+  },
+  panel_classes: ['FBP', 'SPP'],
+  refusal_trigger: 'panel_class_not_yet_supported',
+  refusal_explanation:
+    'Submission contains panel classes FBP and SPP together. Multi-class combinations are not yet supported. Resubmit as a single panel class.',
+  audit_metadata: {
+    ...VALID_REFUSAL.audit_metadata,
+    submission_id: 'SUB-2026-SPP-COMBINED',
+    panel_classes: ['FBP', 'SPP'],
+    escalation_flags_raised: ['panel_class_not_yet_supported'],
+  },
+};
+
+// v0.6.7 — a complete, all-"none" QuestionnaireAnswers base for schema tests.
+const EMPTY_SEVERITIES = Object.fromEntries(
+  SymptomCategory.options.map((c) => [c, 'none' as const]),
+) as Record<SymptomCategory, 'none'>;
+const VALID_QUESTIONNAIRE_ANSWERS: QuestionnaireAnswers = {
+  symptom_categories: {
+    ...EMPTY_SEVERITIES,
+    'Sleep / Mood / Anxiety': 'severe',
+    'Low Cortisol / Adrenal Fatigue': 'moderate',
+  },
+  safety_screening: {
+    pregnant_or_breastfeeding: false,
+    active_malignancy_or_oncology_treatment: false,
+    end_stage_organ_failure_or_dialysis: false,
+    active_eating_disorder: false,
+    active_suicidal_ideation_or_recent_attempt: false,
+    known_kidney_disease: false,
+    known_liver_disease: false,
+    current_medications: '',
+  },
+};
+const SAMPLE_QUESTIONNAIRE_METADATA: RequestMetadata = {
+  practitioner_id: 'P001-NATUROPATH',
+  practitioner_type: 'naturopath',
+  patient_pseudonym: 'PT-2026-QQQ',
+  patient_age_years: 34,
+  patient_sex_assigned_at_birth: 'female',
+  test_type: 'Practitioner_Symptom_Questionnaire',
+  test_lab_id: 'N/A — practitioner questionnaire',
+  test_collection_date: '2026-07-20',
+  panel_classes: ['SPP'],
+  submission_id: 'SUB-2026-QQQ',
 };
 
 // Symptom matrix — formulation with a symptom-driven binding exclusion (licorice).
@@ -1643,6 +1755,154 @@ const tests: Test[] = [
       if (!addendum.includes('planned 165 granules')) throw new Error('Expected the planned allocation to appear');
       if (!addendum.includes('actually delivered 30 granules')) throw new Error('Expected the delivered total to appear');
       if (!addendum.includes('600')) throw new Error('Expected the 600-granule floor to be named');
+    },
+  },
+  // SPP panel class tests (v0.6.7)
+  {
+    name: 'SPP: panel_classes ["SPP"] accepted as formulation with thyroid_adaptogenic category',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system', pdfBase64: 'AAAA', userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 200 },
+          content: [{ type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: VALID_SPP_FORMULATION } }],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const pcs = (result.output as { panel_classes: string[] }).panel_classes;
+      if (!Array.isArray(pcs) || pcs[0] !== 'SPP') throw new Error(`Expected ["SPP"], got ${JSON.stringify(pcs)}`);
+      const ingredient = result.output.proposed_formulation[0];
+      if (ingredient.category !== 'thyroid_adaptogenic') throw new Error(`Expected thyroid_adaptogenic, got ${ingredient.category}`);
+    },
+  },
+  {
+    name: 'SPP: spp_modifier_only_no_biomarker_data escalation flag present',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system', pdfBase64: 'AAAA', userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 200 },
+          content: [{ type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: VALID_SPP_FORMULATION } }],
+        }),
+      });
+      if (result.output.output_type !== 'formulation') throw new Error('Expected formulation');
+      const flags = (result.output.audit_metadata as { escalation_flags_raised?: string[] }).escalation_flags_raised ?? [];
+      if (!flags.includes('spp_modifier_only_no_biomarker_data')) {
+        throw new Error(`Expected spp_modifier_only_no_biomarker_data escalation flag, got ${JSON.stringify(flags)}`);
+      }
+    },
+  },
+  {
+    name: 'SPP: ["FBP","SPP"] combined is refused with panel_class_not_yet_supported',
+    run: async () => {
+      const result = await callClaudeForAnalysis({
+        systemPrompt: 'system', pdfBase64: 'AAAA', userPrompt: 'user',
+        client: makeFakeClient({
+          stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 50 },
+          content: [{ type: 'tool_use', id: 'tu_1', name: 'submit_analysis', input: { result: SPP_COMBINED_REFUSAL } }],
+        }),
+      });
+      if (result.output.output_type !== 'refusal') throw new Error(`Expected refusal, got ${result.output.output_type}`);
+      if (result.output.refusal_trigger !== 'panel_class_not_yet_supported') {
+        throw new Error(`Expected panel_class_not_yet_supported, got ${result.output.refusal_trigger}`);
+      }
+      const pcs = (result.output as { panel_classes: string[] }).panel_classes;
+      if (pcs.length !== 2) throw new Error(`Expected 2 panel classes, got ${JSON.stringify(pcs)}`);
+    },
+  },
+  // QuestionnaireAnswersSchema tests (v0.6.7)
+  {
+    name: 'QuestionnaireAnswersSchema: accepts a valid full submission',
+    run: async () => {
+      const parsed = QuestionnaireAnswersSchema.safeParse(VALID_QUESTIONNAIRE_ANSWERS);
+      if (!parsed.success) throw new Error(`Expected valid, got issues: ${JSON.stringify(parsed.error.issues)}`);
+    },
+  },
+  {
+    name: 'QuestionnaireAnswersSchema: rejects a missing category (all 15 must be present)',
+    run: async () => {
+      const { 'Detox / Skin': _omit, ...incomplete } = VALID_QUESTIONNAIRE_ANSWERS.symptom_categories;
+      const parsed = QuestionnaireAnswersSchema.safeParse({
+        ...VALID_QUESTIONNAIRE_ANSWERS,
+        symptom_categories: incomplete,
+      });
+      if (parsed.success) throw new Error('Expected rejection for a missing category key');
+    },
+  },
+  {
+    name: 'QuestionnaireAnswersSchema: rejects an invalid severity value',
+    run: async () => {
+      const parsed = QuestionnaireAnswersSchema.safeParse({
+        ...VALID_QUESTIONNAIRE_ANSWERS,
+        symptom_categories: { ...VALID_QUESTIONNAIRE_ANSWERS.symptom_categories, 'Digestive / GI': 'extreme' },
+      });
+      if (parsed.success) throw new Error('Expected rejection for an invalid severity value');
+    },
+  },
+  {
+    name: 'QuestionnaireAnswersSchema: rejects an unrecognised category key',
+    run: async () => {
+      const parsed = QuestionnaireAnswersSchema.safeParse({
+        ...VALID_QUESTIONNAIRE_ANSWERS,
+        symptom_categories: { ...VALID_QUESTIONNAIRE_ANSWERS.symptom_categories, 'Made Up Category': 'mild' },
+      });
+      if (parsed.success) throw new Error('Expected rejection for an unrecognised category key');
+    },
+  },
+  {
+    name: 'hasAnyClinicalContent: true when a category is rated above none',
+    run: async () => {
+      if (!hasAnyClinicalContent(VALID_QUESTIONNAIRE_ANSWERS, '')) {
+        throw new Error('Expected true — two categories are rated above none');
+      }
+    },
+  },
+  {
+    name: 'hasAnyClinicalContent: true when all categories are none but clinical notes are present',
+    run: async () => {
+      const allNone: QuestionnaireAnswers = { ...VALID_QUESTIONNAIRE_ANSWERS, symptom_categories: EMPTY_SEVERITIES as never };
+      if (!hasAnyClinicalContent(allNone, 'Patient reports fatigue.')) {
+        throw new Error('Expected true — clinical notes carry the content');
+      }
+    },
+  },
+  {
+    name: 'hasAnyClinicalContent: false when all categories are none and notes are empty',
+    run: async () => {
+      const allNone: QuestionnaireAnswers = { ...VALID_QUESTIONNAIRE_ANSWERS, symptom_categories: EMPTY_SEVERITIES as never };
+      if (hasAnyClinicalContent(allNone, '   ')) {
+        throw new Error('Expected false — no symptom data and whitespace-only notes');
+      }
+    },
+  },
+  // buildQuestionnaireUserPrompt tests (v0.6.7)
+  {
+    name: 'buildQuestionnaireUserPrompt: renders only above-none categories, uppercased severity',
+    run: async () => {
+      const prompt = buildQuestionnaireUserPrompt(SAMPLE_QUESTIONNAIRE_METADATA, VALID_QUESTIONNAIRE_ANSWERS, '');
+      if (!prompt.includes('| Sleep / Mood / Anxiety | SEVERE |')) throw new Error('Expected the severe category row');
+      if (!prompt.includes('| Low Cortisol / Adrenal Fatigue | MODERATE |')) throw new Error('Expected the moderate category row');
+      if (prompt.includes('| Digestive / GI |')) throw new Error('Expected a "none"-rated category to be omitted from the table');
+    },
+  },
+  {
+    name: 'buildQuestionnaireUserPrompt: safety block reflects only flagged items',
+    run: async () => {
+      const answers: QuestionnaireAnswers = {
+        ...VALID_QUESTIONNAIRE_ANSWERS,
+        safety_screening: { ...VALID_QUESTIONNAIRE_ANSWERS.safety_screening, known_kidney_disease: true, current_medications: 'Metformin' },
+      };
+      const prompt = buildQuestionnaireUserPrompt(SAMPLE_QUESTIONNAIRE_METADATA, answers, '');
+      if (!prompt.includes('Known kidney disease')) throw new Error('Expected the flagged safety item to appear');
+      if (prompt.includes('Pregnant or breastfeeding: yes')) throw new Error('Expected unflagged items to be omitted');
+      if (!prompt.includes('Current medications: Metformin')) throw new Error('Expected the medications line to appear');
+    },
+  },
+  {
+    name: 'buildQuestionnaireUserPrompt: falls back to "(none provided)" for empty clinical notes',
+    run: async () => {
+      const prompt = buildQuestionnaireUserPrompt(SAMPLE_QUESTIONNAIRE_METADATA, VALID_QUESTIONNAIRE_ANSWERS, '   ');
+      if (!prompt.includes('(none provided)')) throw new Error('Expected the empty-notes fallback');
     },
   },
 ];

@@ -36,7 +36,8 @@ The granule pod is compounded by a separately-licensed pharmacy on the practitio
 ~/n-of-1-app/
 ├── app/api/
 │   ├── analyse/route.ts              # PDF input endpoint
-│   └── analyse-hl7/route.ts          # HL7 v2.3.1 input endpoint
+│   ├── analyse-hl7/route.ts          # HL7 v2.3.1 input endpoint
+│   └── analyse-questionnaire/route.ts # SPP input endpoint (no pathology test attached)
 ├── lib/                              # Core server-side modules
 │   ├── claude-client.ts              # Anthropic SDK wrapper; callClaudeForAnalysis (PDF) + callClaudeForAnalysisFromText (HL7)
 │   ├── build-prompt.ts               # buildUserPrompt (PDF) + buildHL7UserPrompt (HL7), audit block
@@ -80,9 +81,9 @@ The granule pod is compounded by a separately-licensed pharmacy on the practitio
 ### Architecture
 - **Route owns granule arithmetic, not Claude.** Claude proposes doses; the route computes granules deterministically and enforces the 720-granule pod ceiling. Do not change.
 - **Schema is the structural floor; prompt carries clinical-routing policy.** Clinical rules go in the prompt, not the schema, unless they're true structural invariants.
-- **Panel-class architecture is extensibility-locked.** Schema supports FBP/HMP/GP/MP/TP/RIP enum; currently only FBP is fully implemented. Other classes return `panel_class_not_yet_supported`. Do not refuse on unknown classes — extend instead.
+- **Panel-class architecture is extensibility-locked.** Schema supports FBP/HMP/GP/MP/TP/RIP/SPP enum. FBP, HMP, GP, and SPP are implemented; MP/TP/RIP return `panel_class_not_yet_supported`. Do not refuse on unknown classes — extend instead. SPP (Symptom Presentation Panel, v0.6.7) is the third input path: a practitioner-submitted symptom questionnaire with no pathology test attached at all — modifier-only like GP, but symptom-driven rather than genotype-driven. See `/api/analyse-questionnaire`.
 - **`panel_classes` is a required field on every request.** Not inferred from `test_type`.
-- **Two input paths:** `/api/analyse` (PDF) and `/api/analyse-hl7` (HL7 v2.3.1). Identical response shape. HL7 FT narrative excluded from prompt (lab boilerplate).
+- **Three input paths:** `/api/analyse` (PDF), `/api/analyse-hl7` (HL7 v2.3.1), and `/api/analyse-questionnaire` (SPP — symptom questionnaire, no pathology test attached at all). Identical response shape across all three. HL7 FT narrative excluded from prompt (lab boilerplate).
 - **Two-pass citation generation:** formulation call first; citation call second after granule verification. Failure in citation pass never blocks the formulation response.
 - **Server-side audit log:** `logs/audit.jsonl`, one JSON line per submission, written by both routes. Gitignored. `lib/audit-ref.ts` computes the shared Audit Reference.
 

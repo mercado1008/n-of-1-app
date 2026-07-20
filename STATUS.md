@@ -1,35 +1,59 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-07-20, end of session — underfill retry backstop + prompt v0.6.5 loophole closures
-**Current versions:** prompt v0.6.5, schema v0.4.7, library revision 15
-**Last known state:** 46/46 mock tests passing. Underfill retry backstop live on both routes — deterministic fallback for the v0.6.3/v0.6.4 self-check-justification failure mode. Validated via 2 live-fires: one clean retry-success (550→602/720), one safe retry-fallback (retry itself failed structurally, original 574/720 result kept).
+**Last updated:** 2026-07-20, end of session — SPP panel class (questionnaire-only input path) + General_Comprehensive_Panel test type + underfill retry backstop
+**Current versions:** prompt v0.6.8, schema v0.4.8, library revision 15
+**Last known state:** 59/59 mock tests passing. Three input paths now live: `/api/analyse` (PDF), `/api/analyse-hl7` (HL7), `/api/analyse-questionnaire` (SPP — no pathology test attached, symptom questionnaire is the sole clinical input). Underfill retry backstop live on all three routes. SPP validated via 4 live-fires (2 mild-case iterations, 1 safety-trigger refusal, 1 multi-pattern — see below).
 
 ---
 
 ## What the system does today
 
-A Next.js 14 App Router service accepts functional pathology input and JSON metadata, calls Claude Opus 4.7 with strict tool-use schema enforcement, and returns a structured JSON formulation. Two input paths are operational:
+A Next.js 14 App Router service accepts functional pathology input and JSON metadata, calls Claude Opus 4.7 with strict tool-use schema enforcement, and returns a structured JSON formulation. Three input paths are operational:
 
 - **`/api/analyse`** — accepts a pathology PDF (multipart/form-data)
 - **`/api/analyse-hl7`** — accepts a raw HL7 v2.3.1 ORU^R01 message (text field); biomarkers pre-extracted from 193 NM-type OBX segments, FT narrative excluded from prompt
+- **`/api/analyse-questionnaire`** — accepts a JSON body, no file at all; a practitioner-submitted symptom questionnaire (15 categories rated none/mild/moderate/severe + safety-screening answers) is the sole clinical input. `panel_classes: ["SPP"]` only.
 
-The route owns granule arithmetic deterministically (710-granule pod ceiling). After successful granule verification, both routes make a second lightweight Claude call to generate one published-study citation per formulation ingredient, then write a JSONL audit log entry to `logs/audit.jsonl`.
+The route owns granule arithmetic deterministically (720-granule pod ceiling). After successful granule verification, an underfill-retry backstop fires automatically if a multi-pattern/note-activated panel lands under the 600-granule floor (one corrective retry, capped). All three routes then make a second lightweight Claude call to generate one published-study citation per formulation ingredient, and write a JSONL audit log entry to `logs/audit.jsonl`.
 
 A separate document generation pipeline (`scripts/generate-docs/`) reads the JSON output and produces:
 
 1. **Health Analysis (.docx)** — clinical narrative: executive summary, biomarker analysis, diet/lifestyle, formulation logic (with bullet-list included/excluded), contraindications, monitoring, areas of strength, References section with numbered study citations
 2. **Recommended Formulation Schedule (.xlsx)** — 5 sheets: Formulation / Dose Adjustments / Standalones / Contraindications / Summary
 
-**Panel classes supported (FBP only):**
-- NutriSTAT (primary calibration — PDF path)
-- Organic Acids / OAT (PDF and HL7 paths)
-- Other FBP panels are interpretable with a `critical_review_required` flag
+**Panel classes implemented:** FBP (NutriSTAT primary calibration + Organic Acids + `General_Comprehensive_Panel` catch-all for non-NutriPath comprehensive panels), HMP (EndoSCAN), GP (myDNA Longevity, modifier-only), SPP (practitioner symptom questionnaire, modifier-only, no pathology test at all — new this session).
 
-**Panel classes refused:** HMP, GP, MP, TP, RIP — return `panel_class_not_yet_supported`.
+**Panel classes refused:** MP, TP, RIP — return `panel_class_not_yet_supported`. Multi-class combinations (e.g. `["FBP","SPP"]`) also refused for now.
 
 ---
 
-## Most recent green live-fire (2026-07-20, NutriSTAT — underfill retry backstop v0.6.5)
+## Most recent green live-fire (2026-07-20, SPP — questionnaire-only input path v0.6.7–v0.6.8)
+
+Four fires against the new `/api/analyse-questionnaire` route, none with a pathology test attached.
+
+**SUB-2026-SPP-MILD, first attempt** (2 categories at moderate — Low Cortisol/Adrenal Fatigue, Sleep/Mood/Anxiety):
+- `panel_classes: ["SPP"]` echoed correctly, `critical_review_required: true`, `spp_modifier_only_no_biomarker_data` flag present (plus two Claude-generated extras: `biomarker_gated_exclusions_unavailable`, `conservative_dosing_substituted_for_missing_biomarker_data` — good sign the SPP-class reasoning was internalised, not just checkbox-satisfied)
+- First pass: 312/720 → underfill retry fired → **423/720 (58.8%)** — still under the 600 floor even after retry. Root cause: a sparse (2-category) questionnaire has far less distinct clinical signal than a biomarker panel, so mapping only the directly-activated axes underfills even after full layering within them.
+- Fix: added explicit language to the SPP-class section pointing at Step 4's "almost always includable" background-support list (Vitamin C, D3, quercetin, turmeric, second adaptogen, thiamine, nicotinamide) for submissions with <4 categories rated moderate/severe. Prompt v0.6.7 → v0.6.8.
+
+**SUB-2026-SPP-MILD, re-run after the fix** (identical input):
+- First pass: 431/720 (up from 312 — the fix changed baseline behaviour, not just the retry) → retry fired → **534/720 (74.2%)**, pulling in Turmeric/curcumin, Quercetin, Alpha-lipoic acid, Zinc citrate exactly as intended
+- Still under 600 — accepted as a reasonable floor for a minimally-rated (2-category, moderate-only) presentation rather than over-fitting the prompt further to this specific sparse edge case. See Known Issues.
+
+**SUB-2026-SPP-SAFETY** (1 category moderate + `end_stage_organ_failure_or_dialysis: true`, medications "Furosemide, calcium acetate"):
+- Correct refusal, HTTP 200 in 29s (cheap — no formulation attempted): `refusal_trigger: "end_stage_organ_failure_or_dialysis"`, explanation correctly cross-referenced the medication list (calcium acetate is a phosphate binder consistent with advanced renal disease) as corroborating evidence
+- Confirms the safety-screening-answers-as-hard-refusal-trigger design works exactly as intended, and that refusal outputs still short-circuit the granule pipeline cleanly on this new route
+
+**SUB-2026-SPP-MULTI** (6 categories rated — Metabolic Syndrome, Hypometabolism, Low Cortisol/Adrenal Fatigue [severe], Digestive/GI, Immune/Inflammation, Neurological/Cognitive, Sleep/Mood/Anxiety [severe], Musculoskeletal/Joint) — the strongest of the four results:
+- First pass: 576/720 (just under the floor) → underfill retry fired → **691/720 (96.0%)**, `retry_info.underfill_retry_outcome: "succeeded"`
+- 4 recognised patterns, 23 ingredients spanning 9 categories (thyroid_adaptogenic, minerals, b_vitamins_methylation, anti_inflammatory_core, antioxidant_redox, vitamin_d_c_neurotransmitter, blood_glucose_insulin, mitochondrial_cardiovascular, gastrointestinal) — each traceable to the symptom-to-axis mapping table
+- Confirms the conservative-dosing-substitution design: conservative iodine (131mcg, under the 150mcg cap) included in-pod rather than excluded outright; selenomethionine correctly routed to `standalone_recommendations` at ≤100mcg rather than in-pod, exactly mirroring the GP-class selenium precedent
+- Escalation flags beyond the mandatory one were Claude-generated and clinically sharp: `severe_sleep_mood_anxiety_serotonergic_medication_check_required` (correctly flags the medication-list gap given severe mood/anxiety) and `female_reproductive_age_pregnancy_status_confirmation_advised`
+- Confirms the hypothesis from the mild case: richer symptom signal (6 categories, 2 severe) gives the model enough distinct material to reach a healthy fill without needing the sparse-case background-support workaround at all.
+
+See "SPP panel class + questionnaire-only input path" session write-up below for the full design and code changes.
+
+## Previous green live-fire (2026-07-20, NutriSTAT — underfill retry backstop v0.6.5)
 
 Two consecutive fires against NutriSTAT/FBP panels, back-to-back within the 5-minute prompt-cache window.
 
@@ -133,6 +157,53 @@ Test panel: NutriPath Organic Acids Profiling, 56-year-old female, HL7 v2.3.1 in
     - All 700-granule references updated to 710 throughout the prompt
 21. **Self-check items** — Updated to v0.4.5: explicit numeric check ("write the sum in notes, if <630 with ≥2 patterns this FAILS"); allocation plan consistency check removed; layer pass verification added.
 22. **`scripts/live-test.ts` and `scripts/live-test-hl7.ts`** — undici global dispatcher added for 600s headersTimeout/bodyTimeout. Display strings updated from `/ 700` to `/ 710`.
+
+---
+
+## What changed in this session (2026-07-20 — SPP panel class + questionnaire-only input path)
+
+### Context
+Practitioner wants a genuine test-free formulation mode for patients with no pathology report at all. Considered reusing `panel_classes: ["FBP"]` (cheaper) but rejected it — FBP is explicitly defined as biomarker-driven, and calling a zero-biomarker submission "FBP" is the same mislabeling problem just fixed for `General_Comprehensive_Panel` below. Added a genuine 7th panel class instead: **SPP — Symptom Presentation Panel**, architecturally closer to GP (modifier-only, no biomarker data) than to FBP, just symptom-driven rather than genotype-driven.
+
+### Schema (complete)
+1. **`lib/request-schema.ts`** — `PanelClass` enum gains `SPP`. `SupportedTestType` gains `Practitioner_Symptom_Questionnaire`.
+2. **`prompts/output-schema.ts`** — `PanelClassEnum` gains `SPP`. Genuine output-schema change (not just prompt content) — `output_schema_version` bumped 0.4.7 → 0.4.8 with a CHANGELOG entry. No other schema fields needed changing: `escalation_flags_raised` and `refusal_trigger` are free-form strings, so new SPP-specific values need no enum changes.
+3. **`lib/questionnaire-schema.ts`** — NEW. `SymptomCategory` enum (the 15 categories from the existing symptom-to-axis mapping table, exact string match required — Claude's lookup is by name). `Severity` enum (none/mild/moderate/severe). `SymptomCategoriesSchema = z.record(SymptomCategory, Severity)` — confirmed via direct test that Zod v4 requires ALL 15 keys present and rejects unrecognised ones, which is the strictness wanted (catches frontend/schema drift immediately). `SafetyScreeningSchema` — direct yes/no questions standing in for the lab-dependent hard-refusal triggers (pregnancy, malignancy, end-stage organ failure/dialysis, eating disorder, SI, known kidney/liver disease, current medications). `hasAnyClinicalContent()` helper (not a Zod `.refine` on the schema, since `clinical_notes` is a sibling field on the request body validated by the existing shared `ClinicalNotesSchema` — same architecture as the other two routes, no duplication).
+
+### Route (complete)
+4. **`app/api/analyse-questionnaire/route.ts`** — NEW. JSON body (not multipart — no file involved), validates `panel_classes` is exactly `["SPP"]` (400 otherwise). From granule verification onward, copied verbatim from `/api/analyse-hl7`'s pipeline — `verifyGranuleCounts`, the underfill-retry backstop, `generateCitations`, `appendAuditLog`, `saveSubmission`/`saveDocuments`, `generateDocuments` are all input-format-agnostic and needed zero changes. Audit block hashes the canonicalised questionnaire JSON instead of file bytes.
+5. **`lib/build-prompt.ts`** — `buildQuestionnaireUserPrompt()` NEW, mirrors `buildHL7UserPrompt()`: metadata → Form-B-style severity table (omitting "none" rows) → safety-screening summary (only flagged items) → clinical notes → shared `taskSection()`. `AuditBlock.input_source` widened `'pdf' | 'hl7'` → `'pdf' | 'hl7' | 'questionnaire'` — traced every read site first; nothing pattern-matches exhaustively on the old two-value union, confirmed safe.
+
+### Prompt (complete) — v0.6.6 → v0.6.8
+6. **New `## SPP-class panel interpretation` section**, modeled closely on GP-class: every activated axis is necessarily supportive priority (no biomarker can corroborate); biomarker-dependent binding exclusions (selenium, copper) cannot fire, conservative dosing substitutes; safety-screening answers map onto existing hard/soft refusal triggers — `end_stage_organ_failure_or_dialysis: true` → existing hard refusal (unchanged trigger, now practitioner-answered instead of lab-inferred); `known_kidney_disease`/`known_liver_disease` (without end-stage) → existing **soft** escalation ("mild-to-moderate CKD") — deliberately not a hard refusal, since severity can't be confirmed without labs and hard-refusing every reported kidney/liver history would make the mode unusable for a common comorbidity. Always `critical_review_required: true` + `spp_modifier_only_no_biomarker_data` escalation flag.
+7. **Opportunistic fix**: lines ~154–156 ("Hard refusal triggers... any class other than FBP") were already stale, contradicted by the "Panel classes" section which correctly allowed FBP/HMP/GP — fixed while editing this exact region to include GP and SPP.
+8. **v0.6.8 fill-fix** (see live-fire results below): added explicit language pointing SPP submissions with <4 rated categories at Step 4's "almost always includable" background-support list (Vitamin C, D3, quercetin, turmeric, second adaptogen, thiamine, nicotinamide) — a sparse questionnaire has much less distinct clinical signal than a biomarker panel, so mapping only the directly-activated axes reliably underfills even after full layering within them.
+
+### Frontend (complete)
+9. **`src/components/QuestionnaireForm.tsx`** + **`app/questionnaire/page.tsx`** — NEW. 15 severity selectors (segmented None/Mild/Moderate/Severe per category, sourced from `SymptomCategory.options` so the category list can't drift from the schema), 7 safety-screening checkboxes + medications textarea, existing clinical-notes textarea reused. `test_type` and `panel_classes` hardcoded (no dropdown — this route only ever produces one combination). `test_lab_id`/`test_collection_date` auto-filled (no real lab test exists) rather than forking `RequestMetadataSchema`. POSTs JSON, not FormData. Nav link added in `app/layout.tsx`.
+
+### Tests (40 → 59, wait: 46 → 59 across this session's two features)
+10. **`scripts/test-claude-client-mock.ts`** — 13 new tests: `VALID_SPP_FORMULATION` + `SPP_COMBINED_REFUSAL` fixtures (mirroring the HMP/GP pattern), `QuestionnaireAnswersSchema` validation (valid, missing category, invalid severity, unrecognised category), `hasAnyClinicalContent` (three branches), `buildQuestionnaireUserPrompt` formatting (omits none-rows, safety block reflects only flags, notes fallback). All zero Claude spend. 59/59 passing.
+
+### Live-fire validation (see "Most recent green live-fire" above for full results)
+11. Zero-spend checks first: manual `tsx -e` prompt-rendering smoke test, and three route dry-runs against the running dev server (malformed metadata, missing questionnaire, wrong panel_classes, empty-content guard) — all confirmed correct before spending on Claude.
+12. Mild case (2 categories moderate) exposed a real underfill gap (312→423/720, 58.8%) that the generic retry backstop didn't fully close — root-caused to sparse symptom data having less distinct signal than a biomarker panel, fixed with the v0.6.8 background-support pointer (re-run: 431→534/720, 74.2% — genuine improvement, first-pass baseline moved not just the retry outcome, but still under 600; accepted as a reasonable floor for a minimally-rated presentation rather than further over-fitting this specific sparse edge case).
+13. Safety-trigger case (end-stage organ failure/dialysis) — clean refusal, cheap (29s), correctly cross-referenced the medication list as corroborating evidence.
+14. Multi-pattern case (6 categories, 2 severe) — clean success: first pass 576/720 → retry → **691/720 (96.0%)**. Confirms richer symptom signal reaches a healthy fill without needing the sparse-case background-support workaround; conservative iodine/selenium substitution behaved exactly as designed.
+
+### CLAUDE.md (complete)
+15. Panel-class enum documentation updated: FBP/HMP/GP/MP/TP/RIP/SPP, with FBP/HMP/GP/SPP now marked implemented. Repository structure and "input paths" locked decision updated from two paths to three.
+
+---
+
+## What changed in this session (2026-07-20 — General_Comprehensive_Panel test type)
+
+Practitioner had been uploading real comprehensive GP-ordered blood panels (haematology, iron, lipids, electrolytes, eGFR, vitamin D, thyroid, cortisol, micronutrients) under `test_type: "NutriSTAT"` because no dropdown option existed for a non-NutriPath FBP panel — an accurate-routing-but-inaccurate-labelling problem (`panel_classes: ["FBP"]` already drove the correct clinical interpretation; only the document label was wrong).
+
+1. **`lib/request-schema.ts`** — `SupportedTestType` gains `General_Comprehensive_Panel`.
+2. **`src/components/SubmissionForm.tsx`** — new dropdown entry "General Comprehensive Panel (non-NutriPath)".
+3. **`prompts/system-prompt.md` v0.6.5 → v0.6.6** — three clarifying edits so Claude doesn't treat the unfamiliar `test_type` string as a refusal trigger or expect a symptom matrix that won't be present: noted Stream 2 absence is expected for this test type; added it to the "interpretable but `critical_review_required`" list; clarified the recognised-pattern catalogue applies to any FBP-class panel reporting the relevant biomarkers, not just NutriPath products. No clinical-logic or output-schema changes — purely a labelling fix.
+4. Mock tests: 46/46 still passing (no new tests needed — no new schema surface beyond the enum value itself).
 
 ---
 
@@ -400,16 +471,18 @@ Previously, practitioner free-text clinical notes were only used for refusal che
 - **High-dose iodine binding exclusion** fires when thyroid symptom category ≥20% AND antibody status unknown on the panel.
 - **Executive summary and `biomarker_analysis`** must reference symptom category scores ≥25%.
 
-### Panel classes (as of 2026-06-01)
-- **FBP (Functional Biomarker Panel):** NutriSTAT, Organic Acids, Cardiovascular Comprehensive, etc. Full pattern catalogue calibrated against NutriSTAT; OAT panels work but flag `critical_review_required`.
+### Panel classes (updated 2026-07-20)
+- **FBP (Functional Biomarker Panel):** NutriSTAT, Organic Acids, Cardiovascular Comprehensive, `General_Comprehensive_Panel` (non-NutriPath catch-all, added 2026-07-20), etc. Full pattern catalogue calibrated against NutriSTAT; other FBP test types work but flag `critical_review_required`.
 - **HMP (Hormone Metabolism Panel):** EndoSCAN (24h urinary hormones). Full interpretation section. Other HMP panels (Neurotransmitters Profile) flag `critical_review_required`. Combined FBP+HMP still refused.
 - **GP (Genomic Panel):** myDNA Longevity. Modifier-only — genotype-driven, no biomarker data. Always `critical_review_required` + `gp_modifier_only_no_biomarker_integration` escalation. Other GP panels not yet calibrated.
-- **MP, TP, RIP:** refused with `panel_class_not_yet_supported`.
+- **SPP (Symptom Presentation Panel, added 2026-07-20):** practitioner-submitted symptom questionnaire, no pathology test attached at all. Modifier-only like GP but symptom-driven. Always `critical_review_required` + `spp_modifier_only_no_biomarker_data` escalation. `end_stage_organ_failure_or_dialysis` safety-screening answer is a hard refusal (unchanged existing trigger); `known_kidney_disease`/`known_liver_disease` alone is a soft escalation, not a refusal.
+- **MP, TP, RIP:** refused with `panel_class_not_yet_supported`. Multi-class combinations (including `["FBP","SPP"]`) also refused for now.
 
-### Input paths (locked as of 2026-05-30)
+### Input paths (updated 2026-07-20)
 - **PDF path (`/api/analyse`):** accepts pathology PDF as document attachment.
 - **HL7 path (`/api/analyse-hl7`):** accepts raw HL7 v2.3.1 ORU^R01 text. FT narrative entries excluded from prompt (lab boilerplate). `input_source: 'hl7'` in audit block.
-- **Both paths:** identical response shape, audit log, granule verification, citation pass.
+- **Questionnaire path (`/api/analyse-questionnaire`, added 2026-07-20):** accepts a JSON body (no file). `panel_classes` must be exactly `["SPP"]`. `input_source: 'questionnaire'` in audit block; `pdf_sha256` hashes the canonicalised questionnaire JSON.
+- **All three paths:** identical response shape, audit log, granule verification, underfill-retry backstop, citation pass.
 - **HL7 FT narrative excluded from prompt** — 37KB of lab-intro boilerplate; only NM numeric findings go to Claude.
 
 ### Document conventions
@@ -506,12 +579,17 @@ Previously, practitioner free-text clinical notes were only used for refusal che
 
 ### Pod fill
 - **Run-to-run variance persists.** LLM property — occasional outlier fills (sub-630 or near-720) should be expected despite prompt fixes. Route hard-rejects anything over 720; sub-630 self-check enforcement strengthened in v0.6.3, backstopped by the v0.6.5 underfill retry.
-- **Underfill retry has only been exercised on FBP/NutriSTAT panels (2 live-fires).** HMP and GP panels haven't hit this path yet — no reason to expect different behaviour, but unconfirmed.
+- **Underfill retry has only been exercised on FBP/NutriSTAT panels and SPP panels so far.** HMP and GP panels haven't hit this path yet — no reason to expect different behaviour, but unconfirmed.
 - **SUB-2026-001's retry failed structurally with no diagnosed cause.** Most likely overcorrection past 720 (pod overage) after being told to add more ingredients, but the retry's raw output isn't persisted when it's discarded, so this is inferred, not confirmed. `retryVerification.issues` is now logged via `console.error` on this path (added this session) — check server logs next time this fires to confirm.
+- **SPP submissions with few rated categories reliably underfill even after the retry and the v0.6.8 background-support fix.** SUB-2026-SPP-MILD (2 categories, both moderate) landed at 534/720 (74.2%) after two rounds of prompt strengthening this session — genuine improvement over the initial 423/720, but still short of the 600 floor. Root cause is structural, not a prompt bug: a sparse questionnaire has far less distinct clinical signal than a biomarker panel, so there are fewer well-differentiated ingredients to legitimately justify. Accepted as a reasonable floor for minimally-rated presentations rather than continuing to over-fit the prompt to this specific edge case — revisit if it recurs on more richly-rated SPP submissions (4+ categories), which should have more distinct signal to work with.
 - **Prompt cache TTL is 5 minutes.** If more than 5 minutes pass between fires, the cache expires and the next call is a cache write (slightly slower, slightly more expensive). Between sequential fires this is not an issue. The underfill retry's second call benefits from this — it lands well within the TTL of the first call.
 
 ### Mock tests
-- **Mock tests don't cover the HL7 path's underfill retry branch specifically** (only the shared `lib/underfill-retry.ts` helpers are unit-tested, and only via the PDF-path fixtures). Both routes share the same helper functions so behaviour should be identical, but no route-level integration test exists for either path — consistent with the rest of this test file, which tests `lib/` modules directly rather than the Next.js routes.
+- **Mock tests don't cover the HL7 or questionnaire paths' underfill-retry branch specifically** (only the shared `lib/underfill-retry.ts` helpers are unit-tested, via PDF-path fixtures). All three routes share the same helper functions so behaviour should be identical, but no route-level integration test exists for any of the three paths — consistent with this test file's convention of testing `lib/` modules directly rather than the Next.js routes.
+
+### SPP / questionnaire path
+- **Only exercised with naturopath practitioner_type and female/male patients in the four live-fires so far.** No reason to expect practitioner-type filtering to behave differently, but unconfirmed for this specific route.
+- **Richer symptom presentations (4+ categories, some severe) reach a healthy fill without issue.** SUB-2026-SPP-MULTI (6 categories, 2 severe) landed at 691/720 (96.0%) after one retry — no special-casing needed beyond what already exists. The underfill problem is specific to sparse (1–3 category) presentations; see "Pod fill" above.
 
 ### Cost
 - **Each HL7 live-fire:** ~$3 (formulation) + ~$0.20 (citations) = ~$3.20 total.
@@ -557,7 +635,15 @@ npm run dev
 ```bash
 npx tsx scripts/test-claude-client-mock.ts
 ```
-46/46 green expected. Covers HL7 path, v0.4.7 `references` field, and the v0.6.5 underfill retry helpers.
+59/59 green expected. Covers HL7 path, v0.4.7 `references` field, the v0.6.5 underfill retry helpers, and the v0.6.7 SPP/questionnaire schema + prompt-builder tests.
+
+### Run live-fire — questionnaire path (SPP, no pathology test attached)
+```bash
+npx tsx scripts/live-test-questionnaire.ts \
+  test-fixtures/sample-metadata-spp-mild.json \
+  test-fixtures/sample-questionnaire-spp-mild.json
+```
+Writes to `live-test-output-questionnaire.json`. Other fixture pairs: `sample-metadata-spp-safety-trigger.json` / `sample-questionnaire-spp-safety-trigger.json` (exercises the end-stage-organ-failure hard refusal), `sample-metadata-spp-multipattern.json` / `sample-questionnaire-spp-multipattern.json` (6 categories rated).
 
 ### Run live-fire — PDF path (OAT, P000065, FBP)
 ```bash

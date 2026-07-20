@@ -1,0 +1,29 @@
+{
+  "symptom_categories": {
+    "Metabolic Syndrome": "none",
+    "Hypometabolism": "none",
+    "Low Cortisol / Adrenal Fatigue": "moderate",
+    "High Cortisol / Adrenal Stress": "none",
+    "Estrogen & Progesterone Deficiency": "none",
+    "Estrogen Dominance / Progesterone Deficiency": "none",
+    "Low Androgens": "none",
+    "High Androgens": "none",
+    "Digestive / GI": "none",
+    "Immune / Inflammation": "none",
+    "Neurological / Cognitive / Brain": "none",
+    "Sleep / Mood / Anxiety": "moderate",
+    "Musculoskeletal / Joint / Pain": "none",
+    "Detox / Skin": "none",
+    "Cardiovascular / Cardiometabolic": "none"
+  },
+  "safety_screening": {
+    "pregnant_or_breastfeeding": false,
+    "active_malignancy_or_oncology_treatment": false,
+    "end_stage_organ_failure_or_dialysis": false,
+    "active_eating_disorder": false,
+    "active_suicidal_ideation_or_recent_attempt": false,
+    "known_kidney_disease": false,
+    "known_liver_disease": false,
+    "current_medications": ""
+  }
+}

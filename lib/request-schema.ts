@@ -34,6 +34,10 @@ export const SupportedTestType = z.enum([
   // routing — this is a labelling fix so documents don't say "NutriSTAT" for
   // a non-NutriPath panel.
   'General_Comprehensive_Panel',
+  // No pathology test attached — practitioner-submitted symptom questionnaire
+  // only. panel_classes: ["SPP"] drives the actual clinical routing (see
+  // PanelClass below); this names the specific intake instance.
+  'Practitioner_Symptom_Questionnaire',
 ]);
 export type SupportedTestType = z.infer<typeof SupportedTestType>;
 
@@ -51,6 +55,9 @@ export const PanelClass = z.enum([
   'MP',   // Microbiome Panel — Advanced Microbiome Mapping, Calprotectin
   'TP',   // Toxicant Panel — ALL-Tox, mycotoxins
   'RIP',  // Reactive / Immune Panel — IgG/IgA, autoimmune, cytokine
+  'SPP',  // Symptom Presentation Panel — self-reported symptom questionnaire,
+          // no biomarker or genomic data. Modifier-only like GP, but
+          // symptom-driven rather than genotype-driven. No pathology test attached.
 ]);
 export type PanelClass = z.infer<typeof PanelClass>;
 

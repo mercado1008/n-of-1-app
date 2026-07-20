@@ -29,6 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/" className="text-sage hover:text-white transition-colors">
                 New Submission
               </Link>
+              <Link href="/questionnaire" className="text-sage hover:text-white transition-colors">
+                Questionnaire Only
+              </Link>
               <Link href="/submissions" className="text-sage hover:text-white transition-colors">
                 History
               </Link>

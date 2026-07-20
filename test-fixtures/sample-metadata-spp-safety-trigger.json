@@ -1,0 +1,13 @@
+{
+  "practitioner_id": "P001-NATUROPATH",
+  "practitioner_type": "naturopath",
+  "practitioner_name": "Sample Practitioner",
+  "patient_pseudonym": "PT-2026-SPP-SAFETY",
+  "patient_age_years": 61,
+  "patient_sex_assigned_at_birth": "male",
+  "test_type": "Practitioner_Symptom_Questionnaire",
+  "test_lab_id": "N/A — practitioner questionnaire",
+  "test_collection_date": "2026-07-20",
+  "panel_classes": ["SPP"],
+  "submission_id": "SUB-2026-SPP-SAFETY"
+}

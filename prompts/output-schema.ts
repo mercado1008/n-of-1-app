@@ -1,6 +1,6 @@
-// N of 1 output schema — Phase 4 (v0.4.7). Zod schema for Claude's structured JSON output.
-// Version: 0.4.7
-// Compatible system prompt: 0.3.5+
+// N of 1 output schema — Phase 4 (v0.4.8). Zod schema for Claude's structured JSON output.
+// Version: 0.4.8
+// Compatible system prompt: 0.6.7+
 // Compatible library revision: 15+
 //
 // This schema is what Claude is required to produce. Validation happens server-side.
@@ -12,6 +12,17 @@
 //   addition of a few enum/array fields the downstream document generators need.
 // - .passthrough() is used on flexibly-structured objects to accept thoughtful
 //   variations without rejecting them.
+//
+// CHANGELOG v0.4.7 → v0.4.8 (Phase 5):
+// - ADD: `SPP` (Symptom Presentation Panel) to `PanelClassEnum`. Third input
+//   path (alongside PDF and HL7): a practitioner-submitted symptom
+//   questionnaire with no pathology test attached at all. Modifier-only like
+//   GP (no biomarker/genomic data), but symptom-driven — reuses the existing
+//   Symptom Matrix axis-activation and binding-exclusion machinery as the
+//   sole clinical input rather than a supplement to a biomarker table.
+//   No other schema fields changed; `escalation_flags_raised` and
+//   `refusal_trigger` are free-form strings so the new SPP-specific values
+//   need no enum changes.
 //
 // CHANGELOG v0.4.3 → v0.4.4 (Phase 4):
 // - CHANGE: `granules` per ingredient is now OPTIONAL (was required in v0.4.0
@@ -130,6 +141,9 @@ const PanelClassEnum = z.enum([
   "MP",   // Microbiome panel — Advanced Microbiome Mapping, Calprotectin
   "TP",   // Toxicant panel — ALL-Tox, mycotoxins
   "RIP",  // Reactive / immune panel — IgG/IgA, autoimmune, cytokine
+  "SPP",  // Symptom Presentation Panel — self-reported symptom questionnaire,
+          // no biomarker or genomic data. Modifier-only like GP, but
+          // symptom-driven rather than genotype-driven. No pathology test attached.
 ]);
 
 // v0.4.1 — priority for granule budget allocation. Locked.

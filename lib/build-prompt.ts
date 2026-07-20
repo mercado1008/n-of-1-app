@@ -13,6 +13,7 @@ import type Anthropic from '@anthropic-ai/sdk';
 import promptVersion from '@/prompts/prompt-version.json';
 import type { RequestMetadata } from './request-schema';
 import type { ParsedHL7Message } from './hl7-adapter';
+import type { QuestionnaireAnswers } from './questionnaire-schema';
 
 /** Cached system prompt blocks — same across all requests until the process restarts. */
 export type SystemPromptBlocks = Anthropic.Messages.TextBlockParam[];
@@ -112,6 +113,74 @@ export function buildHL7UserPrompt(
     `Total numeric markers: ${parsed.numeric_findings.length}`,
     '',
     ...numericTable,
+    '',
+    '## Practitioner clinical notes',
+    '',
+    clinicalNotes.trim().length > 0 ? clinicalNotes.trim() : '(none provided)',
+    '',
+    ...taskSection(metadata),
+  ].join('\n');
+}
+
+/**
+ * Assemble the user prompt for the /api/analyse-questionnaire (SPP) path.
+ * No pathology test is attached — the practitioner-submitted symptom
+ * questionnaire is the sole clinical input. Renders the category severities
+ * as a Form-B-style markdown table (the same shape the prompt already
+ * interprets when reading a symptom matrix off a lab PDF) so the existing
+ * axis-activation and binding-exclusion logic in the "Symptom matrix" and
+ * "SPP-class panel interpretation" sections applies unchanged.
+ */
+export function buildQuestionnaireUserPrompt(
+  metadata: RequestMetadata,
+  questionnaire: QuestionnaireAnswers,
+  clinicalNotes: string,
+): string {
+  const ratedCategories = Object.entries(questionnaire.symptom_categories).filter(
+    ([, severity]) => severity !== 'none',
+  );
+
+  const symptomTable =
+    ratedCategories.length > 0
+      ? [
+          '| Symptom category | Severity |',
+          '|---|---|',
+          ...ratedCategories.map(
+            ([category, severity]) => `| ${category} | ${severity.toUpperCase()} |`,
+          ),
+        ]
+      : ['No symptom categories rated MODERATE or higher — see clinical notes for the presenting concern.'];
+
+  const s = questionnaire.safety_screening;
+  const safetyFlags: string[] = [];
+  if (s.pregnant_or_breastfeeding) safetyFlags.push('- Pregnant or breastfeeding: yes');
+  if (s.active_malignancy_or_oncology_treatment) safetyFlags.push('- Active malignancy or oncology treatment: yes');
+  if (s.end_stage_organ_failure_or_dialysis) safetyFlags.push('- End-stage organ failure or on dialysis: yes');
+  if (s.active_eating_disorder) safetyFlags.push('- Active eating disorder: yes');
+  if (s.active_suicidal_ideation_or_recent_attempt) safetyFlags.push('- Active suicidal ideation or recent suicide attempt: yes');
+  if (s.known_kidney_disease) safetyFlags.push('- Known kidney disease (severity not lab-confirmed — no panel attached): yes');
+  if (s.known_liver_disease) safetyFlags.push('- Known liver disease (severity not lab-confirmed — no panel attached): yes');
+  const safetyBlock =
+    safetyFlags.length > 0
+      ? safetyFlags.join('\n')
+      : 'No safety-screening concerns flagged by the practitioner.';
+  const medicationsLine = s.current_medications.trim().length > 0
+    ? `Current medications: ${s.current_medications.trim()}`
+    : 'Current medications: none reported.';
+
+  return [
+    'A practitioner has submitted a symptom questionnaire for N of 1 precision formulation analysis. No pathology test is attached — this is an SPP (Symptom Presentation Panel) submission. There is no biomarker or genomic data; the symptom ratings and safety-screening answers below are the sole clinical input.',
+    '',
+    ...metadataSection(metadata),
+    '',
+    '## Symptom matrix — practitioner-submitted directly (no pathology report; this is the sole clinical input, not supplementary)',
+    '',
+    ...symptomTable,
+    '',
+    '## Safety screening',
+    '',
+    safetyBlock,
+    medicationsLine,
     '',
     '## Practitioner clinical notes',
     '',
@@ -228,13 +297,15 @@ export interface AuditBlock {
   practitioner_id: string;
   practitioner_type: string;
   /**
-   * SHA-256 of the source input document — either a PDF or HL7 message text.
-   * Use `input_source` to determine which. Named pdf_sha256 for historic compat.
+   * SHA-256 of the source input — a PDF, HL7 message text, or (for
+   * questionnaire-only submissions) the canonicalised questionnaire-answers
+   * JSON. Use `input_source` to determine which. Named pdf_sha256 for
+   * historic compat.
    */
   pdf_sha256: string;
   pdf_size_bytes: number;
-  /** Identifies whether the source input was a PDF or an HL7 message. Defaults to 'pdf'. */
-  input_source?: 'pdf' | 'hl7';
+  /** Identifies whether the source input was a PDF, an HL7 message, or a questionnaire. Defaults to 'pdf'. */
+  input_source?: 'pdf' | 'hl7' | 'questionnaire';
   skill_version: string;
   system_prompt_version: string;
   output_schema_version: string;
@@ -246,10 +317,14 @@ export interface AuditBlock {
 
 export function buildAuditBlock(input: {
   metadata: RequestMetadata;
-  /** Source document bytes: PDF bytes for the /api/analyse path; HL7 text bytes for /api/analyse-hl7. */
+  /**
+   * Source bytes: PDF bytes for /api/analyse, HL7 text bytes for
+   * /api/analyse-hl7, or canonicalised questionnaire-answers JSON bytes for
+   * /api/analyse-questionnaire.
+   */
   pdfBytes: Uint8Array;
   model: string;
-  inputSource?: 'pdf' | 'hl7';
+  inputSource?: 'pdf' | 'hl7' | 'questionnaire';
 }): AuditBlock {
   const hash = createHash('sha256').update(input.pdfBytes).digest('hex');
   return {
