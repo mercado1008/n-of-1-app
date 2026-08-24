@@ -217,7 +217,7 @@ export default function QuestionnaireForm() {
         <label className="block text-sm font-medium text-forest mb-2">
           Symptom categories <span className="text-red-500">*</span>
         </label>
-        <p className="text-xs text-forest/60 mb-3">Rate each category as the patient currently presents. Categories left at "None" do not activate a therapeutic axis.</p>
+        <p className="text-xs text-forest/60 mb-3">Rate each category as the patient currently presents. Categories left at &ldquo;None&rdquo; do not activate a therapeutic axis.</p>
         <div className="space-y-2">
           {CATEGORIES.map((category) => (
             <div key={category} className="flex items-center justify-between gap-4 border border-sage rounded px-3 py-2">

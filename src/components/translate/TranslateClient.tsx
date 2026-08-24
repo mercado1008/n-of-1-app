@@ -160,9 +160,9 @@ function PodGauge({ total, capacity }: { total: number; capacity: number }) {
   const inZone = total >= 600 && total <= capacity;
 
   let barColor = 'bg-[#C3AF88]';
-  let label = `${total} / ${capacity} granules`;
-  let statusText = total < 600 ? 'Below target fill zone (600–720)' : inZone ? 'Within target fill zone' : 'Over pod capacity';
-  let statusColor = total < 600 ? 'text-amber-600' : inZone ? 'text-green-700' : 'text-red-600';
+  const label = `${total} / ${capacity} granules`;
+  const statusText = total < 600 ? 'Below target fill zone (600–720)' : inZone ? 'Within target fill zone' : 'Over pod capacity';
+  const statusColor = total < 600 ? 'text-amber-600' : inZone ? 'text-green-700' : 'text-red-600';
 
   if (over) barColor = 'bg-red-500';
   else if (inZone) barColor = 'bg-green-500';
@@ -798,7 +798,7 @@ export function TranslateClient() {
           <div className="flex flex-col items-center justify-center h-full text-center text-gray-400 py-24">
             <div className="text-5xl mb-4">⟳</div>
             <p className="text-lg font-medium text-gray-500 mb-2">Formula will appear here</p>
-            <p className="text-sm">Select commercial products on the left, then click "Build N of 1 Formula"</p>
+            <p className="text-sm">Select commercial products on the left, then click &ldquo;Build N of 1 Formula&rdquo;</p>
           </div>
         )}
 

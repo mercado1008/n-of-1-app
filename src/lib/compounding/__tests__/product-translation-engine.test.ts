@@ -16,8 +16,6 @@ import { describe, it, expect } from 'vitest';
 import {
   translateProducts,
   aggregateTargets,
-  translateActive,
-  computePodFill,
   DEFAULT_TRANSLATION_CONFIG,
   type SelectedProduct,
   type LibraryGranuleSpec,
