@@ -17,6 +17,7 @@ import type { ClaudeOutput } from '@/prompts/output-schema';
 import type { GranuleVerificationResult } from './granule-calc';
 
 export const UNDERFILL_FLOOR_GRANULES = 600;
+export const OVERFILL_CEILING_GRANULES = 720;
 
 type FormulationOutput = ClaudeOutput & { output_type: 'formulation' };
 
@@ -95,5 +96,83 @@ export function buildUnderfillRetryAddendum(args: {
     '3. "Biomarkers are within reference range" is not a valid reason to underfill — the 600-granule floor is triggered by recognised-pattern count and clinical-note-activated axes, not by biomarker abnormality severity.',
     '4. Before closing `proposed_formulation`, compute your running granule estimate. If it is below 660, you are not done — continue the layer pass.',
     '5. Reach a final granule estimate in the 660–690 range, per the standard procedure.',
+  ].join('\n');
+}
+
+// ===========================================================================
+// Overfill retry
+// ===========================================================================
+
+export function isOverfilled(verification: GranuleVerificationResult): boolean {
+  return verification.pod_overage;
+}
+
+/**
+ * True when the only verification failure is the pod overage itself — no unit
+ * mismatches, no missing library entries. Those require human intervention;
+ * a retry won't help. Overage alone is caused by Claude proposing too much —
+ * a single corrective retry asking it to trim has a good chance of succeeding.
+ */
+export function onlyIssueIsOverage(verification: GranuleVerificationResult): boolean {
+  return (
+    !verification.ok &&
+    verification.pod_overage &&
+    verification.issues.every(
+      (i) => i.tsi_code === '(total)' && i.reason.startsWith('pod overage'),
+    )
+  );
+}
+
+/**
+ * Builds the corrective text appended to the original user prompt for the
+ * single overfill retry. Shows the model its own computed per-ingredient
+ * granule costs ranked highest-first so it knows exactly which ingredients
+ * to trim — concrete numbers rather than abstract rules, since the abstract
+ * rules already exist in the system prompt and did not prevent this overfill.
+ */
+export function buildOverfillRetryAddendum(args: {
+  output: FormulationOutput;
+  verification: GranuleVerificationResult;
+}): string {
+  const { output, verification } = args;
+  const overage = verification.computed_total_granules - OVERFILL_CEILING_GRANULES;
+  const podPct = Math.round(verification.pod_budget_used * 1000) / 10;
+
+  // Join ingredient metadata (category, dose) with route-computed granule cost.
+  const ingByCode = new Map(output.proposed_formulation.map((i) => [i.tsi_code, i]));
+  const ranked = [...verification.computed_per_ingredient]
+    .sort((a, b) => b.computed_granules - a.computed_granules)
+    .slice(0, 20)
+    .map((ci) => {
+      const ing = ingByCode.get(ci.tsi_code);
+      const cat = ing?.category ?? 'unknown';
+      const dose = ing ? `${ing.proposed_dose} ${ing.dose_unit}` : '—';
+      return `  - ${ci.tsi_code} (${cat}) | ${dose} | ${ci.computed_granules} granules`;
+    });
+
+  return [
+    '',
+    '## RETRY — pod overfill correction required',
+    '',
+    `Your previous attempt produced ${verification.computed_total_granules} granules ` +
+      `(${podPct}% of the 720-granule pod ceiling), exceeding the hard ceiling by ${overage} granules. ` +
+      `The pod ceiling is absolute — a formulation over 720 granules cannot be dispensed. ` +
+      `You must trim the formulation until the total is within 660–720 granules.`,
+    '',
+    `Ingredients ranked by granule cost, highest first (route-computed):`,
+    ...ranked,
+    '',
+    'How to trim — follow this order:',
+    '1. Remove one or more complete ingredients from the lowest-priority category first, ' +
+      'starting with the smallest-granule-count ingredient in that category. ' +
+      'Removing an ingredient eliminates its entire granule cost.',
+    '2. If removal is not clinically appropriate for a given ingredient, reduce its dose ' +
+      'proportionally until the running total is ≤720.',
+    '3. Do NOT add new ingredients. Do NOT change the priority ranking of therapeutic categories. ' +
+      'Do NOT remove foundational ingredients from primary categories unless there is no other path.',
+    `4. You must reduce by at least ${overage} granules to clear the ceiling. ` +
+      'Aim for a final total of 660–710 to provide a safe margin above rounding variance.',
+    '5. Verify by summing the granule column of your proposed_formulation before finalising. ' +
+      'Write the sum in compliance_self_check.notes.',
   ].join('\n');
 }

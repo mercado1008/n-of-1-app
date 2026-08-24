@@ -85,6 +85,9 @@ import {
   multiPatternFloorApplies,
   isUnderfilled,
   buildUnderfillRetryAddendum,
+  isOverfilled,
+  onlyIssueIsOverage,
+  buildOverfillRetryAddendum,
 } from '@/lib/underfill-retry';
 
 // Force the Node.js runtime — we use Buffer, crypto, and the Anthropic SDK,
@@ -277,6 +280,69 @@ export async function POST(req: NextRequest) {
       output: result.output,
       library,
     });
+
+    // totalUsage accumulates across all retry attempts (overfill and underfill).
+    // Initialised here so both retry blocks can add their token counts.
+    let totalUsage = { ...result.usage };
+
+    // Overfill retry backstop. Fires at most once when the sole failure is a
+    // pod overage (unit mismatches and missing-library failures are not
+    // recoverable by retry — they need human intervention). Sends Claude its
+    // own per-ingredient granule costs ranked highest-first so it knows exactly
+    // which ingredients to trim rather than re-reading abstract ceiling rules it
+    // already ignored.
+    let overfillRetryAttempted = false;
+    let overfillRetryOutcome: 'succeeded' | 'still_overfilled' | 'retry_failed' | undefined;
+    let preOverfillGranules: number | undefined;
+
+    if (result.output.output_type === 'formulation' && onlyIssueIsOverage(verification)) {
+      overfillRetryAttempted = true;
+      preOverfillGranules = verification.computed_total_granules;
+      console.log(
+        `[overfill-retry] Pod overage (${verification.computed_total_granules} granules). ` +
+          `Firing one trim retry.`,
+      );
+      try {
+        const retryAddendum = buildOverfillRetryAddendum({
+          output: result.output,
+          verification,
+        });
+        const retryResult = await callClaudeForAnalysis({
+          systemPrompt,
+          pdfBase64,
+          userPrompt: userPrompt + '\n' + retryAddendum,
+        });
+        const retryVerification = verifyGranuleCounts({ output: retryResult.output, library });
+
+        totalUsage = {
+          input_tokens: totalUsage.input_tokens + retryResult.usage.input_tokens,
+          output_tokens: totalUsage.output_tokens + retryResult.usage.output_tokens,
+          cache_creation_input_tokens:
+            (totalUsage.cache_creation_input_tokens ?? 0) + (retryResult.usage.cache_creation_input_tokens ?? 0),
+          cache_read_input_tokens:
+            (totalUsage.cache_read_input_tokens ?? 0) + (retryResult.usage.cache_read_input_tokens ?? 0),
+        };
+
+        if (retryVerification.ok) {
+          result = retryResult;
+          verification = retryVerification;
+          overfillRetryOutcome = 'succeeded';
+          console.log(
+            `[overfill-retry] Trim succeeded: ${retryVerification.computed_total_granules} granules.`,
+          );
+        } else {
+          overfillRetryOutcome = isOverfilled(retryVerification) ? 'still_overfilled' : 'retry_failed';
+          console.error(
+            `[overfill-retry] Retry still invalid (${overfillRetryOutcome}):`,
+            retryVerification.issues,
+          );
+        }
+      } catch (retryErr) {
+        console.error('[overfill-retry] Retry call failed:', retryErr);
+        overfillRetryOutcome = 'retry_failed';
+      }
+    }
+
     if (!verification.ok) {
       try {
         await appendAuditLog({
@@ -288,8 +354,11 @@ export async function POST(req: NextRequest) {
             pod_budget_used: verification.pod_budget_used,
             ingredient_count: result.output.output_type === 'formulation' ? result.output.proposed_formulation.length : undefined,
             stop_reason: result.stop_reason,
+            overfill_retry_attempted: overfillRetryAttempted || undefined,
+            overfill_retry_outcome: overfillRetryOutcome,
+            pre_retry_granules_computed: preOverfillGranules,
           },
-          usage: result.usage,
+          usage: totalUsage,
         });
       } catch (logErr) {
         console.error('[audit-log] Failed to write audit log entry:', logErr);
@@ -306,6 +375,15 @@ export async function POST(req: NextRequest) {
             computed_total_granules: verification.computed_total_granules,
             pod_overage: verification.pod_overage,
           },
+          ...(overfillRetryAttempted
+            ? {
+                retry_info: {
+                  overfill_retry_attempted: true,
+                  overfill_retry_outcome: overfillRetryOutcome,
+                  pre_retry_granules_computed: preOverfillGranules,
+                },
+              }
+            : {}),
         },
         { status: 502 },
       );
@@ -315,7 +393,6 @@ export async function POST(req: NextRequest) {
     // already bans a sub-600 fill in prose (SUB-2026-796 hit this exact
     // failure mode anyway) — this is the deterministic fallback. Fires at
     // most once, only for panels the 600-granule floor actually applies to.
-    let totalUsage = { ...result.usage };
     let underfillRetryAttempted = false;
     let underfillRetryOutcome: 'succeeded' | 'still_underfilled' | 'retry_failed' | undefined;
     let preRetryGranules: number | undefined;
@@ -395,9 +472,11 @@ export async function POST(req: NextRequest) {
           pod_budget_used: verification.pod_budget_used,
           ingredient_count: result.output.output_type === 'formulation' ? result.output.proposed_formulation.length : undefined,
           stop_reason: result.stop_reason,
+          overfill_retry_attempted: overfillRetryAttempted || undefined,
+          overfill_retry_outcome: overfillRetryOutcome,
           underfill_retry_attempted: underfillRetryAttempted || undefined,
           underfill_retry_outcome: underfillRetryOutcome,
-          pre_retry_granules_computed: preRetryGranules,
+          pre_retry_granules_computed: preRetryGranules ?? preOverfillGranules,
         },
         usage: totalUsage,
       });
@@ -418,12 +497,19 @@ export async function POST(req: NextRequest) {
         computed_per_ingredient: verification.computed_per_ingredient,
         claude_granule_discrepancy_count: verification.claude_granule_discrepancy_count,
       },
-      ...(underfillRetryAttempted
+      ...((overfillRetryAttempted || underfillRetryAttempted)
         ? {
             retry_info: {
-              underfill_retry_attempted: true,
-              underfill_retry_outcome: underfillRetryOutcome,
-              pre_retry_granules_computed: preRetryGranules,
+              ...(overfillRetryAttempted ? {
+                overfill_retry_attempted: true,
+                overfill_retry_outcome: overfillRetryOutcome,
+                pre_overfill_granules_computed: preOverfillGranules,
+              } : {}),
+              ...(underfillRetryAttempted ? {
+                underfill_retry_attempted: true,
+                underfill_retry_outcome: underfillRetryOutcome,
+                pre_underfill_granules_computed: preRetryGranules,
+              } : {}),
             },
           }
         : {}),

@@ -1,0 +1,859 @@
+{
+  "_comment": "Hand-curated mappings from TGA ARTG ingredient names to N of 1 registry moiety names.",
+  "_format": "{ 'artg name (lowercase)': { 'target': 'Registry moietyName (exact)', 'verified': false } }",
+  "_instructions": [
+    "All seeds start with verified: false. A seed 'fires' when its key appears in a real ARTG export.",
+    "The ingest script reports: seeds that fired+resolved | fired+broken target | never fired.",
+    "Unfired seeds hide plausible-but-wrong mappings — review them after each ingest run.",
+    "Change verified to true only after you have confirmed the mapping against real ARTG data.",
+    "Keys must be lowercase. Values in 'target' must match the moietyName field in moiety-registry.ts EXACTLY.",
+    "Wrong target: the key fires in the ARTG data but the moiety lookup silently fails — ingredient appears unmatched.",
+    "Add new mappings here. Re-run: npx tsx scripts/ingest-artg-export.ts <export> --out candidates.json"
+  ],
+  "quercetin dihydrate": {
+    "target": "Quercetin",
+    "verified": true
+  },
+  "nicotinamide mononucleotide": {
+    "target": "NMN",
+    "verified": true
+  },
+  "acetyl levocarnitine hydrochloride": {
+    "target": "Acetyl-L-Carnitine",
+    "verified": true
+  },
+
+  "pyridoxal 5'-phosphate": {
+    "target": "Pyridoxine (vitamin B6)",
+    "verified": false
+  },
+  "pyridoxal-5'-phosphate": {
+    "target": "Pyridoxine (vitamin B6)",
+    "verified": false
+  },
+  "pyridoxal 5-phosphate": {
+    "target": "Pyridoxine (vitamin B6)",
+    "verified": false
+  },
+  "pyridoxine hydrochloride": {
+    "target": "Pyridoxine (vitamin B6)",
+    "verified": false
+  },
+  "5-methyltetrahydrofolate": {
+    "target": "Levomefolic acid",
+    "verified": false
+  },
+  "(6s)-5-methyltetrahydrofolate": {
+    "target": "Levomefolic acid",
+    "verified": false
+  },
+  "l-5-methyltetrahydrofolate": {
+    "target": "Levomefolic acid",
+    "verified": false
+  },
+  "calcium folinate": {
+    "target": "Folinic acid",
+    "verified": false
+  },
+  "magnesium amino acid chelate": {
+    "target": "Magnesium (elemental)",
+    "verified": false
+  },
+  "magnesium glycinate": {
+    "target": "Magnesium (elemental)",
+    "verified": false
+  },
+  "magnesium bisglycinate": {
+    "target": "Magnesium (elemental)",
+    "verified": false
+  },
+  "magnesium orotate": {
+    "target": "Magnesium (elemental)",
+    "verified": false
+  },
+  "magnesium citrate": {
+    "target": "Magnesium (elemental)",
+    "verified": false
+  },
+  "magnesium aspartate": {
+    "target": "Magnesium (elemental)",
+    "verified": false
+  },
+  "magnesium threonate": {
+    "target": "Magnesium (elemental)",
+    "verified": false
+  },
+  "magnesium chloride": {
+    "target": "Magnesium (elemental)",
+    "verified": false
+  },
+  "_removed_magnesium_oxide": "_REMOVED: MgO is 60.3% Mg by mass. Do not map oxide to elemental — ARTG publishes 'Equivalent magnesium X mg' as a separate ingredient row. Use that equivalence row instead.",
+  "_removed_zinc_amino_acid_chelate": "_REMOVED: Salt form amount ≠ elemental zinc. Products that publish 'Equivalent zinc X mg' are handled by the equivalence-row aliases below. Products without an equivalence row should be left unmatched rather than storing the salt amount as elemental.",
+  "_removed_zinc_citrate": "_REMOVED: Same defect as zinc amino acid chelate — use equivalence row.",
+  "_removed_zinc_picolinate": "_REMOVED: Same defect — use equivalence row.",
+  "_removed_zinc_gluconate": "_REMOVED: Same defect — use equivalence row.",
+  "_removed_zinc_bisglycinate": "_REMOVED: Same defect — use equivalence row.",
+  "_removed_zinc_sulfate": "_REMOVED: Same defect — use equivalence row.",
+  "_removed_zinc_oxide": "_REMOVED: ZnO is 80.3% Zn by mass. Do not map oxide to elemental — ARTG publishes 'Equivalent zinc X mg' as a separate ingredient row. Use that equivalence row instead.",
+  "_not_added_calcium_carbonate": "_NOT ADDED: CaCO3 is 40% Ca by mass. Same defect. Use the ARTG equivalence row 'Equivalent calcium X mg' instead.",
+  "selenium yeast": {
+    "target": "Selenium (elemental)",
+    "verified": false
+  },
+  "sodium selenate": {
+    "target": "Selenium (elemental)",
+    "verified": false
+  },
+  "selenomethionine": {
+    "target": "Selenium (elemental)",
+    "verified": false
+  },
+  "l-selenomethionine": {
+    "target": "Selenium (elemental)",
+    "verified": false
+  },
+  "sodium selenite": {
+    "target": "Selenium (elemental)",
+    "verified": false
+  },
+  "_comment_equivalence_rows": "ARTG equivalence rows: TGA publishes elemental content as a separate ingredient row — 'Equivalent magnesium X mg', 'Equivalent zinc X mg', etc. These are the CORRECT source for elemental quantities from oxide/carbonate/salt forms. Map those rows here rather than applying salt→elemental conversion factors.",
+  "equivalent magnesium": {
+    "target": "Magnesium (elemental)",
+    "verified": false
+  },
+  "equivalent to magnesium": {
+    "target": "Magnesium (elemental)",
+    "verified": false
+  },
+  "equivalent calcium": {
+    "target": "Calcium (elemental)",
+    "verified": false
+  },
+  "equivalent to calcium": {
+    "target": "Calcium (elemental)",
+    "verified": false
+  },
+  "equivalent zinc": {
+    "target": "Zinc (elemental)",
+    "verified": false
+  },
+  "equivalent to zinc": {
+    "target": "Zinc (elemental)",
+    "verified": false
+  },
+  "equivalent selenium": {
+    "target": "Selenium (elemental)",
+    "verified": false
+  },
+  "equivalent to selenium": {
+    "target": "Selenium (elemental)",
+    "verified": false
+  },
+  "equivalent iron": {
+    "target": "Iron (elemental)",
+    "verified": false
+  },
+  "equivalent to iron": {
+    "target": "Iron (elemental)",
+    "verified": false
+  },
+  "equivalent iodine": {
+    "target": "Iodine (elemental)",
+    "verified": false
+  },
+  "equivalent to iodine": {
+    "target": "Iodine (elemental)",
+    "verified": false
+  },
+  "equivalent chromium": {
+    "target": "Chromium (elemental)",
+    "verified": false
+  },
+  "equivalent to chromium": {
+    "target": "Chromium (elemental)",
+    "verified": false
+  },
+  "equivalent copper": {
+    "target": "Copper (elemental)",
+    "verified": false
+  },
+  "equivalent to copper": {
+    "target": "Copper (elemental)",
+    "verified": false
+  },
+  "equivalent manganese": {
+    "target": "Manganese (elemental)",
+    "verified": false
+  },
+  "equivalent to manganese": {
+    "target": "Manganese (elemental)",
+    "verified": false
+  },
+  "equivalent potassium": {
+    "target": "Potassium (elemental)",
+    "verified": false
+  },
+  "equivalent to potassium": {
+    "target": "Potassium (elemental)",
+    "verified": false
+  },
+  "calcifediol monohydrate": {
+    "target": "Vitamin D3",
+    "verified": true,
+    "note": "Calcifediol (25-OH-D3) is the hydroxylated precursor to calcitriol. Both calcifediol and cholecalciferol raise serum 25-OH-D; D3 (cholecalciferol) is used as the granule-deliverable form. Practitioner should review dose — calcifediol is ~3-5x more potent per mcg than cholecalciferol."
+  },
+  "calcifediol": {
+    "target": "Vitamin D3",
+    "verified": true,
+    "note": "Calcifediol (25-hydroxyvitamin D3) — see calcifediol monohydrate."
+  },
+  "cholecalciferol": {
+    "target": "Vitamin D3",
+    "verified": false
+  },
+  "colecalciferol": {
+    "target": "Vitamin D3",
+    "verified": false
+  },
+  "riboflavin": {
+    "target": "Vitamin B2",
+    "verified": false
+  },
+  "riboflavine": {
+    "target": "Vitamin B2",
+    "verified": false
+  },
+  "riboflavin 5'-phosphate": {
+    "target": "Vitamin B2",
+    "verified": false
+  },
+  "riboflavin-5-phosphate": {
+    "target": "Vitamin B2",
+    "verified": false
+  },
+  "riboflavine 5'-phosphate": {
+    "target": "Vitamin B2",
+    "verified": false
+  },
+  "thiamine hydrochloride": {
+    "target": "Vitamin B1",
+    "verified": false
+  },
+  "thiamine nitrate": {
+    "target": "Vitamin B1",
+    "verified": false
+  },
+  "thiamine mononitrate": {
+    "target": "Vitamin B1",
+    "verified": false
+  },
+  "ascorbic acid": {
+    "target": "Vitamin C",
+    "verified": false
+  },
+  "calcium ascorbate": {
+    "target": "Vitamin C",
+    "verified": false
+  },
+  "sodium ascorbate": {
+    "target": "Vitamin C",
+    "verified": false
+  },
+  "d-alpha-tocopherol": {
+    "target": "Vitamin E",
+    "verified": false
+  },
+  "dl-alpha-tocopheryl acetate": {
+    "target": "Vitamin E",
+    "verified": false
+  },
+  "d-alpha-tocopheryl acetate": {
+    "target": "Vitamin E",
+    "verified": false
+  },
+  "d-alpha-tocopheryl succinate": {
+    "target": "Vitamin E",
+    "verified": false
+  },
+  "mixed (low-alpha type) tocopherols concentrate": {
+    "target": "Vitamin E",
+    "verified": false
+  },
+  "cobalamin": {
+    "target": "Vitamin B12",
+    "verified": false
+  },
+  "cyanocobalamin": {
+    "target": "Vitamin B12",
+    "verified": false
+  },
+  "methylcobalamin": {
+    "target": "Vitamin B12",
+    "verified": false
+  },
+  "hydroxycobalamin": {
+    "target": "Vitamin B12",
+    "verified": false
+  },
+  "adenosylcobalamin": {
+    "target": "Vitamin B12",
+    "verified": false
+  },
+  "hydroxocobalamin": {
+    "target": "Vitamin B12",
+    "verified": false
+  },
+  "niacin": {
+    "target": "Vitamin B3",
+    "verified": false
+  },
+  "nicotinamide": {
+    "target": "Vitamin B3",
+    "verified": false
+  },
+  "nicotinic acid": {
+    "target": "Vitamin B3",
+    "verified": false
+  },
+  "inositol hexanicotinate": {
+    "target": "Vitamin B3",
+    "verified": false
+  },
+  "choline bitartrate": {
+    "target": "Choline",
+    "verified": false
+  },
+  "l-choline": {
+    "target": "Choline",
+    "verified": false
+  },
+  "choline dihydrogen citrate": {
+    "target": "Choline",
+    "verified": false
+  },
+  "pantothenic acid": {
+    "target": "Pantothenic acid (vitamin B5)",
+    "verified": false
+  },
+  "calcium pantothenate": {
+    "target": "Pantothenic acid (vitamin B5)",
+    "verified": false
+  },
+  "ubiquinol": {
+    "target": "Coenzyme Q10",
+    "verified": false
+  },
+  "ubiquinone": {
+    "target": "Coenzyme Q10",
+    "verified": false
+  },
+  "alpha lipoic acid": {
+    "target": "R,S-alpha lipoic acid",
+    "verified": false
+  },
+  "r-alpha lipoic acid": {
+    "target": "R,S-alpha lipoic acid",
+    "verified": false
+  },
+  "r-lipoic acid": {
+    "target": "R,S-alpha lipoic acid",
+    "verified": false
+  },
+  "n-acetyl cysteine": {
+    "target": "N-acetyl cysteine (NAC)",
+    "verified": false
+  },
+  "n-acetylcysteine": {
+    "target": "N-acetyl cysteine (NAC)",
+    "verified": false
+  },
+  "curcuma longa extract": {
+    "target": "Turmeric (Curcumin)",
+    "verified": false
+  },
+  "curcumin": {
+    "target": "Turmeric (Curcumin)",
+    "verified": false
+  },
+  "curcuminoids": {
+    "target": "Turmeric (Curcumin)",
+    "verified": false
+  },
+  "withania somnifera extract": {
+    "target": "Ashwagandha",
+    "verified": false
+  },
+  "withania somnifera root extract": {
+    "target": "Ashwagandha",
+    "verified": false
+  },
+  "rhodiola rosea extract": {
+    "target": "Rhodiola rosea (Rose Root)",
+    "verified": false
+  },
+  "rhodiola rosea root extract": {
+    "target": "Rhodiola rosea (Rose Root)",
+    "verified": false
+  },
+  "eleutherococcus senticosus extract": {
+    "target": "Siberian ginseng",
+    "verified": false
+  },
+  "acanthopanax senticosus extract": {
+    "target": "Siberian ginseng",
+    "verified": false
+  },
+  "panax quinquefolius extract": {
+    "target": "American ginseng",
+    "verified": false
+  },
+  "american ginseng extract": {
+    "target": "American ginseng",
+    "verified": false
+  },
+  "berberine hydrochloride": {
+    "target": "Berberine HCL (Indian Barberry)",
+    "verified": false
+  },
+  "berberine chloride": {
+    "target": "Berberine HCL (Indian Barberry)",
+    "verified": false
+  },
+  "silybum marianum extract": {
+    "target": "Milk thistle",
+    "verified": false
+  },
+  "silymarin": {
+    "target": "Milk thistle",
+    "verified": false
+  },
+  "bacopa monnieri extract": {
+    "target": "Bacopa",
+    "verified": false
+  },
+  "brahmi extract": {
+    "target": "Bacopa",
+    "verified": false
+  },
+  "ginkgo biloba extract": {
+    "target": "Ginkgo",
+    "verified": false
+  },
+  "ginkgo folium extract": {
+    "target": "Ginkgo",
+    "verified": false
+  },
+  "glycyrrhiza glabra extract": {
+    "target": "Licorice",
+    "verified": false
+  },
+  "licorice root extract": {
+    "target": "Licorice",
+    "verified": false
+  },
+  "liquorice root extract": {
+    "target": "Licorice",
+    "verified": false
+  },
+  "boswellia serrata extract": {
+    "target": "Boswellia (Frankincense)",
+    "verified": false
+  },
+  "vitex agnus-castus extract": {
+    "target": "Chaste tree (Vitex)",
+    "verified": false
+  },
+  "chaste tree extract": {
+    "target": "Chaste tree (Vitex)",
+    "verified": false
+  },
+  "crataegus monogyna extract": {
+    "target": "Hawthorn",
+    "verified": false
+  },
+  "crataegus laevigata extract": {
+    "target": "Hawthorn",
+    "verified": false
+  },
+  "gymnema sylvestre extract": {
+    "target": "Gymnema",
+    "verified": false
+  },
+  "zingiber officinale extract": {
+    "target": "Ginger",
+    "verified": false
+  },
+  "ginger root extract": {
+    "target": "Ginger",
+    "verified": false
+  },
+  "salvia officinalis extract": {
+    "target": "Sage",
+    "verified": false
+  },
+  "matricaria recutita extract": {
+    "target": "Chamomile",
+    "verified": false
+  },
+  "chamomilla recutita extract": {
+    "target": "Chamomile",
+    "verified": false
+  },
+  "olea europaea extract": {
+    "target": "Olive leaf",
+    "verified": false
+  },
+  "olive leaf extract": {
+    "target": "Olive leaf",
+    "verified": false
+  },
+  "hypericum perforatum extract": {
+    "target": "St John's Wort",
+    "verified": false
+  },
+  "vitis vinifera seed extract": {
+    "target": "Grape Seed",
+    "verified": false
+  },
+  "grape seed extract": {
+    "target": "Grape Seed",
+    "verified": false
+  },
+  "camellia sinensis extract": {
+    "target": "Green Tea (EGCG)",
+    "verified": false
+  },
+  "green tea extract": {
+    "target": "Green Tea (EGCG)",
+    "verified": false
+  },
+  "allium sativum extract": {
+    "target": "Garlic",
+    "verified": false
+  },
+  "garlic powder": {
+    "target": "Garlic",
+    "verified": false
+  },
+  "scutellaria baicalensis extract": {
+    "target": "Baical (Chinese) skullcap",
+    "verified": false
+  },
+  "baical skullcap extract": {
+    "target": "Baical (Chinese) skullcap",
+    "verified": false
+  },
+  "glucosamine sulphate": {
+    "target": "Glucosamine sulfate",
+    "verified": false
+  },
+  "glucosamine hydrochloride": {
+    "target": "Glucosamine sulfate",
+    "verified": false
+  },
+  "chondroitin sulphate": {
+    "target": "Chondroitin sulfate",
+    "verified": false
+  },
+  "l-arginine hydrochloride": {
+    "target": "L-arginine",
+    "verified": false
+  },
+  "l-citrulline malate": {
+    "target": "L-citrulline",
+    "verified": false
+  },
+  "gamma aminobutyric acid": {
+    "target": "GABA",
+    "verified": false
+  },
+  "gamma-aminobutyric acid": {
+    "target": "GABA",
+    "verified": false
+  },
+  "myo-inositol": {
+    "target": "Inositol",
+    "verified": false
+  },
+  "reduced glutathione": {
+    "target": "Glutathione",
+    "verified": false
+  },
+  "l-glutathione": {
+    "target": "Glutathione",
+    "verified": false
+  },
+  "sodium butyrate": {
+    "target": "Butyric acid",
+    "verified": false
+  },
+  "tributyrin": {
+    "target": "Butyric acid",
+    "verified": false
+  },
+  "diindolylmethane": {
+    "target": "DIM (3,3'-diindolylmethane)",
+    "verified": false
+  },
+  "3,3'-diindolylmethane": {
+    "target": "DIM (3,3'-diindolylmethane)",
+    "verified": false
+  },
+  "pyrroloquinoline quinone disodium": {
+    "target": "Pyrroloquinoline quinone",
+    "verified": false
+  },
+  "nicotinamide riboside chloride": {
+    "target": "Nicotinamide riboside chloride (NR)",
+    "verified": false
+  },
+  "nicotinamide riboside": {
+    "target": "Nicotinamide riboside chloride (NR)",
+    "verified": false
+  },
+  "5-hydroxytryptophan": {
+    "target": "5-HTP",
+    "verified": false
+  },
+  "l-5-hydroxytryptophan": {
+    "target": "5-HTP",
+    "verified": false
+  },
+  "d-biotin": {
+    "target": "Biotin",
+    "verified": false
+  },
+  "iodine": {
+    "target": "Iodine (elemental)",
+    "verified": false
+  },
+  "potassium iodide": {
+    "target": "Iodine (elemental)",
+    "verified": false
+  },
+  "kelp extract": {
+    "target": "Iodine (elemental)",
+    "verified": false
+  },
+  "chromium picolinate": {
+    "target": "Chromium (elemental)",
+    "verified": false
+  },
+  "chromium nicotinate": {
+    "target": "Chromium (elemental)",
+    "verified": false
+  },
+  "chromium polynicotinate": {
+    "target": "Chromium (elemental)",
+    "verified": false
+  },
+  "menaquinone-7": {
+    "target": "Vitamin K2",
+    "verified": false
+  },
+  "menaquinone-4": {
+    "target": "Vitamin K2",
+    "verified": false
+  },
+  "mk-7": {
+    "target": "Vitamin K2",
+    "verified": false
+  },
+  "retinol": {
+    "target": "Vitamin A",
+    "verified": false
+  },
+  "retinyl acetate": {
+    "target": "Vitamin A",
+    "verified": false
+  },
+  "retinyl palmitate": {
+    "target": "Vitamin A",
+    "verified": false
+  },
+  "retinol palmitate": {
+    "target": "Vitamin A",
+    "verified": false
+  },
+
+  "_comment_tga_bare_latin_names": "TGA ARTG listings often use the bare Latin species name (Withania somnifera) rather than the 'extract' form (withania somnifera extract) covered by seeds above. Added after first real TGA ingest — 2026-08-12.",
+
+  "withania somnifera": {
+    "target": "Ashwagandha",
+    "verified": false
+  },
+  "withania somnifera root": {
+    "target": "Ashwagandha",
+    "verified": false
+  },
+  "curcuma longa": {
+    "target": "Turmeric (Curcumin)",
+    "verified": false
+  },
+  "silybum marianum": {
+    "target": "Milk thistle",
+    "verified": false
+  },
+  "rhodiola rosea": {
+    "target": "Rhodiola rosea (Rose Root)",
+    "verified": false
+  },
+  "bacopa monnieri": {
+    "target": "Bacopa",
+    "verified": false
+  },
+  "vitis vinifera": {
+    "target": "Grape Seed",
+    "verified": false
+  },
+  "ginkgo biloba": {
+    "target": "Ginkgo",
+    "verified": false
+  },
+  "panax quinquefolius": {
+    "target": "American ginseng",
+    "verified": false
+  },
+  "eleutherococcus senticosus": {
+    "target": "Siberian ginseng",
+    "verified": false
+  },
+  "glycyrrhiza glabra": {
+    "target": "Licorice",
+    "verified": false
+  },
+  "boswellia serrata": {
+    "target": "Boswellia (Frankincense)",
+    "verified": false
+  },
+  "vitex agnus-castus": {
+    "target": "Chaste tree (Vitex)",
+    "verified": false
+  },
+  "crataegus monogyna": {
+    "target": "Hawthorn",
+    "verified": false
+  },
+  "crataegus laevigata": {
+    "target": "Hawthorn",
+    "verified": false
+  },
+  "gymnema sylvestre": {
+    "target": "Gymnema",
+    "verified": false
+  },
+  "zingiber officinale": {
+    "target": "Ginger",
+    "verified": false
+  },
+  "salvia officinalis": {
+    "target": "Sage",
+    "verified": false
+  },
+  "matricaria recutita": {
+    "target": "Chamomile",
+    "verified": false
+  },
+  "olea europaea": {
+    "target": "Olive leaf",
+    "verified": false
+  },
+  "hypericum perforatum": {
+    "target": "St John's Wort",
+    "verified": false
+  },
+  "camellia sinensis": {
+    "target": "Green Tea (EGCG)",
+    "verified": false
+  },
+  "allium sativum": {
+    "target": "Garlic",
+    "verified": false
+  },
+  "scutellaria baicalensis": {
+    "target": "Baical (Chinese) skullcap",
+    "verified": false
+  },
+  "crocus sativus": {
+    "target": "Saffron",
+    "verified": false
+  },
+
+  "_comment_tga_functional_names": "TGA sometimes uses bare functional/chemical names without the L- prefix or salt suffix.",
+
+  "theanine": {
+    "target": "L-theanine",
+    "verified": false
+  },
+  "tyrosine": {
+    "target": "L-tyrosine",
+    "verified": false
+  },
+  "glutamine": {
+    "target": "L-glutamine",
+    "verified": false
+  },
+  "mecobalamin": {
+    "target": "Vitamin B12",
+    "verified": false
+  },
+  "ubidecarenone": {
+    "target": "Coenzyme Q10",
+    "verified": false
+  },
+  "menaquinone 7": {
+    "target": "Vitamin K2",
+    "verified": false
+  },
+  "menaquinone 4": {
+    "target": "Vitamin K2",
+    "verified": false
+  },
+  "pyridoxal 5-phosphate monohydrate": {
+    "target": "Pyridoxine (vitamin B6)",
+    "verified": false
+  },
+  "d-alpha-tocopheryl acid succinate": {
+    "target": "Vitamin E",
+    "verified": false
+  },
+
+  "_comment_additional_latin_names": "Second pass after full-run alias report — 2026-08-12. Additional high-frequency Latin names not covered by the extract-form seeds above.",
+
+  "passiflora incarnata": {
+    "target": "Passionflower",
+    "verified": false
+  },
+  "passiflora edulis": {
+    "target": "Passionflower",
+    "verified": false
+  },
+  "astragalus membranaceus": {
+    "target": "Astragalus",
+    "verified": false
+  },
+  "astragalus mongholicus": {
+    "target": "Astragalus",
+    "verified": false
+  },
+  "glycyrrhiza uralensis": {
+    "target": "Licorice",
+    "verified": false
+  },
+  "melissa officinalis": {
+    "target": "Lemon balm",
+    "verified": false
+  },
+  "serenoa repens": {
+    "target": "Saw palmetto",
+    "verified": false
+  },
+  "pinus pinaster": {
+    "target": "Pine Bark (Pycnogenol)",
+    "verified": false
+  },
+  "punica granatum": {
+    "target": "Pomegranate",
+    "verified": false
+  }
+}

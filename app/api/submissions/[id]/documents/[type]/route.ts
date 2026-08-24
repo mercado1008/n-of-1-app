@@ -7,8 +7,8 @@ export const runtime = 'nodejs';
 const TYPE_MAP: Record<string, { key: keyof typeof DOCUMENT_NAMES; mime: string; ext: string }> = {
   'health-analysis': {
     key: 'healthAnalysis',
-    mime: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    ext: 'docx',
+    mime: 'application/pdf',
+    ext: 'pdf',
   },
   'formulation-schedule': {
     key: 'formulationSchedule',

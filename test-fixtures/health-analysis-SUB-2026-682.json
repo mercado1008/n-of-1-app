@@ -1,0 +1,352 @@
+{
+  "submissionId": "SUB-2026-682",
+  "patientPseudonym": "PT-2026-111",
+  "age": 36,
+  "sexAtBirth": "female",
+  "testType": "StrateGene Core",
+  "labId": "SG-2026-0041",
+  "collectionDate": "2026-07-30",
+  "practitionerId": "P001-NATUROPATH",
+  "practitionerType": "naturopath",
+  "generatedAt": "2026-07-31T16:01:00.000+10:00",
+  "auditReference": "2B6D-054F-8F67",
+  "status": "draft",
+
+  "executiveSummary": "StrateGene® Core genotype report indicates a modifier-only genetic susceptibility profile — patient is a 36-year-old female with variants across methylation, monoamine metabolism, histamine clearance, folate transport, and antioxidant/detoxification pathways. Formulation is genotype-driven and requires practitioner integration with biomarker data (FBP or HMP) for a complete clinical picture.",
+
+  "clinicalPatterns": [
+    {
+      "name": "Methylation-cycle impaired genotype",
+      "supportingSnps": [
+        "MTHFR C677T AG (slow)",
+        "MTR A2756G AA (slow context)",
+        "MTRR G66A AG (slow)",
+        "MTHFD1 G1958A AG (slow)",
+        "TCN2 c.776G>C GC (slow)",
+        "BHMT G716A GG (slow per Library)",
+        "SLC19A1 G80A TC (slow)"
+      ]
+    },
+    {
+      "name": "Catecholamine accumulation & monoamine clearance",
+      "supportingSnps": [
+        "MAOA T941G TT (slow)",
+        "COMT intermediate haplotype",
+        "SLC6A3 rs6347 CC (fast reuptake)",
+        "DRD2 rs12364283 AA (slow receptor density)"
+      ]
+    },
+    {
+      "name": "Histamine-intolerance genotype (upper-GI axis)",
+      "supportingSnps": [
+        "DAO/AOC1 slow haplotype (rs2052129 TG + rs10156191 TC)",
+        "NAT2 slow acetylator haplotype",
+        "MAOA T941G TT (slow)"
+      ]
+    },
+    {
+      "name": "Antioxidant / Phase II susceptibility",
+      "supportingSnps": [
+        "GSTA1 C-69T AG (slow)",
+        "SOD2 A16V GG (slow)",
+        "GPX4 C718T TT (selenium-dependent)",
+        "GSR -386C>A TT (fast, B2-dependent)",
+        "GGT1 -1207T>C AG (fast)"
+      ]
+    },
+    {
+      "name": "Serotonergic-tone-reduced genotype",
+      "supportingSnps": [
+        "TPH2 G-703T GG (slow — lower brain serotonin synthesis)",
+        "HTR3A C178T CC (slow receptor)",
+        "HTR3B A386C AA (slow receptor)",
+        "IDO2 R248W TC (very slow)"
+      ]
+    },
+    {
+      "name": "Oestrogen metabolism / CYP1B1-fast genotype",
+      "supportingSnps": [
+        "CYP1B1 rs1800440 TT (fast Phase I)",
+        "COMT intermediate haplotype",
+        "GSTA1 slow"
+      ]
+    }
+  ],
+
+  "findings": [
+    {
+      "gene": "MTHFR C677T",
+      "rsid": "rs1801133",
+      "genotypeLabel": "AG heterozygous — slow",
+      "direction": "slow",
+      "interpretation": "One copy of the thermolabile C677T variant. MTHFR enzyme activity is reduced approximately 35% from baseline under physiological temperature, with additional reduction under thermal or oxidative stress. Homocysteine may trend above reference range particularly when riboflavin and folate status are suboptimal.",
+      "contributors": "Riboflavin (B2) insufficiency amplifies the functional impact of this variant. Dietary folate load and form (folic acid vs. reduced folate) significantly modulate risk.",
+      "formulationRelevance": "Foundational driver for calcium folinate and methylcobalamin inclusion. Riboflavin B2 is a cofactor for MTHFR and is included as a layer ingredient. Folic acid is avoided in favour of reduced folate forms."
+    },
+    {
+      "gene": "MAOA T941G",
+      "rsid": "rs6323",
+      "genotypeLabel": "TT homozygous — slow",
+      "direction": "slow",
+      "interpretation": "Slow MAOA activity reduces serotonin, dopamine, and norepinephrine degradation in the synaptic cleft. Combined with slow COMT (intermediate haplotype), catecholamine clearance is multi-step impaired. The patient may have heightened sensitivity to sympathomimetic substances, stress, and serotonergic agents.",
+      "contributors": "High dietary biogenic amines, methyl-donor overload, stress, oestrogen-related MAOA suppression, stimulating adaptogens.",
+      "formulationRelevance": "BINDING EXCLUSION for 5-HTP pending medication review. Magnesium and riboflavin included as cofactors to modulate enzymatic activity. Stimulating adaptogens deprioritised from pod."
+    },
+    {
+      "gene": "COMT",
+      "rsid": "rs4680",
+      "genotypeLabel": "Intermediate haplotype — Val158Met AG",
+      "direction": "intermediate",
+      "interpretation": "Intermediate COMT activity. Oestrogen methylation, dopamine, and norepinephrine clearance proceed at an intermediate rate. This haplotype is relatively resilient but becomes clinically significant when combined with slow MAOA and high CYP1B1 Phase I activity driving 4-OH-oestrogen accumulation.",
+      "contributors": "CYP1B1-fast genotype increases 4-OH-oestrogen substrate load. Magnesium deficiency reduces COMT activity. High-dose methyl donors can saturate the pathway.",
+      "formulationRelevance": "Magnesium glycinate included as COMT cofactor. DIM and calcium D-glucarate added to manage downstream oestrogen metabolite burden. High-dose SAMe excluded."
+    },
+    {
+      "gene": "SOD2 A16V",
+      "rsid": "rs4880",
+      "genotypeLabel": "GG homozygous — slow mitochondrial import",
+      "direction": "slow",
+      "interpretation": "Alanine-to-valine substitution at the mitochondrial targeting sequence of SOD2 (manganese superoxide dismutase). Mitochondrial import of this antioxidant enzyme is reduced, increasing superoxide accumulation in mitochondria under oxidative stress. Relevant to redox capacity, fatigue, and sensitivity to pro-oxidant environmental exposures.",
+      "contributors": "GSTA1-slow and GPX4-slow further reduce antioxidant headroom. SOD2-slow amplifies susceptibility to PM2.5, pesticides, and xenobiotics.",
+      "formulationRelevance": "Drives inclusion of NAC, alpha-lipoic acid, CoQ10, and L-glutathione in the redox/antioxidant axis. Selenium included to support GPX4 context."
+    }
+  ],
+
+  "lifestyleConsiderations": [
+    {
+      "topic": "Folate source",
+      "consideration": "The practitioner may wish to discuss avoidance of synthetic folic acid (fortified cereals, breads, non-prescription multivitamins containing folic acid) and preference for whole-food folate and reduced folate supplements (calcium folinate, methylfolate) given the SLC19A1, MTHFR, and MTHFD1 variants documented above.",
+      "rationale": "Slow folate transport and reduced MTHFR/MTHFD1 flux favour reduced folate forms; unmetabolised folic acid may interfere with folate receptor activity."
+    },
+    {
+      "topic": "Histamine and DAO support",
+      "consideration": "The practitioner may wish to explore lower-histamine dietary patterns and identify any personal food triggers, given the slow DAO haplotype and slow MAOA.",
+      "rationale": "Reduced DAO activity elevates gut and systemic histamine burden; slow MAOA further reduces N-methylhistamine clearance."
+    },
+    {
+      "topic": "Methyl-donor loading caution",
+      "consideration": "Given the intermediate COMT haplotype combined with slow MAOA, the practitioner may wish to avoid supraphysiologic methyl-donor stacks (e.g. high-dose SAMe or TMG) and use pulse-dosing when methylation support is introduced.",
+      "rationale": "Slow COMT + slow MAOA increases catecholamine accumulation risk when methyl-donor drive is high."
+    },
+    {
+      "topic": "Cruciferous vegetable intake",
+      "consideration": "Regular intake of cruciferous vegetables (broccoli, cauliflower, cabbage, Brussels sprouts, kale) may be discussed with the patient — supporting Phase II detoxification, Nrf2, and oestrogen metabolism.",
+      "rationale": "Supports GSTA1, SOD2, CYP1B1 balance identified in the genotype."
+    },
+    {
+      "topic": "Sleep and stress hygiene",
+      "consideration": "Attention to stress management, consistent sleep timing, and daylight exposure may be discussed — supporting the TPH2/serotonin pathway and MAOA regulation.",
+      "rationale": "Vitamin D and daylight enhance brain TPH2; chronic stress modulates MAOA activity."
+    }
+  ],
+
+  "formulationStrategy": {
+    "intro": "This is a StrateGene® Core GP-class modifier-only formulation for a 36-year-old female. The genotype-driven priority axes are:",
+    "axes": [
+      "Methylation and folate cycle support — calcium folinate, methylcobalamin, riboflavin B2, P5P, zinc citrate.",
+      "Catecholamine / histamine buffering — magnesium glycinate (COMT cofactor), quercetin and vitamin C for DAO/mast-cell support, pantothenic acid B5 for NAT2.",
+      "Redox and antioxidant support — NAC, alpha-lipoic acid, vitamin C, CoQ10, resveratrol, milk thistle for Phase II Nrf2 support.",
+      "Hormone metabolism support given CYP1B1-fast + intermediate COMT — DIM, calcium D-glucarate.",
+      "Dopaminergic and serotonergic background support — vitamin D3, moderate iron via dietary discussion, thiamine B1, nicotinamide B3."
+    ],
+    "dosingNote": "Because this is a GP-only submission without any biomarker data, all doses are conservative, homocysteine-lowering and methyl-donor supplements are kept at moderate rather than high doses, and 5-HTP is deliberately excluded pending medication review and clinical correlation given slow MAOA. The formulation uses foundational + layer stacking within each axis at moderate doses, targeting a filled pod (600–720 granules) as required by the pod-fill principle for a multi-pattern panel.",
+    "included": [
+      {
+        "name": "Calcium folinate",
+        "dose": "547 mcg",
+        "rationale": "Foundational for the methylation-impaired genotype (MTHFR, MTHFD1, SLC19A1); avoids folic acid; supports downstream MTR/MTRR flux."
+      },
+      {
+        "name": "Methylcobalamin (B12)",
+        "dose": "500 mcg",
+        "rationale": "Foundational for slow MTR/MTRR and TCN2; bioavailable B12 form."
+      },
+      {
+        "name": "Riboflavin (B2)",
+        "dose": "30 mg",
+        "rationale": "Cofactor for MTHFR, MAOA, MAOB, and GSR; addresses multiple upregulated and downregulated B2-dependent enzymes."
+      },
+      {
+        "name": "P5P (B6)",
+        "dose": "15 mg",
+        "rationale": "Cofactor for DDC, CBS, and the HDC axis; supports serotonin/dopamine synthesis and homocysteine handling."
+      },
+      {
+        "name": "Magnesium glycinate",
+        "dose": "100 mg elemental",
+        "rationale": "COMT cofactor and general methylation/nervous-system support."
+      },
+      {
+        "name": "N-acetylcysteine",
+        "dose": "500 mg",
+        "rationale": "Glutathione precursor; supports GSTA1-slow and SOD2-slow context."
+      },
+      {
+        "name": "Vitamin C",
+        "dose": "500 mg",
+        "rationale": "DAO/HDC cofactor, adrenal cofactor, antioxidant and hydrogen peroxide buffer."
+      },
+      {
+        "name": "Quercetin",
+        "dose": "200 mg",
+        "rationale": "Mast-cell and DAO-adjacent stabilisation for the histamine-intolerance genotype."
+      },
+      {
+        "name": "DIM",
+        "dose": "100 mg",
+        "rationale": "Oestrogen metabolism support (CYP1B1-fast + intermediate COMT)."
+      },
+      {
+        "name": "Calcium D-glucarate",
+        "dose": "500 mg",
+        "rationale": "β-glucuronidase inhibition supporting oestrogen and xenobiotic clearance."
+      }
+    ],
+    "excluded": [
+      {
+        "name": "5-HTP",
+        "code": "W030006000",
+        "reason": "Excluded from the pod given slow MAOA (T941G TT) and unknown medication context. Adding a serotonin precursor to a slow MAOA background without medication review risks serotonin accumulation. Documented in binding_exclusions_applied."
+      },
+      {
+        "name": "SAMe / high-dose TMG",
+        "reason": "Deprioritised given intermediate COMT + slow MAOA; the practitioner may consider these later based on measured homocysteine, if elevated."
+      },
+      {
+        "name": "Panax ginseng & stimulating adaptogens",
+        "reason": "Deprioritised for pod given slow MAOA + intermediate COMT + fast β-adrenergic receptor genotype, which increases sensitivity to catecholamine drive."
+      }
+    ],
+    "companionScheduleNote": "The detailed ingredient-by-ingredient formulation, including doses, granule counts, and per-ingredient rationale, is in the companion Recommended Formulation Schedule (.xlsx)."
+  },
+
+  "contraindications": [
+    {
+      "severity": "informational",
+      "flag": "Medication context not provided",
+      "description": "No current medications were listed in the practitioner's clinical notes. Standard contraindication checks were run against the recommended formulation itself. The practitioner may wish to review any concurrent SSRIs/SNRIs (serotonin support), anticoagulants (CoQ10, resveratrol, quercetin), and glucose-lowering agents (alpha-lipoic acid) before initiating.",
+      "ingredients": ["R,S-alpha lipoic acid", "Resveratrol", "Quercetin", "Coenzyme Q10"]
+    },
+    {
+      "severity": "monitor",
+      "flag": "Vitamin B6 TGA warning threshold",
+      "description": "The proposed P5P dose delivers approximately 10 mg pyridoxine equivalents per day — at the TGA warning threshold. The practitioner may wish to advise the patient to report any tingling, burning, or numbness immediately.",
+      "ingredients": ["Vitamin B6 (P5P)"]
+    },
+    {
+      "severity": "monitor",
+      "flag": "Zinc–copper ratio monitoring",
+      "description": "Zinc supplementation (15 mg elemental) is conservative, but the practitioner may wish to monitor Cu:Zn ratio if the formulation is extended beyond 3 months.",
+      "ingredients": ["Zinc citrate"]
+    },
+    {
+      "severity": "lowInContext",
+      "flag": "Selenium cumulative toxicity",
+      "description": "Selenomethionine is dosed at 50 mcg elemental — well below toxicity thresholds. The practitioner may wish to consider red-cell selenium testing if extending use.",
+      "ingredients": ["Selenium (selenomethionine)"]
+    }
+  ],
+
+  "bindingExclusions": [
+    {
+      "ingredient": "5-HTP",
+      "reason": "The patient's slow MAOA genotype reduces serotonin degradation, and no medication history was supplied to rule out serotonergic pharmaceuticals. The practitioner may wish to consider re-introducing 5-HTP only after confirming absence of SSRIs/SNRIs/MAOIs/tramadol/triptans and reviewing symptomatic serotonin status."
+    }
+  ],
+
+  "monitoring": {
+    "intro": "Because no functional pathology panel accompanies this GP-class submission, the practitioner may wish to consider baseline and follow-up testing to translate this genotype-driven formulation into a measurable clinical response.",
+    "markers": [
+      { "marker": "Plasma homocysteine", "qualifier": "baseline, recheck 8–12 weeks" },
+      { "marker": "Serum B12 and methylmalonic acid (MMA)" },
+      { "marker": "Red-cell folate" },
+      { "marker": "Red-cell magnesium" },
+      { "marker": "Ferritin and transferrin saturation" },
+      { "marker": "25-hydroxy vitamin D" },
+      { "marker": "Red-cell selenium", "qualifier": "if extending selenium" },
+      { "marker": "Cu:Zn ratio", "qualifier": "if zinc extended past 3 months" },
+      { "marker": "hs-CRP", "qualifier": "inflammatory context" },
+      { "marker": "Urinary organic acids", "qualifier": "practitioner-directed" },
+      {
+        "marker": "Hormone metabolism panel (e.g. DUTCH / EndoSCAN) if symptoms warrant, given CYP1B1-fast + intermediate COMT profile",
+        "fullWidth": true
+      }
+    ],
+    "caveat": "Genotype-only submission — biomarker follow-up is essential to individualise doses and evaluate response."
+  },
+
+  "areasOfStrength": [
+    "MAOB and several other monoamine oxidase-adjacent SNPs show contextual/indeterminate calls, suggesting no additional monoamine clearance burden beyond MAOA.",
+    "GSR is upregulated (fast) — a strength for glutathione recycling capacity when riboflavin (B2) is optimised.",
+    "NOX (CYBA) is slow — potentially reducing inflammatory oxidative burst risk in vascular tissue.",
+    "COMT haplotype resolves as intermediate rather than fully slow — indicating balanced methylation of catecholamines and oestrogens with modifiable expression.",
+    "SLC18A1 fast genotype (A allele carrier) may support neurotransmitter storage and resilience against stress-related mood fluctuations."
+  ],
+
+  "references": [
+    {
+      "index": 1,
+      "authors": "Scaglione F & Panzavolta G",
+      "year": 2014,
+      "title": "Folate, folic acid and 5-methyltetrahydrofolate are not the same thing",
+      "journal": "Xenobiotica",
+      "supports": "Calcium folinate"
+    },
+    {
+      "index": 2,
+      "authors": "Paul C & Brady DM",
+      "year": 2017,
+      "title": "Comparative bioavailability and utilization of particular forms of B12 supplements with potential to mitigate B12-related genetic polymorphisms",
+      "journal": "Integrative Medicine",
+      "supports": "Methylcobalamin"
+    },
+    {
+      "index": 3,
+      "authors": "McNulty H et al.",
+      "year": 2017,
+      "title": "Riboflavin lowers blood pressure in adults with the MTHFR 677TT genotype",
+      "journal": "Am J Clin Nutr",
+      "supports": "Riboflavin"
+    },
+    {
+      "index": 4,
+      "authors": "Boyle NB et al.",
+      "year": 2017,
+      "title": "The effects of magnesium supplementation on subjective anxiety and stress — a systematic review",
+      "journal": "Nutrients",
+      "supports": "Magnesium glycinate"
+    },
+    {
+      "index": 5,
+      "authors": "Ooi SL et al.",
+      "year": 2018,
+      "title": "N-acetylcysteine for the treatment of psychiatric disorders: a review of current evidence",
+      "journal": "BioMed Research International",
+      "supports": "NAC"
+    },
+    {
+      "index": 6,
+      "authors": "Carr AC & Maggini S",
+      "year": 2017,
+      "title": "Vitamin C and immune function",
+      "journal": "Nutrients",
+      "supports": "Vitamin C"
+    },
+    {
+      "index": 7,
+      "authors": "Mlcek J et al.",
+      "year": 2016,
+      "title": "Quercetin and its anti-allergic immune response",
+      "journal": "Molecules",
+      "supports": "Quercetin"
+    },
+    {
+      "index": 8,
+      "authors": "Thomson CA et al.",
+      "year": 2017,
+      "title": "A randomized, placebo-controlled trial of diindolylmethane for breast cancer biomarker modulation in patients taking tamoxifen",
+      "journal": "Breast Cancer Res Treat",
+      "supports": "DIM"
+    }
+  ]
+}

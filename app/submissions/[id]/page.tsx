@@ -54,7 +54,7 @@ export default async function ResultsPage({ params }: { params: { id: string } }
             className="flex items-center gap-2 px-4 py-2 bg-forest text-white text-sm rounded hover:bg-forest/90 transition-colors"
             download
           >
-            ↓ Health Analysis (.docx)
+            ↓ Health Analysis (.pdf)
           </a>
           <a
             href={`/api/submissions/${id}/documents/formulation-schedule`}

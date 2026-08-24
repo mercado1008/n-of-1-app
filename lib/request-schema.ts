@@ -22,6 +22,10 @@ export const SupportedTestType = z.enum([
   'NutriSTAT',
   'EndoSCAN',
   'myDNA_Longevity',
+  // StrateGene® Core (Dirty Genes / Seeking Health) — methylation,
+  // neurotransmitter, histamine, biopterin, and glutathione pathway SNPs.
+  // GP class; modifier-only. panel_classes: ["GP"].
+  'StrateGene_Core',
   'Organic_Acids',
   'Comprehensive_Stool_Analysis',
   'Advanced_Thyroid',

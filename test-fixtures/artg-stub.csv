@@ -1,0 +1,71 @@
+ARTG ID,Product Name,Sponsor Name,Dose Form,Category,Ingredient,Quantity,Unit
+100001,BiQ10 150,BioCeuticals,Capsule,Listed,coenzyme q10,150,mg
+100002,Vitamin D3 1000IU,Blackmores,Tablet,Listed,cholecalciferol,25,mcg
+100003,Ultra Muscleze,Metagenics,Capsule,Listed,magnesium amino acid chelate,300,mg
+100003,Ultra Muscleze,Metagenics,Capsule,Listed,zinc amino acid chelate,5,mg
+100004,Se 200,Orthoplex,Tablet,Listed,selenium yeast,200,mcg
+100005,P5P B6 40mg,Bioceuticals,Capsule,Listed,pyridoxal 5'-phosphate,40,mg
+100006,Activated B Complex,BioCeuticals,Capsule,Listed,pyridoxal 5'-phosphate,25,mg
+100006,Activated B Complex,BioCeuticals,Capsule,Listed,methylcobalamin,1000,mcg
+100006,Activated B Complex,BioCeuticals,Capsule,Listed,riboflavin,10,mg
+100006,Activated B Complex,BioCeuticals,Capsule,Listed,thiamine hydrochloride,25,mg
+100006,Activated B Complex,BioCeuticals,Capsule,Listed,nicotinamide,50,mg
+100007,Methyl Folate 500,Pure Encapsulations,Capsule,Listed,(6s)-5-methyltetrahydrofolate,500,mcg
+100008,Vitamin C 1000,Nature's Way,Tablet,Listed,ascorbic acid,1000,mg
+100009,Probiotic 50B,Swisse,Capsule,Listed,lactobacillus acidophilus,25000000000,CFU
+100009,Probiotic 50B,Swisse,Capsule,Listed,lactobacillus rhamnosus,25000000000,CFU
+100010,Turmeric 15000,Bioglan,Tablet,Listed,curcuma longa extract,750,mg
+100011,Ashwagandha KSM-66,Musashi,Capsule,Listed,withania somnifera extract,300,mg
+100012,Magnesium Glycinate 150,BioMedica,Tablet,Listed,magnesium glycinate,150,mg
+100013,Berberine 500,Orthoplex,Capsule,Listed,berberine hydrochloride,500,mg
+100014,Alpha Lipoic Acid 300,Bioglan,Capsule,Listed,alpha lipoic acid,300,mg
+100015,Multi B Stress Formula,Blackmores,Tablet,Listed,riboflavin,5,mg
+100015,Multi B Stress Formula,Blackmores,Tablet,Listed,pantothenic acid,100,mg
+100016,Ginkgo 2000,Swisse,Tablet,Listed,ginkgo biloba extract,2000,mg
+100017,Ibuprofen 200mg,Pharma Inc,Tablet,Registered,ibuprofen,200,mg
+100018,Magnesium Sulfate Injection,Hospital Pharma,Injection,Listed,magnesium sulfate,1000,mg
+100019,Magnesium Orotate 500,DFH,Tablet,Listed,magnesium orotate,500,mg
+100020,NAC Detox 600,Metagenics,Capsule,Listed,n-acetylcysteine,600,mg
+100021,Zinc Picolinate 30,Piping Rock,Capsule,Listed,zinc picolinate,30,mg
+100022,Milk Thistle 35000,Swisse,Tablet,Listed,silybum marianum extract,7000,mg
+100023,Rhodiola 3000,Bioglan,Tablet,Listed,rhodiola rosea extract,600,mg
+100024,Choline Bitartrate 300,BioCeuticals,Capsule,Listed,choline bitartrate,600,mg
+100025,Magnesium Citrate 200,Swisse,Tablet,Listed,magnesium citrate,300,mg
+100026,Pyridoxine HCl 100,Blackmores,Tablet,Listed,pyridoxine hydrochloride,100,mg
+100027,Boswellia 5000,Nature's Own,Capsule,Listed,boswellia serrata extract,3000,mg
+100028,Chromium GTF 200,Orthoplex,Tablet,Listed,chromium picolinate,200,mcg
+100029,Ubiquinol Q10 150,BioCeuticals,Soft capsule,Listed,ubiquinol,150,mg
+100030,B5 Pantothenic 500,Fusion Health,Capsule,Listed,pantothenic acid,500,mg
+100031,Zinc Bisglycinate 25,Designs for Health,Capsule,Listed,zinc bisglycinate,25,mg
+100032,Selenomethionine 100,Thorne,Capsule,Listed,selenomethionine,100,mcg
+100033,Calcium Folinate 500,BioCeuticals,Capsule,Listed,calcium folinate,500,mcg
+100034,Vitamin B12 Methyl 500,Pure Encapsulations,Capsule,Listed,methylcobalamin,500,mcg
+100035,Vitamin A 10000IU,Blackmores,Capsule,Listed,retinyl palmitate,3000,mcg
+100036,Vitamin K2 180,Metagenics,Capsule,Listed,menaquinone-7,180,mcg
+100037,Licorice DGL,Integria,Tablet,Listed,glycyrrhiza glabra extract,750,mg
+100038,Biotin 5000,Swisse,Tablet,Listed,biotin,5,mg
+100039,Chromium Nicotinate 200,Bioglan,Tablet,Listed,chromium nicotinate,200,mcg
+100040,NAD+ 300,Tru Niagen,Capsule,Listed,nicotinamide riboside chloride,300,mg
+100041,CoQ10 Ubiquinone,Nature's Own,Capsule,Listed,ubiquinone,100,mg
+100042,Bacopa 5000,Swisse,Tablet,Listed,bacopa monnieri extract,3000,mg
+100043,Magnesium Threonate,Magtein,Capsule,Listed,magnesium threonate,144,mg
+100043,Magnesium Threonate,Magtein,Capsule,Listed,magnesium threonate,200,mg
+100044,Zinc Citrate 15,Orthoplex,Tablet,Listed,zinc citrate,15,mg
+100044,Zinc Citrate 15,Orthoplex,Tablet,Listed,magnesium citrate,100,mg
+100045,Evening Primrose 1000,Blackmores,Soft gelatin capsule,Listed,evening primrose oil,1000,mg
+100046,Fish Oil Omega 3,Swisse,Soft capsule,Listed,eicosapentaenoic acid,180,mg
+100046,Fish Oil Omega 3,Swisse,Soft capsule,Listed,docosahexaenoic acid,120,mg
+100047,Valerian Night,Nattura,Tablet,Listed,valeriana officinalis extract,300,mg
+100048,Echinacea Forte,Ethical Nutrients,Capsule,Listed,echinacea purpurea extract,1000,mg
+100049,Inositol Powder,Designs for Health,Powder,Listed,myo-inositol,2000,mg
+100050,Multi Mineral,Swisse,Tablet,Listed,calcium carbonate,500,mg
+100050,Multi Mineral,Swisse,Tablet,Listed,magnesium oxide,100,mg
+100050,Multi Mineral,Swisse,Tablet,Listed,zinc oxide,10,mg
+100051,GABA 750,Thorne,Capsule,Listed,gamma aminobutyric acid,750,mg
+100052,L-Theanine 200,Pure Encapsulations,Capsule,Listed,l-theanine,200,mg
+100053,Taurine 2000,Bioglan,Capsule,Listed,taurine,2000,mg
+100054,L-Glutamine 5000,Metagenics,Powder,Listed,l-glutamine,5000,mg
+100055,Vitamin E 500IU,Blackmores,Capsule,Listed,d-alpha-tocopherol,335,mg
+100056,Omega3 + D3,Nordic Naturals,Soft capsule,Listed,cholecalciferol,25,mcg
+100056,Omega3 + D3,Nordic Naturals,Soft capsule,Listed,eicosapentaenoic acid,360,mg
+100056,Omega3 + D3,Nordic Naturals,Soft capsule,Listed,docosahexaenoic acid,240,mg

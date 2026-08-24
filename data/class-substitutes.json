@@ -1,0 +1,104 @@
+{
+  "_comment": "Maps unresolved ARTG ingredient names to N of 1 library substitutes at therapeutic doses.",
+  "_format": "Keys are ARTG ingredient names normalised to lowercase. Each entry specifies the N of 1 library moiety (TSI code) to substitute and the recommended daily dose from the library monograph. Doses are always expressed in the library moiety unit (from moiety-registry.ts moietyUnit field). Requires practitioner confirmation before inclusion in a pod.",
+  "_excluded": "omega-3 fatty acids (DHA, EPA, fish oil, triglycerides) and probiotics (Lactobacillus, Bifidobacterium species) are intentionally excluded — route to PURCHASE_SEPARATELY, not substituted.",
+  "_versioned": "2026-08-24 — added dimethylglycine hydrochloride → TMG",
+
+  "dimethylglycine hydrochloride": {
+    "libraryId": "W010023000",
+    "recommendedDose": 1000,
+    "rationale": "Dimethylglycine HCl (DMG, a secondary amine methyl donor) substituted with Betaine/TMG (trimethylglycine) — the primary methyl donor in the same choline → betaine → DMG metabolic pathway. TMG is the direct precursor to DMG via betaine-homocysteine methyltransferase; both support methylation and homocysteine metabolism. The HCl salt amount cannot be directly converted to a TMG equivalent (different molecular entities); library recommended dose applied (1000 mg TMG/day). Confirm dose is appropriate for the patient's methylation needs."
+  },
+
+  "zinc amino acid chelate": {
+    "libraryId": "W040008000",
+    "recommendedDose": 15,
+    "rationale": "Zinc amino acid chelate (a salt-chelate form) substituted with zinc citrate — the N of 1 library zinc form. The chelate salt amount cannot be converted to elemental zinc without knowing the exact amino acid mass ratio; library therapeutic dose applied (15 mg elemental zinc). Confirm dose is appropriate for the patient's zinc status."
+  },
+
+  "riboflavin sodium phosphate": {
+    "libraryId": "W030011000",
+    "recommendedDose": 25,
+    "rationale": "Riboflavin sodium phosphate (FMN, the coenzyme form of Vitamin B2) substituted with riboflavin — the form stocked in the N of 1 library. Both forms are bioavailable; the phosphate ester is cleaved to riboflavin in the intestinal lumen. Library dose applied (25 mg riboflavin/day)."
+  },
+
+  "berberis aristata": {
+    "libraryId": "W010026000",
+    "recommendedDose": 500,
+    "rationale": "Berberis aristata (Indian barberry root) is the primary botanical source of the alkaloid berberine. Substituted with Berberine HCL (Indian Barberry) — the concentrated standardised extract in the N of 1 library. Commercial product dose is expressed as dry herb and cannot be directly converted to berberine HCL equivalent; library therapeutic dose applied (500 mg/day)."
+  },
+
+  "folic acid": {
+    "libraryId": "W030009000",
+    "recommendedDose": 500,
+    "rationale": "Folic acid (synthetic pteroylglutamic acid) substituted with levomefolic acid (5-MTHF, the bioactive reduced form). All N of 1 pods use the active form directly, bypassing the MTHFR conversion step. Library dose applied; folic acid amount on commercial label not converted."
+  },
+  "folate": {
+    "libraryId": "W030009000",
+    "recommendedDose": 500,
+    "rationale": "Generic 'folate' label resolved to levomefolic acid (5-MTHF) — the form stocked in the N of 1 library. Library dose applied."
+  },
+
+  "betacarotene": {
+    "libraryId": "W030006000",
+    "recommendedDose": 1032,
+    "rationale": "Beta-carotene (provitamin A carotenoid) substituted with preformed retinyl acetate (Vitamin A). Unit conversion not performed — beta-carotene mcg cannot be directly equated to retinyl acetate mcg due to variable conversion efficiency. Library recommended dose (1032 mcg retinyl acetate = 900 mcg RE) applied. Practitioner must confirm form suitability; retinyl acetate is contraindicated in pregnancy at high doses."
+  },
+  "beta-carotene": {
+    "libraryId": "W030006000",
+    "recommendedDose": 1032,
+    "rationale": "Beta-carotene (provitamin A carotenoid) substituted with preformed retinyl acetate (Vitamin A). Library recommended dose applied. Confirm form appropriateness — retinyl acetate carries pregnancy warnings above 3000 mcg RE/day."
+  },
+
+  "panax ginseng": {
+    "libraryId": "W010001000",
+    "recommendedDose": 200,
+    "rationale": "Panax ginseng (Asian/Korean ginseng) not in the N of 1 library. Substituted with American ginseng (Panax quinquefolius) — same genus, same ginsenoside class, with a Rb1-dominant profile favouring calming adaptogenic activity. Korean ginseng tends more stimulating (Rg1-dominant); confirm the substitute suits the patient's presentation."
+  },
+  "panax ginseng root extract": {
+    "libraryId": "W010001000",
+    "recommendedDose": 200,
+    "rationale": "Panax ginseng root extract not in library. Substituted with American ginseng (Panax quinquefolius) as closest ginsenoside-class equivalent. Library dose applied."
+  },
+  "panax ginseng extract": {
+    "libraryId": "W010001000",
+    "recommendedDose": 200,
+    "rationale": "Panax ginseng extract not in library. Substituted with American ginseng (Panax quinquefolius). Library dose applied."
+  },
+  "korean ginseng": {
+    "libraryId": "W010001000",
+    "recommendedDose": 200,
+    "rationale": "Korean ginseng (Panax ginseng) not in library. Substituted with American ginseng (Panax quinquefolius). Library dose applied."
+  },
+  "red ginseng": {
+    "libraryId": "W010001000",
+    "recommendedDose": 200,
+    "rationale": "Red ginseng (steamed/processed Panax ginseng) not in library. Substituted with American ginseng (Panax quinquefolius). Red ginseng processing increases Rg1 content (stimulating); confirm the substitute is appropriate for the patient. Library dose applied."
+  },
+
+  "phytomenadione": {
+    "libraryId": "W030007000",
+    "recommendedDose": 100,
+    "rationale": "Phytomenadione (Vitamin K1) substituted with menaquinone-7 (Vitamin K2 MK-7). MK-7 is preferred for supplementation — superior bioavailability, longer half-life (~3 days vs hours), and better distribution to bone and vascular tissue. Practitioner must confirm the form switch is clinically appropriate."
+  },
+  "phylloquinone": {
+    "libraryId": "W030007000",
+    "recommendedDose": 100,
+    "rationale": "Phylloquinone (Vitamin K1) substituted with menaquinone-7 (Vitamin K2 MK-7). MK-7 preferred for supplementation. Confirm form suitability."
+  },
+  "vitamin k1": {
+    "libraryId": "W030007000",
+    "recommendedDose": 100,
+    "rationale": "Vitamin K1 substituted with menaquinone-7 (Vitamin K2 MK-7). K2 MK-7 preferred for supplementation. Confirm form suitability with practitioner."
+  },
+
+  "_no_substitute_note": "The following high-frequency ARTG ingredients have no appropriate N of 1 library substitute and are left as UNAVAILABLE. Practitioners should source independently if clinically warranted.",
+  "_no_substitute_echinacea": "Echinacea purpurea — immune modulator; no library equivalent",
+  "_no_substitute_ganoderma": "Ganoderma lucidum — adaptogen mushroom; no library equivalent",
+  "_no_substitute_schisandra": "Schisandra chinensis — hepatoprotective adaptogen; no library equivalent",
+  "_no_substitute_glycine": "Glycine — amino acid; queued for library addition (revision 16)",
+  "_no_substitute_methionine": "Methionine — amino acid; not in current library",
+  "_no_substitute_collagen": "Hydrolysed collagen — structural protein; not a granule-deliverable moiety",
+  "_no_substitute_piper_nigrum": "Piper nigrum (bioperine) — absorption enhancer, not a primary therapeutic active",
+  "_no_substitute_ganoderma": "Ganoderma lucidum (reishi) — adaptogen mushroom; no library equivalent"
+}

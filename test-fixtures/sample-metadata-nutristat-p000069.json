@@ -1,0 +1,15 @@
+{
+  "practitioner_id": "P001-NATUROPATH",
+  "practitioner_type": "naturopath",
+  "practitioner_name": "Sample Practitioner",
+  "patient_pseudonym": "PT-2026-004",
+  "patient_age_years": 42,
+  "patient_sex_assigned_at_birth": "female",
+  "test_type": "NutriSTAT",
+  "test_lab_id": "202608120001NS001",
+  "test_collection_date": "2026-07-28",
+  "submission_id": "SUB-2026-NS-001",
+  "panel_classes": [
+    "FBP"
+  ]
+}

@@ -1,8 +1,37 @@
 # Nof1 Precision Formulation — STATUS
 
-**Last updated:** 2026-07-20, end of session — SPP panel class (questionnaire-only input path) + General_Comprehensive_Panel test type + underfill retry backstop
+**Last updated:** 2026-08-13, end of session — document generation restyle (xlsx Stage 4, Health Analysis HTML→PDF Stage 5), Protocol Translator granule controls + 'Bioactives' rename
 **Current versions:** prompt v0.6.8, schema v0.4.8, library revision 15
-**Last known state:** 59/59 mock tests passing. Three input paths now live: `/api/analyse` (PDF), `/api/analyse-hl7` (HL7), `/api/analyse-questionnaire` (SPP — no pathology test attached, symptom questionnaire is the sole clinical input). Underfill retry backstop live on all three routes. SPP validated via 4 live-fires (2 mild-case iterations, 1 safety-trigger refusal, 1 multi-pattern — see below).
+**Last known state:** 59/59 mock tests passing. Three input paths now live: `/api/analyse` (PDF), `/api/analyse-hl7` (HL7), `/api/analyse-questionnaire` (SPP — no pathology test attached, symptom questionnaire is the sole clinical input). Underfill retry backstop live on all three routes. Health Analysis is now a branded PDF (Puppeteer); Formulation Schedule xlsx fully restyled with olive/gold design tokens.
+
+---
+
+## What changed in this session (2026-08-13 — document restyle + Protocol Translator granule controls)
+
+### xlsx Formulation Schedule — full restyle (Stage 4, complete)
+
+1. **`scripts/generate-docs/formulation-schedule.ts`** — complete rewrite. New design-token palette (19 ARGB constants matching the olive/gold brand: `olive FF535B50`, `gold FFC6AF81`, `goldPale FFF2EADA`, etc.), Calibri font throughout, freeze panes on Formulation/Dose Adjustments/Standalones/Contraindications sheets (`xSplit: 2, ySplit: 1`), category band rows (merged A:D, olive fill, gold font), priority pills (`HIGH` = olive/white, `MODERATE` = goldPale/goldDeep, `STANDARD` = surfacePill/olive), severity pills (`high` = olive, `monitor` = goldPale, `informational` = surfacePill), olive total row with `onOliveGold` font for the granule number.
+2. **Summary sheet (Sheet 5)** — `█`-bar chart for category granule breakdown (Calibri, gold bar colour), 18pt big-3 metrics (total ingredients / total granules / pod fill), 12pt 6-count metrics. Phantom empty row 1 fixed by removing `header:` from column definitions (ExcelJS writes a row for every column header, even empty string).
+3. **`scripts/generate-docs/derive-summary.ts`** — `deriveSummary()` is the single source of truth for granule totals and category breakdowns. Called once in `index.ts` and passed to both generators. Both the xlsx Summary sheet and any Health Analysis section that references granule figures use the same computed object — no duplication of arithmetic.
+
+### Health Analysis — HTML→PDF conversion (Stage 5, complete)
+
+4. **`scripts/generate-docs/health-analysis-html.ts`** — NEW (~700 lines). `buildHealthAnalysisHtml(opts)` returns a complete, self-contained HTML string for the Health Analysis document. Google Fonts (`Jost` 300/400/500/600, `Source Serif 4` 300–700/italic) loaded as render-blocking `<link>` elements so they are available before PDF capture. Logo embedded as `data:image/png;base64,...` URI (passed from caller) so `setContent()` can render it without filesystem access. Dynamic section numbering: each section builder returns `''` when its data is absent; populated sections are numbered 01, 02, ... at render time. Section 04 reads from `proposed_formulation[]` structured data, not Claude's free-text `formulation_logic.what_was_intentionally_included_and_why` (Bug 2 fix). CSS: `@page { size: A4; margin: 0.7in; }`. A4 portrait.
+5. **`scripts/generate-docs/health-analysis-pdf.ts`** — NEW. `generateHealthAnalysisPdf({ html })` launches Puppeteer (headless, `--no-sandbox`), calls `page.setContent(html, { waitUntil: 'load' })`, awaits `document.fonts.ready` via `evaluateHandle`, then calls `page.pdf({ format: 'A4', printBackground: true })`. Returns a `Buffer`. Browser opened and closed per call.
+6. **`scripts/generate-docs/index.ts`** — updated to use the new PDF path. Logo loaded from disk and base64-encoded before being passed to `buildHealthAnalysisHtml`. Output filename: `Nof1_HealthAnalysis_{submission_id}_DRAFT.pdf`.
+
+### Server-side document generation — PDF output (complete)
+
+7. **`lib/generate-documents.ts`** — updated to call `buildHealthAnalysisHtml` + `generateHealthAnalysisPdf` instead of the old `generateHealthAnalysis` (docx generator). Logo loaded via `loadLogoBase64()` helper (tries design-handoff asset, falls back to `assets/brand/nof1_logo_header.jpg`). `healthAnalysis` field in the return value is now a PDF buffer. `generateFormulationSchedule` call unchanged.
+8. **`lib/submissions.ts`** — `DOCUMENT_NAMES.healthAnalysis` changed from `'health-analysis.docx'` to `'health-analysis.pdf'`. All document save/load/path logic uses this constant, so no other changes needed.
+9. **`app/api/submissions/[id]/documents/[type]/route.ts`** — `health-analysis` type map entry updated: `mime: 'application/pdf'`, `ext: 'pdf'`. Download link now serves a PDF file.
+
+### Protocol Translator — granule controls + 'Bioactives' rename (complete)
+
+10. **`src/components/translate/TranslateClient.tsx`** — three changes:
+    - **'synthetic' → 'Bioactives':** `displayCategory()` helper maps `cat.toLowerCase() === 'synthetic'` → `'Bioactives'`. `categoryBadge()` now passes the display name to the colour map. Category badge label renders `{displayCategory(cat)}`. Internal ARTG data is unchanged; only the practitioner-facing label changes.
+    - **Direct Translation granule controls:** two new state maps (`directGranuleOverrides`, `exclusiveGranuleOverrides`) reset on each new translation. `getDirectGranules(a)` / `getDirectDose(a)` / `adjustDirectGranules(id, delta, base)` helpers. The Granules column in the Direct Translation table now shows `−` / count / `+` inline buttons. Dose column recalculates from `totalDose / originalGranules × adjustedGranules`. Pod total and "from direct translation" breakdown stat both use adjusted values.
+    - **N of 1 Additions granule controls:** `getExclusiveGranules(e)` / `getExclusiveDose(e)` / `adjustExclusiveGranules(id, delta, base)` helpers. When an exclusive is checked, the card shows `−` / count / `+` inline controls below the dose line. Pod total and "from N of 1 additions" breakdown stat use adjusted values. Buttons call `ev.preventDefault()` to prevent the wrapping `<label>` from toggling the checkbox on click.
 
 ---
 
@@ -487,15 +516,16 @@ Previously, practitioner free-text clinical notes were only used for refusal che
 
 ### Document conventions
 - **Page size:** A4 portrait.
-- **Brand colours:** White, Black, Gold `#C3AF88`, Forest `#535B50`, Sage Green `#A7B7A5`, Cloud `#E2E0D9`.
-- **Fonts:** Roboto Medium (headings) / Roboto Regular (body), Arial fallback.
-- **Filename:** `Nof1_HealthAnalysis_{submission_id}_DRAFT.docx` and `Nof1_FormulationSchedule_{submission_id}_DRAFT.xlsx`.
-- **TSI codes:** xlsx only, never docx. Labelled as "W Code".
+- **Brand colours:** White, Black, Gold `#C3AF88`/`#C6AF81`, Forest `#535B50`, Sage Green `#A7B7A5`, Cloud `#E2E0D9`. xlsx uses ARGB constants; HTML/PDF uses hex.
+- **Fonts:** Health Analysis (PDF): Jost (headings) / Source Serif 4 (body), Google Fonts CDN. xlsx: Calibri throughout.
+- **Filename:** `Nof1_HealthAnalysis_{submission_id}_DRAFT.pdf` and `Nof1_FormulationSchedule_{submission_id}_DRAFT.xlsx`.
+- **Health Analysis is now a PDF** (was docx). Generated via Puppeteer from a branded HTML string. Saved as `health-analysis.pdf` in `data/submissions/{id}/`. Download route serves `application/pdf`.
+- **TSI codes:** xlsx only, never PDF. Labelled as "W Code".
 - **No AI/model identifier** in any practitioner-facing document.
-- **Audit Reference:** opaque `XXXX-XXXX-XXXX` (12 hex chars from SHA-256 of audit state). Appears in docx footer only.
-- **Brand band:** pre-composited PNG at `assets/brand/nof1_header_band.png`.
-- **References section:** numbered list in docx, populated from `output.references` (two-pass citation call). Falls back to `evidence_pointer` for older outputs.
-- **Internal taxonomy never in client-facing output** — humanised via `CATEGORY_DISPLAY_NAMES`.
+- **Audit Reference:** opaque `XXXX-XXXX-XXXX` (12 hex chars from SHA-256 of audit state). Appears in PDF footer only.
+- **Logo:** loaded from disk and embedded as base64 data URI in the HTML so Puppeteer's `setContent()` can render it without filesystem access.
+- **References section:** numbered list in PDF, populated from `output.references` (two-pass citation call).
+- **Internal taxonomy never in client-facing output** — humanised via `displayCategory()` (Protocol Translator) and `CATEGORY_DISPLAY_NAMES` (xlsx).
 
 ### Regulatory and audit
 - **Server-side audit log:** `logs/audit.jsonl`, one JSON line per submission. Contains full AuditBlock, audit_reference, outcome, usage. Written by both routes. `logs/` is gitignored.
@@ -550,8 +580,9 @@ Previously, practitioner free-text clinical notes were only used for refusal che
 - **Graceful failure.** Formulation returned even if citation call fails.
 
 ### Document generation
-- **Health Analysis docx.** All sections rendering. Section 4 included/excluded now bullet-list (was array-to-string bug). References section populated with numbered study citations.
-- **Formulation Schedule xlsx.** 5 sheets, brand styling, severity colour-coding.
+- **Health Analysis PDF.** Branded HTML→PDF via Puppeteer. Jost/Source Serif 4 fonts (Google CDN), olive cover band, dynamic section numbering, base64 logo. Section 04 reads from `proposed_formulation[]` (Bug 2 fix). References section populated with numbered study citations.
+- **Formulation Schedule xlsx.** 5 sheets, Calibri font, olive/gold design-token palette, freeze panes, category band rows, priority/severity pills, `█`-bar Summary sheet. `deriveSummary()` is the single source of truth for all granule totals.
+- **Server-side generation** (`lib/generate-documents.ts`) also produces PDF now; download route serves `application/pdf`.
 - **Audit Reference.** Deterministic, opaque, consistent between route and generator.
 
 ### Infrastructure

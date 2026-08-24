@@ -11,6 +11,9 @@ export interface AuditLogEntry {
     pod_budget_used?: number;
     ingredient_count?: number;
     stop_reason?: string | null;
+    /** Overfill retry backstop (see lib/underfill-retry.ts) — omitted when ceiling wasn't breached. */
+    overfill_retry_attempted?: boolean;
+    overfill_retry_outcome?: 'succeeded' | 'still_overfilled' | 'retry_failed';
     /** Underfill retry backstop (see lib/underfill-retry.ts) — omitted when the floor didn't apply. */
     underfill_retry_attempted?: boolean;
     underfill_retry_outcome?: 'succeeded' | 'still_underfilled' | 'retry_failed';

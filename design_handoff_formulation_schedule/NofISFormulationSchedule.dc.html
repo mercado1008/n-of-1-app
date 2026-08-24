@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..600&display=swap" rel="stylesheet" />
+<style>
+  doc-page:not(:defined){visibility:hidden}
+  body{margin:0}
+  a{color:#535B50}
+  a:hover{color:#C6AF81}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  *{animation-delay:-99s !important;animation-duration:.001s !important;animation-iteration-count:1 !important;animation-fill-mode:both !important;animation-play-state:running !important;transition-duration:0s !important}
+</style>
+<script src="./doc-page.js"></script>
+</helmet>
+<doc-page orientation="landscape" margin="0.45in">
+
+<div slot="header" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:6px;border-bottom:1px solid #DEDCD2;font-family:Jost,sans-serif;font-size:7pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81">
+  <div style="color:#535B50;font-weight:500">N of 1</div>
+  <div>Recommended Formulation Schedule &nbsp;·&nbsp; Practitioner Decision Support</div>
+  <div>SUB-2026-682</div>
+</div>
+
+<div slot="footer" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:6px;border-top:1px solid #DEDCD2;font-family:Jost,sans-serif;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#9A9F91">
+  <div>Confidential — practitioner use only</div>
+  <div>Draft — pending practitioner review</div>
+</div>
+
+<div style="font-family:'Source Serif 4',Georgia,serif;color:#23261F;font-size:9pt;line-height:1.5">
+
+  <div style="background:#535B50;margin:12px -0.45in 0;padding:0.34in 0.45in;color:#F4F3EE">
+    <img src="assets/logo.png" alt="N of 1" style="display:block;width:112px;height:auto;margin-bottom:26px" />
+    <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.24em;text-transform:uppercase;color:#C6AF81;margin-bottom:11px">Precision Formulation</div>
+    <h1 style="font-family:Jost,sans-serif;font-weight:300;font-size:26pt;line-height:1.05;letter-spacing:-0.01em;margin:0 0 13px">Recommended Formulation Schedule</h1>
+    <div style="display:flex;flex-wrap:wrap;gap:8px 18px;font-family:Jost,sans-serif;font-size:8.5pt;font-weight:300;color:#D6D8CE">
+      <div>Submission SUB-2026-682</div>
+      <div style="color:#8E9686">|</div>
+      <div>Patient PT-2026-111</div>
+      <div style="color:#8E9686">|</div>
+      <div>22 ingredients · 673 granules · 93.5% of pod budget</div>
+      <div style="color:#8E9686">|</div>
+      <div>Generated 31 July 2026</div>
+    </div>
+  </div>
+
+  <div style="break-inside:avoid;margin:0 -0.45in;padding:13px 0.45in 14px;background:#EFEDE4;border-bottom:1px solid #DEDCD2">
+    <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:6px">
+      <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#C6AF81"></span>
+      <div style="font-family:Jost,sans-serif;font-weight:600;font-size:8pt;letter-spacing:.16em;text-transform:uppercase;color:#535B50">Draft — proposed doses, pending practitioner review</div>
+    </div>
+    <p style="margin:0 0 0 17px;font-size:8.5pt;line-height:1.5;color:#4A4E43;max-width:62em">Companion to the Health Analysis document for this submission. Doses are proposed on genotype evidence only and are not prescribed. The reviewing practitioner is the prescribing clinician of record and exercises independent clinical judgement on every line below.</p>
+  </div>
+
+  <div style="margin-top:22px">
+    <div style="break-inside:avoid;break-after:avoid;display:flex;align-items:baseline;gap:12px;border-bottom:2px solid #535B50;padding-bottom:7px;margin-bottom:5px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:18pt;line-height:1;color:#C6AF81">01</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:13pt;margin:0;color:#2E332A">Formulation</h2>
+      <div style="margin-left:auto;font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#8A8F81">Grouped by category · granule subtotals per group</div>
+    </div>
+
+    <sc-for list="{{ groups }}" as="group" hint-placeholder-count="6">
+      <div style="{{ group.wrapStyle }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:7px 9px;background:#EFEDE4;border-bottom:1px solid #DEDCD2">
+          <div style="font-family:Jost,sans-serif;font-size:8.5pt;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#535B50">{{ group.name }}</div>
+          <div style="display:flex;gap:16px;font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.08em;text-transform:uppercase;color:#8A8F81">
+            <div>{{ group.priority }}</div>
+            <div>{{ group.granules }} granules</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:7.5% 14% 6% 5.5% 8.5% 15% 27.5% 16%;font-family:Jost,sans-serif;font-size:6.5pt;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#F1F0EA;background:#535B50">
+          <div style="padding:6px 7px;border-right:1px solid #6B7266">W Code</div>
+          <div style="padding:6px 7px;border-right:1px solid #6B7266">Common Name</div>
+          <div style="padding:6px 7px;border-right:1px solid #6B7266;text-align:right">Dose</div>
+          <div style="padding:6px 7px;border-right:1px solid #6B7266;text-align:right">Gran.</div>
+          <div style="padding:6px 7px;border-right:1px solid #6B7266">Priority</div>
+          <div style="padding:6px 7px;border-right:1px solid #6B7266">Target Findings</div>
+          <div style="padding:6px 7px;border-right:1px solid #6B7266">Rationale for Practitioner</div>
+          <div style="padding:6px 7px">Cautions</div>
+        </div>
+        <sc-for list="{{ group.rows }}" as="row" hint-placeholder-count="4">
+          <div style="{{ row.gridStyle }}">
+            <div style="padding:7px;border-right:1px solid #EDEBE3;font-family:Jost,sans-serif;font-size:7pt;color:#8A8F81">{{ row.code }}</div>
+            <div style="padding:7px;border-right:1px solid #EDEBE3;font-family:Jost,sans-serif;font-size:8pt;font-weight:500;color:#2E332A;line-height:1.35">{{ row.name }}</div>
+            <div style="padding:7px;border-right:1px solid #EDEBE3;font-family:Jost,sans-serif;font-size:7.5pt;text-align:right;font-variant-numeric:tabular-nums">{{ row.dose }}</div>
+            <div style="padding:7px;border-right:1px solid #EDEBE3;font-family:Jost,sans-serif;font-size:7.5pt;text-align:right;font-variant-numeric:tabular-nums;color:#535B50;font-weight:500">{{ row.granules }}</div>
+            <div style="padding:7px;border-right:1px solid #EDEBE3"><span style="{{ row.pillStyle }}">{{ row.priority }}</span></div>
+            <div style="padding:7px;border-right:1px solid #EDEBE3;font-size:7.5pt;line-height:1.4;color:#5C6155">{{ row.findings }}</div>
+            <div style="padding:7px;border-right:1px solid #EDEBE3;font-size:7.5pt;line-height:1.45">{{ row.rationale }}</div>
+            <div style="padding:7px;font-size:7.5pt;line-height:1.4;color:#7A7F72">{{ row.caution }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+
+    <div style="break-inside:avoid;display:grid;grid-template-columns:7.5% 14% 6% 5.5% 8.5% 15% 27.5% 16%;background:#535B50;color:#F1F0EA;font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.08em;text-transform:uppercase;margin-top:2px">
+      <div style="padding:9px 7px;grid-column:span 3;font-weight:500">Total — 22 ingredients in pod</div>
+      <div style="padding:9px 7px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;color:#E4D6B4;font-size:9pt">673</div>
+      <div style="padding:9px 7px;grid-column:span 4;font-size:7.5pt;color:#C6C9BE;letter-spacing:.04em;text-transform:none">93.5% of pod budget · estimated pod weight 13,016 mg. Doses shown are product weight as supplied; elemental figures for salts appear in the dose adjustment notes.</div>
+    </div>
+  </div>
+
+  <div style="break-before:page;padding-top:6px">
+    <div style="break-inside:avoid;break-after:avoid;display:flex;align-items:baseline;gap:12px;border-bottom:2px solid #535B50;padding-bottom:7px;margin-bottom:12px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:18pt;line-height:1;color:#C6AF81">02</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:13pt;margin:0;color:#2E332A">Dose Adjustments</h2>
+    </div>
+    <p style="margin:0 0 14px;max-width:60em;font-size:9pt">Three doses were adjusted away from their naive genotype-driven target. Each adjustment and its reason is recorded below for practitioner review.</p>
+    <sc-for list="{{ adjustments }}" as="adj" hint-placeholder-count="3">
+      <div style="break-inside:avoid;display:grid;grid-template-columns:210px 1fr 150px;gap:18px;padding:12px 0;border-top:1px solid #E4E2DA">
+        <div>
+          <div style="font-family:Jost,sans-serif;font-size:9pt;font-weight:500;color:#2E332A;line-height:1.35">{{ adj.label }}</div>
+          <div style="margin-top:4px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:6.5pt;color:#9A9F91;word-break:break-all">{{ adj.key }}</div>
+        </div>
+        <div style="font-size:9pt;line-height:1.5">{{ adj.description }}</div>
+        <div style="font-family:Jost,sans-serif;font-size:8.5pt;color:#535B50">{{ adj.ingredient }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="margin-top:30px">
+    <div style="break-inside:avoid;break-after:avoid;display:flex;align-items:baseline;gap:12px;border-bottom:2px solid #535B50;padding-bottom:7px;margin-bottom:12px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:18pt;line-height:1;color:#C6AF81">03</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:13pt;margin:0;color:#2E332A">Standalone Recommendations</h2>
+    </div>
+    <p style="margin:0 0 14px;max-width:60em;font-size:9pt">Recommendations that fall outside the pod — either unavailable in the Ingredients Library in granule format, or deliberately held out pending clinical confirmation.</p>
+    <sc-for list="{{ standalones }}" as="item" hint-placeholder-count="3">
+      <div style="break-inside:avoid;display:grid;grid-template-columns:1fr 78px 1fr;gap:18px;padding:12px 0;border-top:1px solid #E4E2DA">
+        <div style="font-size:9pt;line-height:1.5">{{ item.recommendation }}</div>
+        <div><span style="{{ item.pillStyle }}">{{ item.inLibraryLabel }}</span></div>
+        <div style="font-size:9pt;line-height:1.5;color:#5C6155">{{ item.note }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="break-before:page;padding-top:6px">
+    <div style="break-inside:avoid;break-after:avoid;display:flex;align-items:baseline;gap:12px;border-bottom:2px solid #535B50;padding-bottom:7px;margin-bottom:12px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:18pt;line-height:1;color:#C6AF81">04</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:13pt;margin:0;color:#2E332A">Contraindications and Interactions</h2>
+    </div>
+    <p style="margin:0 0 12px;max-width:60em;font-size:9pt">Four flags raised against the recommended formulation, ordered by severity. These mirror the contraindication section of the Health Analysis document.</p>
+    <div style="display:grid;grid-template-columns:11% 22% 45% 22%;font-family:Jost,sans-serif;font-size:6.5pt;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#F1F0EA;background:#535B50">
+      <div style="padding:7px 8px;border-right:1px solid #6B7266">Severity</div>
+      <div style="padding:7px 8px;border-right:1px solid #6B7266">Flag</div>
+      <div style="padding:7px 8px;border-right:1px solid #6B7266">Description</div>
+      <div style="padding:7px 8px">Affected Ingredient(s)</div>
+    </div>
+    <sc-for list="{{ contras }}" as="c" hint-placeholder-count="4">
+      <div style="{{ c.gridStyle }}">
+        <div style="padding:9px 8px;border-right:1px solid #EDEBE3"><span style="{{ c.pillStyle }}">{{ c.severity }}</span></div>
+        <div style="padding:9px 8px;border-right:1px solid #EDEBE3">
+          <div style="font-family:Jost,sans-serif;font-size:8.5pt;font-weight:500;color:#2E332A;line-height:1.35">{{ c.label }}</div>
+          <div style="margin-top:4px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:6.5pt;color:#9A9F91;word-break:break-all">{{ c.key }}</div>
+        </div>
+        <div style="padding:9px 8px;border-right:1px solid #EDEBE3;font-size:8.5pt;line-height:1.45">{{ c.description }}</div>
+        <div style="padding:9px 8px;font-family:Jost,sans-serif;font-size:8pt;color:#535B50;line-height:1.45">{{ c.ingredients }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="margin-top:30px">
+    <div style="break-inside:avoid;break-after:avoid;display:flex;align-items:baseline;gap:12px;border-bottom:2px solid #535B50;padding-bottom:7px;margin-bottom:14px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:18pt;line-height:1;color:#C6AF81">05</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:13pt;margin:0;color:#2E332A">Summary</h2>
+    </div>
+
+    <div style="font-family:Jost,sans-serif;font-size:7.5pt;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#8A8F81;margin-bottom:10px">Headline numbers</div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#DEDCD2;border:1px solid #DEDCD2;margin-bottom:24px">
+      <sc-for list="{{ headline }}" as="h" hint-placeholder-count="9">
+        <div style="background:#FFFFFF;padding:11px 13px">
+          <div style="font-family:Jost,sans-serif;font-size:7pt;letter-spacing:.13em;text-transform:uppercase;color:#8A8F81;margin-bottom:5px">{{ h.label }}</div>
+          <div style="{{ h.valueStyle }}">{{ h.value }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="font-family:Jost,sans-serif;font-size:7.5pt;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#8A8F81;margin-bottom:10px">Granule budget by category</div>
+    <div style="break-inside:avoid;max-width:660px">
+      <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="6">
+        <div style="display:grid;grid-template-columns:250px 46px 1fr;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid #EDEBE3">
+          <div style="font-family:Jost,sans-serif;font-size:8.5pt;color:#2E332A">{{ cat.name }} <span style="color:#9A9F91;font-size:7.5pt">{{ cat.priority }}</span></div>
+          <div style="font-family:Jost,sans-serif;font-size:8.5pt;text-align:right;font-variant-numeric:tabular-nums;color:#535B50;font-weight:500">{{ cat.granules }}</div>
+          <div style="height:8px;background:#EFEDE4"><div style="{{ cat.barStyle }}"></div></div>
+        </div>
+      </sc-for>
+      <div style="display:grid;grid-template-columns:250px 46px 1fr;align-items:center;gap:12px;padding:9px 0;border-top:2px solid #535B50;margin-top:3px">
+        <div style="font-family:Jost,sans-serif;font-size:8.5pt;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#535B50">Plan total</div>
+        <div style="font-family:Jost,sans-serif;font-size:9.5pt;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:#535B50">673</div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="break-inside:avoid;margin-top:26px;padding-top:13px;border-top:2px solid #535B50">
+    <p style="margin:0 0 8px;font-family:Jost,sans-serif;font-size:8.5pt;font-weight:500;color:#535B50">Patients should not act on the contents of this schedule without the direct guidance of their treating practitioner.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:5px 18px;font-family:Jost,sans-serif;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#9A9F91">
+      <div>Submission SUB-2026-682</div>
+      <div>Generated 31 July 2026, 4:01 pm</div>
+      <div>Audit reference 2B6D-054F-8F67</div>
+      <div>Companion document — Health Analysis</div>
+    </div>
+  </div>
+
+</div>
+</doc-page>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ING = [
+  ['W030027000','Calcium folinate (Folinic acid)','547 mcg',3,'MODERATE','B-Vitamins / Methylation','MTHFR C677T AG, SLC19A1 G80A TC, MTHFD1 G1958A AG','Folinic acid provides a bioavailable reduced folate suitable for the patient\u2019s SLC19A1 slow transporter, MTHFR slow variant, and MTHFD1 slow variant — avoiding unmetabolised folic acid. The practitioner may wish to titrate based on future homocysteine and MMA testing.','AUST L limit is 500 mcg folinic acid per daily dose (equivalent to 547 mcg calcium folinate). Reassess if homocysteine trends below 5 umol/L.'],
+  ['W030008000','Methylcobalamin (Vitamin B12)','500 mcg',2,'STANDARD','B-Vitamins / Methylation','MTR A2756G AA, MTRR G66A AG, TCN2 c.776G>C GC','Bioavailable methylated B12 supports slow MTR/MTRR and reduced TCN2 binding. Conservative dose selected in the absence of measured B12/MMA.','The practitioner may wish to consider hydroxocobalamin if methyl-donor loading is not tolerated.'],
+  ['W030011000','Riboflavin (Vitamin B2)','30 mg',3,'STANDARD','B-Vitamins / Methylation','MTHFR C677T AG, MAOA T941G TT, GSR -386 TT fast','Riboflavin is a cofactor for MTHFR (stabilises variant), MAOA, MAOB, and GSR — several of which are variant in this genotype. Moderate dose supports all four axes simultaneously.','May transiently discolour urine (harmless).'],
+  ['W030012000','Vitamin B6 (Pyridoxal-5-phosphate)','15 mg',2,'MODERATE','B-Vitamins / Methylation','TPH2 slow, DAO slow, MTHFR slow','P5P supports DDC (serotonin/dopamine synthesis), CBS, and HDC pathways. Conservative dose reflects TGA cautions and slow MAOA + slow TPH2 background.','TGA warning applies at >10 mg pyridoxine equivalents per day; monitor for peripheral neuropathy symptoms with prolonged use.'],
+  ['W030002000','Thiamine (Vitamin B1)','25 mg',3,'STANDARD','B-Vitamins / Methylation','Methylation-impaired genotype background','General B-vitamin cofactor support alongside the activated B-vitamin stack; relevant to aldehyde metabolism context.','Excreted rapidly; no significant safety concern at this dose.'],
+  ['W030003000','Nicotinamide (Vitamin B3)','100 mg',10,'STANDARD','B-Vitamins / Methylation','MTRR G66A AG, GSR fast, CAT mixed','NAD+/NADPH cofactor for MTRR, GSR, CAT, and other redox enzymes; methylation-cycle support in nicotinamide form (not niacin) to avoid flushing and lipid-modifying effects.','Nicotinamide form does not cause flushing; separate from lipid-modifying niacin use.'],
+  ['W030004000','Pantothenic acid (Vitamin B5)','100 mg',19,'STANDARD','B-Vitamins / Methylation','NAT2 slow haplotype','B5 is a cofactor for NAT2 acetylation and general acyl-CoA metabolism — supports the slow NAT2 acetylator haplotype.','Well tolerated at this dose.'],
+  ['W030019000','Choline bitartrate','300 mg',42,'STANDARD','B-Vitamins / Methylation','MTHFD1 G1958A AG, BHMT G716A GG','Supports MTHFD1-slow and BHMT-slow genotype where dietary choline demand rises. Choline and folate have an inverse relationship; conservation of folate is supported by choline sufficiency.','Fishy body odour is uncommon at this dose but possible; reduce if symptomatic.'],
+  ['W040008000','Zinc citrate','46.7 mg',8,'STANDARD','Minerals','BHMT slow, MTR slow context','Zinc is a BHMT and MTR cofactor and supports immune resilience. Dose kept conservative to preserve copper balance in the absence of Cu:Zn biomarker data.','Long-term zinc use may lower copper — reassess Cu:Zn if extended beyond 3 months.'],
+  ['W040002000','Magnesium glycinate','855 mg',100,'STANDARD','Minerals','COMT intermediate haplotype, MAOA slow','Magnesium is the COMT cofactor and supports nervous system and cardiovascular function. Dose reduced from a clinical target of ~400 mg elemental to 100 mg elemental to fit the pod budget; the practitioner may wish to consider a standalone magnesium top-up if clinically indicated.','Well tolerated; dose-reduced for pod-fit reasons rather than clinical concern.'],
+  ['W040004000','Selenium (as selenomethionine)','124.19 mcg',1,'MODERATE','Minerals','GPX4 C718T TT','Selenium is the GPX4 cofactor; the patient carries the GPX4 TT contextual variant. Conservative dose (well below the 150 mcg AUST L cap and the GP-class 100 mcg elemental caution) selected in the absence of red-cell selenium measurement.','Selenosis is cumulative; practitioner may wish to measure red-cell selenium before extending beyond 3 months.'],
+  ['W140010000','N-acetylcysteine (NAC)','500 mg',100,'STANDARD','Antioxidant / Redox','GSTA1 slow, SOD2 slow, PON1 mixed','Glutathione precursor supporting GSTA1-slow, SOD2-slow, and PON1 intermediate genotype. Also supports mucous membranes and general redox buffering.','May cause mild GI upset; separate from mineral supplements by 1 hour if practical.'],
+  ['W140016000','L-glutathione (S-acetyl form)','250 mg',45,'STANDARD','Antioxidant / Redox','GSR fast, GGT1 fast, GSTA1 slow','Direct glutathione support complements NAC to buffer GSR/GGT1-fast turnover and SOD2-slow oxidative headroom.','S-acetyl form is stable and orally bioavailable.'],
+  ['W030020000','Alpha-lipoic acid','100 mg',20,'STANDARD','Antioxidant / Redox','SOD2 slow, Antioxidant susceptibility','Recycles glutathione, vitamin C and vitamin E; supports mitochondrial redox in SOD2-slow context.','May lower blood glucose slightly.'],
+  ['W010031000','Quercetin','200 mg',18,'STANDARD','Antioxidant / Redox','DAO slow, CYP1B1 fast, PON1 mixed','Mast-cell and DAO-adjacent stabilisation for the slow DAO haplotype; also modulates CYP1B1 activity relevant to hormone metabolism.','May reduce methotrexate clearance if used concurrently.'],
+  ['W010019000','Resveratrol','100 mg',10,'STANDARD','Antioxidant / Redox','CYP1B1 fast, SOD2 slow','Nrf2/Phase II activator and mild CYP1B1 modulator; supports the oestrogen metabolism and antioxidant axes.','May potentiate anticoagulant effects.'],
+  ['W010013000','Milk thistle (silymarin)','150 mg',15,'STANDARD','Antioxidant / Redox','GSTA1 slow, CYP1B1 fast','Nrf2-mediated Phase II support given GSTA1-slow and CYP1B1-fast profile.','May affect glucuronidation of certain medications.'],
+  ['W030001000','Vitamin C (ascorbic acid)','500 mg',50,'STANDARD','Vitamin D / C / Neurotransmitter','DAO slow, GGT1 fast, PON1 mixed','Vitamin C is a DAO/HDC axis cofactor and general antioxidant; particularly relevant with the DAO slow haplotype and fast GGT1.','Split dose if GI-sensitive.'],
+  ['W030005000','Vitamin D3 (colecalciferol)','25 mcg',2,'STANDARD','Vitamin D / C / Neurotransmitter','TPH2 slow','Vitamin D3 (1000 IU) transcriptionally activates TPH2 in the brain — directly relevant to the TPH2-slow genotype. Also supports general immune and skeletal health.','The practitioner may wish to confirm 25-OH vitamin D status if not already tested.'],
+  ['W030021000','Coenzyme Q10','100 mg',100,'STANDARD','Mitochondrial / Cardiovascular','SOD2 slow','Mitochondrial support relevant to SOD2-slow context and general cardiovascular resilience.','May reduce warfarin effect — practitioner review before combining with anticoagulants.'],
+  ['W140019000','DIM (3,3\u2032-diindolylmethane)','100 mg',20,'STANDARD','Hormone Metabolism','CYP1B1 fast, COMT intermediate','Supports oestrogen metabolism by promoting 2-hydroxy pathway; relevant to CYP1B1-fast + intermediate COMT genotype.','May interact with medications metabolised by CYP enzymes.'],
+  ['W040012000','Calcium D-glucarate','500 mg',100,'STANDARD','Hormone Metabolism','CYP1B1 fast, GSTA1 slow','Inhibits \u03b2-glucuronidase and supports oestrogen and xenobiotic clearance — complements DIM in the hormone metabolism axis.','Well tolerated at this dose.'],
+];
+
+const CAT_PRIORITY = {
+  'B-Vitamins / Methylation': 'primary',
+  'Antioxidant / Redox': 'primary',
+  'Hormone Metabolism': 'secondary',
+  'Minerals': 'secondary',
+  'Mitochondrial / Cardiovascular': 'secondary',
+  'Vitamin D / C / Neurotransmitter': 'supportive',
+};
+
+const ORDER = ['B-Vitamins / Methylation','Minerals','Antioxidant / Redox','Vitamin D / C / Neurotransmitter','Mitochondrial / Cardiovascular','Hormone Metabolism'];
+
+const ADJUSTMENTS = [
+  ['Dose reduced for pod budget','dose_reduction_for_pod_budget','Magnesium glycinate was reduced from a clinical target of 400 mg elemental (approximately 3420 mg glycinate salt) to 100 mg elemental (855 mg salt) to fit the granule budget. The practitioner may wish to consider a separately dosed magnesium glycinate top-up outside the pod (200\u2013300 mg additional elemental) if clinically indicated by muscle tension, sleep, or menstrual symptoms.','Magnesium glycinate'],
+  ['Conservative dose — missing biomarker','conservative_dose_for_missing_biomarker','Selenium (as selenomethionine) is dosed at 50 mcg elemental — well below the GP-class 100 mcg conservative ceiling — because red-cell selenium was not measured in this GP-only submission. Practitioner may wish to titrate upward after biomarker confirmation.','Selenium (Selenomethionine)'],
+  ['Conservative dose — regulatory and MAOA context','conservative_dose_for_regulatory_and_MAOA_context','Vitamin B6 (P5P) is dosed at 15 mg total (delivering approximately 10 mg pyridoxine equivalents) to remain below the TGA warning threshold and to reflect the slow MAOA and slow TPH2 background — reducing risk of over-stimulating downstream monoamine synthesis.','Vitamin B6 (P5P)'],
+];
+
+const STANDALONES = [
+  ['Practitioner discussion regarding dietary iron sources (red meat, legumes, dark leafy greens with vitamin C) and confirmation of iron studies (ferritin, transferrin saturation) before considering supplemental iron. This supports the slow DRD2 + fast SLC6A3 dopamine pathway context.', false, 'Iron is not included in the pod because iron studies are not available on this GP-only submission; adding iron blindly is not clinically appropriate.'],
+  ['Practitioner discussion regarding omega-3 EPA/DHA (fish oil 1\u20132 g/day) for general anti-inflammatory and neurological support, given the slow serotonergic and mixed \u03b2-adrenergic receptor genotype.', false, 'Fish oil is not currently in the N of 1 Ingredients Library as a granule-format product; the practitioner may source a separate high-quality EPA/DHA supplement.'],
+  ['5-HTP (excluded from pod: deprioritised)', true, '5-HTP is deprioritised in this formulation due to the patient\u2019s slow MAOA (T941G TT) and unknown medication status. The practitioner may wish to consider 5-HTP separately only after confirming no concurrent serotonergic pharmaceuticals (SSRIs, SNRIs, MAOIs, tramadol, triptans) and evaluating symptomatic serotonin need.'],
+];
+
+const CONTRAS = [
+  ['Informational','Medication context not provided','medication_context_not_provided','No current medications were listed in the practitioner\u2019s clinical notes. Standard contraindication checks were run against the recommended formulation itself. The practitioner may wish to review any concurrent SSRIs/SNRIs (relevance to serotonin support), anticoagulants (relevance to CoQ10, resveratrol, quercetin), and glucose-lowering agents (relevance to alpha-lipoic acid) before initiating.','R,S-alpha lipoic acid, Resveratrol, Quercetin, Coenzyme Q10'],
+  ['Monitor','Vitamin B6 TGA warning threshold','vitamin_b6_TGA_warning_threshold','The proposed P5P dose delivers ~10 mg pyridoxine equivalents per day — at the TGA warning threshold. The practitioner may wish to advise the patient to report any tingling, burning, or numbness immediately.','Vitamin B6 (P5P)'],
+  ['Monitor','Zinc\u2013copper ratio monitoring','zinc_copper_ratio_monitoring','Zinc supplementation (15 mg elemental) is conservative but the practitioner may wish to monitor Cu:Zn ratio if the formulation is extended beyond 3 months.','Zinc citrate'],
+  ['Low in context','Selenium cumulative toxicity context','selenium_cumulative_toxicity_context','Selenomethionine is dosed at 50 mcg elemental — well below toxicity thresholds. The practitioner may wish to consider red-cell selenium testing if extending use.','Selenium (Selenomethionine)'],
+];
+
+const HEADLINE = [
+  ['Total granules (route-computed)','673',true],
+  ['Pod budget utilisation','93.5%',true],
+  ['Pod weight (estimated)','13,016 mg',true],
+  ['Ingredients in pod','22',false],
+  ['Items excluded from pod','1',false],
+  ['Standalone recommendations','2',false],
+  ['Recognised clinical patterns','6',false],
+  ['Binding exclusions applied','1',false],
+  ['Contraindication flags raised','4',false],
+];
+
+const PILL = 'display:inline-block;font-family:Jost,sans-serif;font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;';
+
+class Component extends DCLogic {
+  pill(v) {
+    const k = String(v).toLowerCase();
+    if (k === 'moderate' || k === 'monitor' || k === 'yes') return PILL + 'background:#F2EADA;color:#7A6A3E;';
+    if (k === 'high') return PILL + 'background:#535B50;color:#F4F3EE;';
+    return PILL + 'background:#EDEDE4;color:#535B50;';
+  }
+
+  renderVals() {
+    const catTotals = {};
+    ING.forEach((r) => { catTotals[r[5]] = (catTotals[r[5]] || 0) + r[3]; });
+    const maxCat = Math.max.apply(null, ORDER.map((c) => catTotals[c]));
+
+    const zebra = (i, cols) =>
+      'display:grid;grid-template-columns:' + cols + ';align-items:start;border-bottom:1px solid #E4E2DA;break-inside:avoid;' +
+      (i % 2 ? 'background:#FAFAF7;' : 'background:#FFFFFF;');
+
+    return {
+      groups: ORDER.map((cat) => ({
+        wrapStyle: 'break-inside:avoid;margin-bottom:9px',
+        name: cat,
+        priority: CAT_PRIORITY[cat],
+        granules: catTotals[cat],
+        rows: ING.filter((r) => r[5] === cat).map((r, i) => ({
+          gridStyle: zebra(i, '7.5% 14% 6% 5.5% 8.5% 15% 27.5% 16%'),
+          code: r[0], name: r[1], dose: r[2], granules: r[3],
+          priority: r[4], pillStyle: this.pill(r[4]),
+          findings: r[6], rationale: r[7], caution: r[8],
+        })),
+      })),
+      adjustments: ADJUSTMENTS.map((a) => ({ label: a[0], key: a[1], description: a[2], ingredient: a[3] })),
+      standalones: STANDALONES.map((s) => ({
+        recommendation: s[0],
+        inLibraryLabel: s[1] ? 'In library' : 'Not in library',
+        pillStyle: this.pill(s[1] ? 'yes' : 'no'),
+        note: s[2],
+      })),
+      contras: CONTRAS.map((c, i) => ({
+        gridStyle: zebra(i, '11% 22% 45% 22%'),
+        severity: c[0], pillStyle: this.pill(c[0]),
+        label: c[1], key: c[2], description: c[3], ingredients: c[4],
+      })),
+      headline: HEADLINE.map((h) => ({
+        label: h[0],
+        value: h[1],
+        valueStyle: h[2]
+          ? 'font-family:Jost,sans-serif;font-size:17pt;font-weight:300;color:#535B50;font-variant-numeric:tabular-nums;line-height:1'
+          : 'font-family:Jost,sans-serif;font-size:12pt;font-weight:400;color:#2E332A;font-variant-numeric:tabular-nums;line-height:1',
+      })),
+      categories: ORDER.map((c) => ({
+        name: c,
+        priority: '(' + CAT_PRIORITY[c] + ')',
+        granules: catTotals[c],
+        barStyle: 'height:8px;background:#C6AF81;width:' + Math.round((catTotals[c] / maxCat) * 100) + '%',
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

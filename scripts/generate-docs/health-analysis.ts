@@ -58,6 +58,7 @@ import type {
   RouteAuditBlock,
   RouteGranuleVerification,
 } from './types';
+import type { FormulationSummary } from './derive-summary';
 
 // ===========================================================================
 // REUSABLE PARAGRAPH AND TABLE FACTORIES
@@ -640,11 +641,26 @@ function buildSection4(output: AnalysisOutput): Array<Paragraph | Table> {
     elements.push(subsectionHeading('Overall strategy'));
     elements.push(bodyParagraph(fl.overall_strategy));
   }
-  const included: unknown = fl.what_was_intentionally_included_and_why;
-  if (Array.isArray(included) && included.length > 0) {
+
+  // Intentionally included — rendered from proposed_formulation structured data,
+  // NOT from formulation_logic.what_was_intentionally_included_and_why (free text).
+  // Bug 2 root cause: Claude's free text stated an incorrect elemental dose for
+  // selenium ("100 mcg elemental") that contradicted its own contraindications
+  // section. Rendering proposed_dose + dose_unit directly matches the xlsx
+  // Formulation sheet (column C) and removes the free-text ambiguity.
+  const formulation = output.proposed_formulation ?? [];
+  if (formulation.length > 0) {
     elements.push(subsectionHeading('What was intentionally included, and why'));
-    for (const item of included) {
-      elements.push(bulletParagraph(typeof item === 'string' ? item : String(item)));
+    for (const ing of formulation) {
+      const name = ing.common_name ?? ing.tsi_code ?? '—';
+      const dose =
+        ing.proposed_dose != null && ing.dose_unit
+          ? ` — ${ing.proposed_dose} ${ing.dose_unit}`
+          : '';
+      const rationale = ing.rationale_for_practitioner
+        ? `: ${ing.rationale_for_practitioner}`
+        : '';
+      elements.push(bulletParagraph(`${name}${dose}${rationale}`));
     }
   }
 
@@ -1151,6 +1167,13 @@ export interface GenerateHealthAnalysisOptions {
   tsiResolver?: TsiResolver;
   // Optional: route's granule verification block (reserved for future use).
   granuleVerification?: RouteGranuleVerification;
+  /**
+   * Pre-computed formulation summary from deriveSummary(). Passed by the
+   * orchestrator (scripts/generate-docs/index.ts) so both documents share the
+   * same derived data object. Used in future sections that surface granule
+   * totals or category breakdowns; not yet rendered in any current section.
+   */
+  formulationSummary?: FormulationSummary;
 }
 
 /**

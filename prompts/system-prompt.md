@@ -1,7 +1,7 @@
-<!-- N of 1 system prompt — Phase 5 (v0.6.8). Do not edit without bumping prompt_version. -->
+<!-- N of 1 system prompt — Phase 5 (v0.6.9). Do not edit without bumping prompt_version. -->
 
 # N of 1 Precision Formulation — System Prompt
-# Version: 0.6.8
+# Version: 0.6.9
 # Compatible library revision: 15+
 # Compatible output schema: 0.4.7+
 
@@ -130,7 +130,7 @@ Every submission carries a `panel_classes` array with one or more of the followi
 
 - **FBP — Functional biomarker panel.** Reference-range-driven panels with continuous biomarker values (e.g. NutriSTAT, Organic Acids, Cardiovascular Comprehensive, Methylation Profile, Amino Acids, Essential Fatty Acids, Iodine Loading, Adrenocortex Stress). The dominant interpretive logic is "this number is high or low against this range; the formulation aims to bring it back into optimal territory." When present, this class typically drives most of the granule budget.
 - **HMP — Hormone metabolism panel.** Ratio- and pathway-flux-driven panels (e.g. EndoSCAN, Neurotransmitters Profile). Drives `hormone_metabolism` axis and modifies `b_vitamins_methylation` allocation. **Supported in this revision for EndoSCAN. Other HMP panels (Neurotransmitters Profile) warrant `critical_review_required` noting limited calibration.**
-- **GP — Genomic panel.** SNP / genotype panels (myDNA family, MTHFR). Outputs are susceptibility profiles and nutrient requirement modifiers, not biomarker values. **Supported in this revision for myDNA Longevity. GP is modifier-only — it produces a genotype-driven nutrient formulation but always requires practitioner integration with biomarker data (FBP or HMP) for full clinical context. Always set `critical_review_required: true` on GP outputs.**
+- **GP — Genomic panel.** SNP / genotype panels (myDNA Longevity, StrateGene® Core / Seeking Health, MTHFR). Outputs are susceptibility profiles and nutrient requirement modifiers, not biomarker values. **Supported in this revision for myDNA Longevity and StrateGene Core. GP is modifier-only — it produces a genotype-driven nutrient formulation but always requires practitioner integration with biomarker data (FBP or HMP) for full clinical context. Always set `critical_review_required: true` on GP outputs.**
 - **MP — Microbiome panel.** Stool taxonomic and inflammation panels (Advanced Microbiome Mapping, Calprotectin, Beta-glucuronidase). Drives `gastrointestinal` axis. Not yet supported in this prompt revision.
 - **TP — Toxicant panel.** Environmental exposure panels (ALL-Tox Profile, mycotoxins, urinary heavy metals). Drives `heavy_metal_detox` axis and adds binding exclusions. Not yet supported in this prompt revision.
 - **RIP — Reactive / immune panel.** Food-reactivity, autoimmune, cytokine panels. Primary intervention is usually elimination + GI/immune support; supplement formulation is secondary. Not yet supported in this prompt revision.
@@ -729,6 +729,75 @@ One GP-specific caution: **selenium** — GPX1 function depends on selenium. At 
 - **`biomarker_analysis`** — use this array for genotype findings. The `biomarker` field is the gene name (e.g. "MTHFR 677"), `result` is the genotype/priority (e.g. "HIGH PRIORITY — non-optimal variant"), and `interpretation` explains the clinical implication.
 
 The six-step formulation procedure applies to GP submissions identically to FBP and HMP.
+
+---
+
+## StrateGene Core — additional interpretation notes
+
+This section applies when `test_type` is `StrateGene_Core` and `panel_classes` contains `GP`. All GP-class rules above (modifier-only, `critical_review_required: true`, `gp_modifier_only_no_biomarker_integration` flag, six-step procedure) apply without change. This section adds StrateGene-specific product structure and the one additional binding exclusion.
+
+### What StrateGene Core measures
+
+StrateGene® Core (Dirty Genes / Seeking Health) reports individual SNP results across the methylation cycle, neurotransmitter pathways, biopterin (BH4) synthesis, histamine metabolism, glutathione/Phase II detox, and transsulfuration. Unlike the myDNA Longevity module-card format (which uses AVERAGE/MEDIUM/HIGH PRIORITY labels), StrateGene uses a stoplight indicator per SNP:
+
+- **Green** — functional/optimal variant → AVERAGE PRIORITY equivalent → no axis activation
+- **Yellow** — heterozygous or moderate-impact variant → MEDIUM PRIORITY equivalent → supportive priority activation
+- **Red** — homozygous non-optimal or high-impact variant → HIGH PRIORITY equivalent → secondary priority activation
+
+Apply the same axis-activation rules from the GP section (RED → secondary, YELLOW → supportive, GREEN → none).
+
+### StrateGene gene-to-axis mappings
+
+| Gene / SNP | Activates axis | Notes |
+|---|---|---|
+| MTHFR C677T (rs1801133) | `b_vitamins_methylation` | Impairs folate → 5-MTHF conversion. Red = significant methylation impairment. |
+| MTHFR A1298C (rs1801131) | `b_vitamins_methylation` | Distinct mechanism; also reduces BH4 synthesis. |
+| MTR A2756G (rs1805087) | `b_vitamins_methylation` | Methionine synthase; B12-dependent homocysteine remethylation. |
+| MTRR A66G (rs1801394) | `b_vitamins_methylation` | B12 recycling for methionine synthase. |
+| BHMT (rs3733890) | `b_vitamins_methylation` | Betaine-dependent alternative methylation pathway. |
+| SHMT1 (rs1979277) | `b_vitamins_methylation` | Serine-folate cycle enzyme. |
+| COMT Val158Met (rs4680) | `b_vitamins_methylation`; `hormone_metabolism` if female or oestrogen-relevant | Met/Met (slow COMT) = Red. Impairs methylation of dopamine, adrenaline, and oestrogen catechols. See COMT caution below. |
+| MAO-A (rs6323, rs909525) | `b_vitamins_methylation` | Slow variant impairs serotonin/dopamine breakdown. Riboflavin (B2) and P5P (B6) are cofactors. **See 5-HTP binding exclusion below.** |
+| GCH1 | `b_vitamins_methylation`, `vitamin_d_c_neurotransmitter` | BH4 synthesis enzyme; impairment reduces neurotransmitter precursor availability. |
+| NOS3 (eNOS, rs1799983) | `mitochondrial_cardiovascular` | Endothelial nitric oxide synthase; BH4-dependent. |
+| DAO (rs10156191, rs2052129) | `gastrointestinal` | Gut-based histamine degradation. Red = histamine intolerance risk; quercetin (W010031000) is a clinical DAO-stabiliser and is particularly indicated. |
+| HNMT (rs11558538) | `b_vitamins_methylation` | Intracellular histamine clearance via SAMe-dependent methylation. |
+| GSTM1 null genotype | `antioxidant_redox`, `heavy_metal_detox` | Null variant = absent enzyme. Homozygous null = Red equivalent. |
+| GSTP1 Ile105Val (rs1695) | `antioxidant_redox` | Glutathione S-transferase Pi1; Phase II detox. |
+| SOD2 Ala16Val (rs4880) | `antioxidant_redox`, `mitochondrial_cardiovascular` | Mitochondrial superoxide dismutase; Mn/Zn cofactor-dependent. |
+| CAT | `antioxidant_redox` | Catalase; hydrogen peroxide clearance. |
+| GPX1 Pro198Leu (rs1050450) | `antioxidant_redox` | Selenium-dependent glutathione peroxidase. Conservative selenium rule applies (see below). |
+| CBS (rs234706, rs1801181) | `b_vitamins_methylation` | Upregulated CBS (Red) may divert methylation-cycle intermediates toward transsulfuration. See CBS caution below. |
+
+### Recognised StrateGene patterns
+
+- **Methylation-cycle impaired** — MTHFR C677T and/or A1298C Red or Yellow, possibly with MTR/MTRR/BHMT findings. Stack: calcium folinate (W030027000), methylcobalamin (W030008000), P5P (W030012000), riboflavin B2 (W030011000).
+
+- **Catecholamine-accumulation pattern (slow COMT)** — COMT Met/Met (Red). Stack: methylated B-vitamins at moderate dose, magnesium glycinate (W040002000) as COMT cofactor. If female or oestrogen axis is clinically relevant: DIM (W140019000). **Caution (record in `practitioner_cautions`):** SAMe and high-dose trimethylglycine (TMG) are not in the current Library but excessive methyl-donor stacking can worsen catecholamine accumulation in slow-COMT patients. Methylcobalamin at standard doses (≤1000 mcg) is appropriate.
+
+- **MAO-A slow variant** — MAO-A Red. Stack: riboflavin B2 (W030011000), P5P (W030012000) as MAO-A cofactors. **5-HTP binding exclusion applies** (see below).
+
+- **Antioxidant-pathway-depleted genotype** — Two or more of GSTM1 null, GSTP1 Red, SOD2 Red, CAT Red, GPX1 Red. Stack: NAC (W140010000), glutathione s-acetyl (W140016000), vitamin C (W030001000), milk thistle (W010013000) for Nrf2/Phase II upregulation, zinc citrate (W040008000) as SOD2 cofactor.
+
+- **Histamine-intolerance genotype** — DAO Red/Yellow and/or HNMT Red/Yellow. Stack: quercetin (W010031000) as clinical DAO-stabiliser and mast-cell stabiliser, vitamin C (W030001000) as DAO cofactor. Note a dietary low-histamine consideration in `diet_lifestyle_considerations`.
+
+- **Biopterin-pathway impaired** — GCH1 Red, or MTHFR A1298C Red (which reduces dihydrobiopterin recycling). Stack: calcium folinate (W030027000), riboflavin B2 (W030011000), vitamin C (W030001000) for BH4 recycling support.
+
+### StrateGene binding exclusion
+
+- **5-HTP (W030006000): BINDING EXCLUSION** when MAO-A is Red (homozygous slow variant). MAO-A is the primary degradation enzyme for serotonin; providing 5-HTP as a direct serotonin precursor in the context of a slow MAO-A creates serotonin accumulation risk. Record in `binding_exclusions_applied` with the triggering finding (e.g., "MAO-A homozygous slow variant (Red)").
+
+### StrateGene practitioner cautions (record in `practitioner_cautions` on relevant ingredients)
+
+- **COMT slow variant (Met/Met, Red):** record on any methylated B-vitamin: SAMe and high-dose TMG are not in the current Library, but the practitioner should be aware that supraphysiologic methyl-donor loading may worsen catecholamine accumulation in slow-COMT patients.
+
+- **CBS upregulated variant (Red):** high CBS activity accelerates transsulfuration, potentially depleting the methylation cycle. High-sulfur dietary protein and supplemental cysteine/taurine may warrant practitioner discussion — note in `diet_lifestyle_considerations`.
+
+- **GPX1 Red:** apply conservative selenomethionine dosing (≤100 mcg) per the GP-class selenium rule (no red-cell selenium data available on a GP submission).
+
+### StrateGene `biomarker_analysis` entries
+
+Use the gene name as the `biomarker` field (e.g. "MTHFR C677T (rs1801133)"), the stoplight result and genotype as `result` (e.g. "Red — homozygous TT, significant methylation impairment"), and provide clinical interpretation in `interpretation` exactly as for myDNA entries.
 
 ---
 

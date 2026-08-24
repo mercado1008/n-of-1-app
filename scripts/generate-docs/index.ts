@@ -11,15 +11,17 @@
  *   output = ./generated-docs/
  *
  * Produces:
- *   - Nof1_HealthAnalysis_{submission_id}_DRAFT.docx   (practitioner-facing analysis)
+ *   - Nof1_HealthAnalysis_{submission_id}_DRAFT.pdf    (branded PDF via Puppeteer)
  *   - Nof1_FormulationSchedule_{submission_id}_DRAFT.xlsx (practitioner + dispensary)
  */
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
-import { generateHealthAnalysis, type GenerateHealthAnalysisOptions } from './health-analysis';
+import { buildHealthAnalysisHtml } from './health-analysis-html';
+import { generateHealthAnalysisPdf } from './health-analysis-pdf';
 import { generateFormulationSchedule } from './formulation-schedule';
+import { deriveSummary, type FormulationSummary } from './derive-summary';
 import type { AnalysisOutput, LiveTestOutputFile } from './types';
 
 interface LibraryIngredient {
@@ -113,20 +115,66 @@ async function main(): Promise<void> {
   // Build the TSI → ingredient-name resolver once, used by both generators.
   const tsiResolver = await buildTsiResolver();
 
-  // --- Health Analysis docx ---
-  const docxFilename = `Nof1_HealthAnalysis_${submissionId}_DRAFT.docx`;
-  const docxPath = path.join(outputDir, docxFilename);
+  // Derive the formulation summary once — this is the single source of truth
+  // for both the xlsx Summary sheet and any Health Analysis section that
+  // references granule totals or category breakdowns.
+  // Only computed for formulation outputs with route-computed ingredient data.
+  let formulationSummary: FormulationSummary | undefined;
+  if (
+    output.output_type === 'formulation' &&
+    output.proposed_formulation &&
+    wrapper.granule_verification?.computed_per_ingredient
+  ) {
+    try {
+      formulationSummary = deriveSummary(
+        output.proposed_formulation,
+        wrapper.granule_verification.computed_per_ingredient,
+      );
+      console.log(
+        `  deriveSummary: ${formulationSummary.ingredientCount} ingredients, ` +
+        `${formulationSummary.totalGranules} granules, ` +
+        `${formulationSummary.byCategory.length} categories`,
+      );
+    } catch (err) {
+      console.warn(`  ⚠  deriveSummary failed (Summary sheet will fall back): ${(err as Error).message}`);
+    }
+  }
+
+  // --- Health Analysis PDF ---
+  const pdfFilename = `Nof1_HealthAnalysis_${submissionId}_DRAFT.pdf`;
+  const pdfPath = path.join(outputDir, pdfFilename);
+
+  // Load logo as base64 — embedded into the HTML so Puppeteer's setContent()
+  // can render it without filesystem access.
+  let logoBase64: string | undefined;
+  let logoMimeType = 'image/png';
+  const logoCandidates = [
+    path.join(process.cwd(), 'design_handoff_health_analysis', 'assets', 'logo.png'),
+    path.join(process.cwd(), 'assets', 'brand', 'nof1_logo_header.jpg'),
+  ];
+  for (const candidate of logoCandidates) {
+    try {
+      const raw = await readFile(candidate);
+      logoBase64 = raw.toString('base64');
+      logoMimeType = candidate.endsWith('.jpg') || candidate.endsWith('.jpeg') ? 'image/jpeg' : 'image/png';
+      break;
+    } catch { /* try next */ }
+  }
+  if (!logoBase64) console.log('  (No logo file found — cover band will use text fallback)');
 
   console.log(`Generating Health Analysis...`);
-  const docxBuffer = await generateHealthAnalysis({
+  const html = buildHealthAnalysisHtml({
     output,
-    requestMetadata: requestMetadata as GenerateHealthAnalysisOptions['requestMetadata'],
     routeAudit: wrapper.audit,
-    granuleVerification: wrapper.granule_verification,
+    requestMetadata,
+    logoBase64,
+    logoMimeType,
     tsiResolver,
+    // auditReference not computed here — submission_id used as fallback
   });
-  await writeFile(docxPath, docxBuffer);
-  console.log(`  → ${docxPath} (${(docxBuffer.length / 1024).toFixed(1)} KB)`);
+  const pdfBuffer = await generateHealthAnalysisPdf({ html });
+  await writeFile(pdfPath, pdfBuffer);
+  console.log(`  → ${pdfPath} (${(pdfBuffer.length / 1024).toFixed(1)} KB)`);
 
   // --- Recommended Formulation Schedule xlsx ---
   const xlsxFilename = `Nof1_FormulationSchedule_${submissionId}_DRAFT.xlsx`;
@@ -138,6 +186,7 @@ async function main(): Promise<void> {
     granuleVerification: wrapper.granule_verification,
     routeAudit: wrapper.audit,
     tsiResolver,
+    formulationSummary,
   });
   await writeFile(xlsxPath, xlsxBuffer);
   console.log(`  → ${xlsxPath} (${(xlsxBuffer.length / 1024).toFixed(1)} KB)`);

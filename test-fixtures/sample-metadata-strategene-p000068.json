@@ -1,0 +1,12 @@
+{
+  "submission_id": "SUB-2026-007",
+  "practitioner_id": "P001-NATUROPATH",
+  "practitioner_type": "naturopath",
+  "patient_pseudonym": "PT-2026-007",
+  "patient_age_years": 38,
+  "patient_sex_assigned_at_birth": "female",
+  "test_type": "StrateGene_Core",
+  "test_lab_id": "SG-2026-0041",
+  "test_collection_date": "2026-07-15",
+  "panel_classes": ["GP"]
+}

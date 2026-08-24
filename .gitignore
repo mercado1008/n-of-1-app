@@ -39,5 +39,27 @@ next-env.d.ts
 /logs/
 /data/submissions/
 
+# Live-fire output files (per-run artefacts)
+live-test-output*.json
+live-test-error*.json
+
+# Generated documents (per-run output, not source)
+/generated-docs/*.docx
+/generated-docs/*.xlsx
+/generated-docs/*.pdf
+
+# TGA ARTG export (raw source data, re-generate candidates.json from this)
+/data/artg-export.xlsx
+/data/artg-export-*.xlsx
+
+# Derived ARTG alias report (build artefact)
+artg-alias-report.json
+
+# Source Excel workbooks — large, not needed at runtime (rebuild library with build:library script)
+/data/library-built/*.xlsx
+
+# candidates.json IS tracked — it is the deployed product database
+# To regenerate: npx tsx scripts/ingest-artg-export.ts data/artg-export.xlsx
+
 # Office temp/lock files created when documents are open
 generated-docs/~$*

@@ -1,0 +1,959 @@
+[
+  {
+    "artgId": "100001",
+    "productName": "BiQ10 150",
+    "sponsor": "BioCeuticals",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030021000",
+        "moiety": "Coenzyme Q10",
+        "amount": 150,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100002",
+    "productName": "Vitamin D3 1000IU",
+    "sponsor": "Blackmores",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030005000",
+        "moiety": "Vitamin D3",
+        "amount": 25,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100003",
+    "productName": "Ultra Muscleze",
+    "sponsor": "Metagenics",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W040003000",
+        "moiety": "Magnesium (elemental)",
+        "amount": 300,
+        "unit": "mg"
+      },
+      {
+        "libraryId": "W140015000",
+        "moiety": "Zinc (elemental)",
+        "amount": 5,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100004",
+    "productName": "Se 200",
+    "sponsor": "Orthoplex",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W040004000",
+        "moiety": "Selenium (elemental)",
+        "amount": 200,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100005",
+    "productName": "P5P B6 40mg",
+    "sponsor": "Bioceuticals",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030012000",
+        "moiety": "Pyridoxine (vitamin B6)",
+        "amount": 40,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100006",
+    "productName": "Activated B Complex",
+    "sponsor": "BioCeuticals",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030012000",
+        "moiety": "Pyridoxine (vitamin B6)",
+        "amount": 25,
+        "unit": "mg"
+      },
+      {
+        "libraryId": "W030008000",
+        "moiety": "Vitamin B12",
+        "amount": 1000,
+        "unit": "mcg"
+      },
+      {
+        "libraryId": "W030011000",
+        "moiety": "Vitamin B2",
+        "amount": 10,
+        "unit": "mg"
+      },
+      {
+        "libraryId": "W030002000",
+        "moiety": "Vitamin B1",
+        "amount": 25,
+        "unit": "mg"
+      },
+      {
+        "libraryId": "W030003000",
+        "moiety": "Vitamin B3",
+        "amount": 50,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100007",
+    "productName": "Methyl Folate 500",
+    "sponsor": "Pure Encapsulations",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030009000",
+        "moiety": "Levomefolic acid",
+        "amount": 500,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100008",
+    "productName": "Vitamin C 1000",
+    "sponsor": "Nature's Way",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030001000",
+        "moiety": "Vitamin C",
+        "amount": 1000,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100010",
+    "productName": "Turmeric 15000",
+    "sponsor": "Bioglan",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W010029000",
+        "moiety": "Turmeric (Curcumin)",
+        "amount": 750,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100011",
+    "productName": "Ashwagandha KSM-66",
+    "sponsor": "Musashi",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W010003000",
+        "moiety": "Ashwagandha",
+        "amount": 300,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100012",
+    "productName": "Magnesium Glycinate 150",
+    "sponsor": "BioMedica",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W040003000",
+        "moiety": "Magnesium (elemental)",
+        "amount": 150,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100013",
+    "productName": "Berberine 500",
+    "sponsor": "Orthoplex",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W010026000",
+        "moiety": "Berberine HCL (Indian Barberry)",
+        "amount": 500,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100014",
+    "productName": "Alpha Lipoic Acid 300",
+    "sponsor": "Bioglan",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030020000",
+        "moiety": "R,S-alpha lipoic acid",
+        "amount": 300,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100015",
+    "productName": "Multi B Stress Formula",
+    "sponsor": "Blackmores",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030011000",
+        "moiety": "Vitamin B2",
+        "amount": 5,
+        "unit": "mg"
+      },
+      {
+        "libraryId": "W030004000",
+        "moiety": "Pantothenic acid (vitamin B5)",
+        "amount": 100,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100016",
+    "productName": "Ginkgo 2000",
+    "sponsor": "Swisse",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W010060000",
+        "moiety": "Ginkgo",
+        "amount": 2000,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100019",
+    "productName": "Magnesium Orotate 500",
+    "sponsor": "DFH",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W040003000",
+        "moiety": "Magnesium (elemental)",
+        "amount": 500,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100020",
+    "productName": "NAC Detox 600",
+    "sponsor": "Metagenics",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W140010000",
+        "moiety": "N-acetyl cysteine (NAC)",
+        "amount": 600,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100021",
+    "productName": "Zinc Picolinate 30",
+    "sponsor": "Piping Rock",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W140015000",
+        "moiety": "Zinc (elemental)",
+        "amount": 30,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100022",
+    "productName": "Milk Thistle 35000",
+    "sponsor": "Swisse",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W010013000",
+        "moiety": "Milk thistle",
+        "amount": 7000,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100023",
+    "productName": "Rhodiola 3000",
+    "sponsor": "Bioglan",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W010020000",
+        "moiety": "Rhodiola rosea (Rose Root)",
+        "amount": 600,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100024",
+    "productName": "Choline Bitartrate 300",
+    "sponsor": "BioCeuticals",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030019000",
+        "moiety": "Choline",
+        "amount": 600,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100025",
+    "productName": "Magnesium Citrate 200",
+    "sponsor": "Swisse",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W040003000",
+        "moiety": "Magnesium (elemental)",
+        "amount": 300,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100026",
+    "productName": "Pyridoxine HCl 100",
+    "sponsor": "Blackmores",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030012000",
+        "moiety": "Pyridoxine (vitamin B6)",
+        "amount": 100,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100027",
+    "productName": "Boswellia 5000",
+    "sponsor": "Nature's Own",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W010022000",
+        "moiety": "Boswellia (Frankincense)",
+        "amount": 3000,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100028",
+    "productName": "Chromium GTF 200",
+    "sponsor": "Orthoplex",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030018000",
+        "moiety": "Chromium (elemental)",
+        "amount": 200,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100029",
+    "productName": "Ubiquinol Q10 150",
+    "sponsor": "BioCeuticals",
+    "doseForm": "SOFT_CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030021000",
+        "moiety": "Coenzyme Q10",
+        "amount": 150,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100030",
+    "productName": "B5 Pantothenic 500",
+    "sponsor": "Fusion Health",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030004000",
+        "moiety": "Pantothenic acid (vitamin B5)",
+        "amount": 500,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100031",
+    "productName": "Zinc Bisglycinate 25",
+    "sponsor": "Designs for Health",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W140015000",
+        "moiety": "Zinc (elemental)",
+        "amount": 25,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100032",
+    "productName": "Selenomethionine 100",
+    "sponsor": "Thorne",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W040004000",
+        "moiety": "Selenium (elemental)",
+        "amount": 100,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100033",
+    "productName": "Calcium Folinate 500",
+    "sponsor": "BioCeuticals",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030027000",
+        "moiety": "Folinic acid",
+        "amount": 500,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100034",
+    "productName": "Vitamin B12 Methyl 500",
+    "sponsor": "Pure Encapsulations",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030008000",
+        "moiety": "Vitamin B12",
+        "amount": 500,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100035",
+    "productName": "Vitamin A 10000IU",
+    "sponsor": "Blackmores",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030006000",
+        "moiety": "Vitamin A",
+        "amount": 3000,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100036",
+    "productName": "Vitamin K2 180",
+    "sponsor": "Metagenics",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030007000",
+        "moiety": "Vitamin K2",
+        "amount": 180,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100037",
+    "productName": "Licorice DGL",
+    "sponsor": "Integria",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W010046000",
+        "moiety": "Licorice",
+        "amount": 750,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100038",
+    "productName": "Biotin 5000",
+    "sponsor": "Swisse",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030010000",
+        "moiety": "Biotin",
+        "amount": 5,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100039",
+    "productName": "Chromium Nicotinate 200",
+    "sponsor": "Bioglan",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030018000",
+        "moiety": "Chromium (elemental)",
+        "amount": 200,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100040",
+    "productName": "NAD+ 300",
+    "sponsor": "Tru Niagen",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030029000",
+        "moiety": "Nicotinamide riboside chloride (NR)",
+        "amount": 300,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100041",
+    "productName": "CoQ10 Ubiquinone",
+    "sponsor": "Nature's Own",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030021000",
+        "moiety": "Coenzyme Q10",
+        "amount": 100,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100042",
+    "productName": "Bacopa 5000",
+    "sponsor": "Swisse",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W010052000",
+        "moiety": "Bacopa",
+        "amount": 3000,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100043",
+    "productName": "Magnesium Threonate",
+    "sponsor": "Magtein",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W040003000",
+        "moiety": "Magnesium (elemental)",
+        "amount": 200,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100044",
+    "productName": "Zinc Citrate 15",
+    "sponsor": "Orthoplex",
+    "doseForm": "TABLET",
+    "activesPerUnit": [
+      {
+        "libraryId": "W140015000",
+        "moiety": "Zinc (elemental)",
+        "amount": 15,
+        "unit": "mg"
+      },
+      {
+        "libraryId": "W040003000",
+        "moiety": "Magnesium (elemental)",
+        "amount": 100,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100049",
+    "productName": "Inositol Powder",
+    "sponsor": "Designs for Health",
+    "doseForm": "POWDER",
+    "activesPerUnit": [
+      {
+        "libraryId": "W140007000",
+        "moiety": "Inositol",
+        "amount": 2000,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100051",
+    "productName": "GABA 750",
+    "sponsor": "Thorne",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W130001000",
+        "moiety": "GABA",
+        "amount": 750,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100052",
+    "productName": "L-Theanine 200",
+    "sponsor": "Pure Encapsulations",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W130003000",
+        "moiety": "L-theanine",
+        "amount": 200,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100053",
+    "productName": "Taurine 2000",
+    "sponsor": "Bioglan",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W140014000",
+        "moiety": "Taurine",
+        "amount": 2000,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100054",
+    "productName": "L-Glutamine 5000",
+    "sponsor": "Metagenics",
+    "doseForm": "POWDER",
+    "activesPerUnit": [
+      {
+        "libraryId": "W140005000",
+        "moiety": "L-glutamine",
+        "amount": 5000,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100055",
+    "productName": "Vitamin E 500IU",
+    "sponsor": "Blackmores",
+    "doseForm": "CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030022000",
+        "moiety": "Vitamin E",
+        "amount": 335,
+        "unit": "mg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 0,
+    "unmatchedActiveNames": []
+  },
+  {
+    "artgId": "100056",
+    "productName": "Omega3 + D3",
+    "sponsor": "Nordic Naturals",
+    "doseForm": "SOFT_CAPSULE",
+    "activesPerUnit": [
+      {
+        "libraryId": "W030005000",
+        "moiety": "Vitamin D3",
+        "amount": 25,
+        "unit": "mcg"
+      }
+    ],
+    "maxUnitsPerDay": null,
+    "excipients": [],
+    "snapshotDate": "2026-08-12",
+    "unmatchedActiveCount": 2,
+    "unmatchedActiveNames": [
+      "eicosapentaenoic acid",
+      "docosahexaenoic acid"
+    ]
+  }
+]

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..600&display=swap" rel="stylesheet" />
+<style>
+  doc-page:not(:defined){visibility:hidden}
+  body{margin:0}
+  a{color:#535B50}
+  a:hover{color:#C6AF81}
+</style>
+<script src="./doc-page.js"></script>
+</helmet>
+<doc-page margin="0.7in">
+
+<div slot="header" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:7px;border-bottom:1px solid #DEDCD2;font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81">
+  <div style="color:#535B50;font-weight:500">N of 1</div>
+  <div>Health Analysis &nbsp;·&nbsp; Practitioner Decision Support</div>
+  <div>SUB-2026-682</div>
+</div>
+
+<div slot="footer" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:7px;border-top:1px solid #DEDCD2;font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.1em;text-transform:uppercase;color:#9A9F91">
+  <div>Confidential — practitioner use only</div>
+  <div>Audit ref 2B6D-054F-8F67</div>
+</div>
+
+<div style="font-family:'Source Serif 4',Georgia,serif;color:#23261F;font-size:10.5pt;line-height:1.6">
+
+  <div style="background:#535B50;margin:16px -0.7in 0;padding:0.5in 0.7in;color:#F4F3EE">
+    <img src="assets/logo.png" alt="N of 1" style="display:block;width:132px;height:auto;margin-bottom:38px" />
+    <div style="font-family:Jost,sans-serif;font-size:8.5pt;letter-spacing:.24em;text-transform:uppercase;color:#C6AF81;margin-bottom:14px">Precision Formulation</div>
+    <h1 style="font-family:Jost,sans-serif;font-weight:300;font-size:34pt;line-height:1.05;letter-spacing:-0.01em;margin:0 0 16px">Health Analysis</h1>
+    <div style="display:flex;flex-wrap:wrap;gap:10px 22px;font-family:Jost,sans-serif;font-size:9.5pt;font-weight:300;letter-spacing:.02em;color:#D6D8CE">
+      <div>Submission SUB-2026-682</div>
+      <div style="color:#8E9686">|</div>
+      <div>Patient PT-2026-111</div>
+      <div style="color:#8E9686">|</div>
+      <div>Generated 31 July 2026</div>
+    </div>
+  </div>
+
+  <sc-if value="{{ showDraftNotice }}" hint-placeholder-val="{{ true }}">
+  <div style="break-inside:avoid;margin:0 -0.7in;padding:16px 0.7in 18px;background:#EFEDE4;border-bottom:1px solid #DEDCD2">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:7px">
+      <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#C6AF81"></span>
+      <div style="font-family:Jost,sans-serif;font-weight:600;font-size:9pt;letter-spacing:.16em;text-transform:uppercase;color:#535B50">Draft — pending practitioner review and approval</div>
+    </div>
+    <p style="margin:0 0 0 19px;font-size:9.5pt;line-height:1.55;color:#4A4E43;max-width:44em">This document is decision support for a qualified healthcare practitioner. It is not a diagnosis, not a prescription, and not directed to the patient. The reviewing practitioner is the prescribing clinician of record and exercises independent clinical judgement on every recommendation contained herein.</p>
+  </div>
+  </sc-if>
+
+  <div style="break-inside:avoid;display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:26px 0 34px;border-top:1px solid #DEDCD2;border-left:1px solid #DEDCD2">
+    <div style="padding:11px 14px;border-right:1px solid #DEDCD2;border-bottom:1px solid #DEDCD2"><div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81;margin-bottom:3px">Patient pseudonym</div><div style="font-family:Jost,sans-serif;font-size:10.5pt;color:#23261F">PT-2026-111</div></div>
+    <div style="padding:11px 14px;border-right:1px solid #DEDCD2;border-bottom:1px solid #DEDCD2"><div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81;margin-bottom:3px">Age</div><div style="font-family:Jost,sans-serif;font-size:10.5pt;color:#23261F">36</div></div>
+    <div style="padding:11px 14px;border-right:1px solid #DEDCD2;border-bottom:1px solid #DEDCD2"><div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81;margin-bottom:3px">Sex (at birth)</div><div style="font-family:Jost,sans-serif;font-size:10.5pt;color:#23261F">Female</div></div>
+    <div style="padding:11px 14px;border-right:1px solid #DEDCD2;border-bottom:1px solid #DEDCD2"><div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81;margin-bottom:3px">Test type</div><div style="font-family:Jost,sans-serif;font-size:10.5pt;color:#23261F">General comprehensive panel</div></div>
+    <div style="padding:11px 14px;border-right:1px solid #DEDCD2;border-bottom:1px solid #DEDCD2"><div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81;margin-bottom:3px">Lab ID</div><div style="font-family:Jost,sans-serif;font-size:10.5pt;color:#23261F">1111</div></div>
+    <div style="padding:11px 14px;border-right:1px solid #DEDCD2;border-bottom:1px solid #DEDCD2"><div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81;margin-bottom:3px">Collection date</div><div style="font-family:Jost,sans-serif;font-size:10.5pt;color:#23261F">2026-07-30</div></div>
+    <div style="padding:11px 14px;border-right:1px solid #DEDCD2;border-bottom:1px solid #DEDCD2"><div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81;margin-bottom:3px">Practitioner ID</div><div style="font-family:Jost,sans-serif;font-size:10.5pt;color:#23261F">P001-NATUROPATH</div></div>
+    <div style="padding:11px 14px;border-right:1px solid #DEDCD2;border-bottom:1px solid #DEDCD2"><div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81;margin-bottom:3px">Practitioner type</div><div style="font-family:Jost,sans-serif;font-size:10.5pt;color:#23261F">Naturopath</div></div>
+    <div style="padding:11px 14px;border-right:1px solid #DEDCD2;border-bottom:1px solid #DEDCD2"><div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;color:#8A8F81;margin-bottom:3px">Generated</div><div style="font-family:Jost,sans-serif;font-size:10.5pt;color:#23261F">31 July 2026, 4:01 pm</div></div>
+  </div>
+
+  <div style="break-inside:avoid;margin:0 0 14px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #535B50;padding-bottom:8px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:22pt;line-height:1;color:#C6AF81">01</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:15pt;letter-spacing:.01em;margin:0;color:#2E332A">Executive Summary</h2>
+    </div>
+  </div>
+  <p style="margin:0 0 18px;max-width:46em">StrateGene® Core genotype report indicates a modifier-only genetic susceptibility profile — patient is a 36-year-old female with variants across methylation, monoamine metabolism, histamine clearance, folate transport, and antioxidant/detoxification pathways. Formulation is genotype-driven and requires practitioner integration with biomarker data (FBP or HMP) for a complete clinical picture.</p>
+
+  <div style="font-family:Jost,sans-serif;font-size:8.5pt;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#8A8F81;margin:0 0 12px">Recognised clinical patterns</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:34px">
+    <div style="break-inside:avoid;background:#F4F3EC;border-left:3px solid #C6AF81;padding:13px 15px">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#2E332A;margin-bottom:5px">Methylation-cycle impaired genotype</div>
+      <div style="font-size:9pt;line-height:1.5;color:#5C6155">MTHFR C677T AG (slow) · MTR A2756G AA (slow context) · MTRR G66A AG (slow) · MTHFD1 G1958A AG (slow) · TCN2 c.776G&gt;C GC (slow) · BHMT G716A GG (slow per Library) · SLC19A1 G80A TC (slow)</div>
+    </div>
+    <div style="break-inside:avoid;background:#F4F3EC;border-left:3px solid #C6AF81;padding:13px 15px">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#2E332A;margin-bottom:5px">Catecholamine accumulation &amp; monoamine clearance</div>
+      <div style="font-size:9pt;line-height:1.5;color:#5C6155">MAOA T941G TT (slow) · COMT intermediate haplotype · SLC6A3 rs6347 CC (fast reuptake) · DRD2 rs12364283 AA (slow receptor density)</div>
+    </div>
+    <div style="break-inside:avoid;background:#F4F3EC;border-left:3px solid #C6AF81;padding:13px 15px">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#2E332A;margin-bottom:5px">Histamine-intolerance genotype (upper-GI axis)</div>
+      <div style="font-size:9pt;line-height:1.5;color:#5C6155">DAO/AOC1 slow haplotype (rs2052129 TG + rs10156191 TC) · NAT2 slow acetylator haplotype · MAOA T941G TT (slow)</div>
+    </div>
+    <div style="break-inside:avoid;background:#F4F3EC;border-left:3px solid #C6AF81;padding:13px 15px">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#2E332A;margin-bottom:5px">Antioxidant / Phase II susceptibility</div>
+      <div style="font-size:9pt;line-height:1.5;color:#5C6155">GSTA1 C-69T AG (slow) · SOD2 A16V GG (slow) · GPX4 C718T TT (selenium-dependent) · GSR -386C&gt;A TT (fast, B2-dependent) · GGT1 -1207T&gt;C AG (fast)</div>
+    </div>
+    <div style="break-inside:avoid;background:#F4F3EC;border-left:3px solid #C6AF81;padding:13px 15px">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#2E332A;margin-bottom:5px">Serotonergic-tone-reduced genotype</div>
+      <div style="font-size:9pt;line-height:1.5;color:#5C6155">TPH2 G-703T GG (slow — lower brain serotonin synthesis) · HTR3A C178T CC (slow receptor) · HTR3B A386C AA (slow receptor) · IDO2 R248W TC (very slow)</div>
+    </div>
+    <div style="break-inside:avoid;background:#F4F3EC;border-left:3px solid #C6AF81;padding:13px 15px">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#2E332A;margin-bottom:5px">Oestrogen metabolism / CYP1B1-fast genotype</div>
+      <div style="font-size:9pt;line-height:1.5;color:#5C6155">CYP1B1 rs1800440 TT (fast Phase I) · COMT intermediate haplotype · GSTA1 slow</div>
+    </div>
+  </div>
+
+  <div style="break-inside:avoid;margin:0 0 14px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #535B50;padding-bottom:8px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:22pt;line-height:1;color:#C6AF81">02</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:15pt;letter-spacing:.01em;margin:0;color:#2E332A">Detailed Biomarker Analysis</h2>
+    </div>
+  </div>
+  <p style="margin:0 0 6px;max-width:46em">The following 31 biomarker findings are surfaced for practitioner review. Each finding includes a hedged interpretation, possible contributors per the published literature, and the relevance of the finding to the formulation strategy. All calls are genotype-only; wild type is considered reference.</p>
+
+  <div style="margin-bottom:34px">
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">MTHFR C677T <span style="font-weight:300;color:#8A8F81">(rs1801133)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">AG heterozygous — slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Approximately 30% reduced MTHFR enzymatic activity per published in vitro data; riboflavin (B2) binding is stabilising.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Reduced FAD cofactor affinity; sensitivity to thermal stress; variability with folate and B2 intake.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports inclusion of riboflavin B2, activated folate (calcium folinate rather than folic acid), and B-vitamin cofactors to reduce homocysteine burden.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">MTR A2756G <span style="font-weight:300;color:#8A8F81">(rs1805087)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">AA wild type — slow in framework</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Methionine synthase activity dependent on methyl-B12 and zinc; recycles homocysteine to methionine.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">MTR is redox-sensitive; oxidative stress and B12 depletion reduce activity.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports methylcobalamin and zinc inclusion at moderate dose to maintain remethylation capacity.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">MTRR G66A <span style="font-weight:300;color:#8A8F81">(rs1801394)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">AG heterozygous — slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced affinity of MTRR for the MTR-cobalamin complex; slower cobalamin recycling.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Combined MTR + MTRR variants can synergistically slow remethylation, especially under oxidative stress.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Reinforces need for methylcobalamin and riboflavin (B2/FAD) support.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">MTHFD1 G1958A <span style="font-weight:300;color:#8A8F81">(rs2236225)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">AG heterozygous — slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>~25% reduced folate cycle dehydrogenase activity; increases choline utilisation.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Impacts phosphatidylcholine synthesis and one-carbon flux, particularly relevant in women of reproductive age.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports calcium folinate and consideration of choline/betaine cofactors.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">MAOA T941G <span style="font-weight:300;color:#8A8F81">(rs6323)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">TT — slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced monoamine oxidase A activity; slower clearance of dopamine, norepinephrine, serotonin, and N-methylhistamine. Heterozygous in female; one T allele on X.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Chronic stress upregulates MAO enzymes; oestrogen fluctuations modulate MAOA activity.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports riboflavin (B2) as the MAOA cofactor and antioxidant/hydrogen-peroxide buffering (vitamin C, glutathione precursors). Caution around excess methyl-donor and monoamine precursor loading.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">COMT haplotype <span style="font-weight:300;color:#8A8F81">(rs6269 AG + rs4680 AG)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">Intermediate (2-SNP)</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Intermediate methylation of catecholamines and catechol oestrogens; balanced but sensitive to methyl-donor loading and stress.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">COMT activity is highly modifiable by lifestyle, stress and oestrogen status.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports magnesium (COMT cofactor) and cautious methylation support; avoid supraphysiologic SAMe/TMG stacking without monitoring.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">DAO / AOC1 haplotype <span style="font-weight:300;color:#8A8F81">(rs2052129 TG + rs10156191 TC)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">Slow haplotype</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced histamine and polyamine breakdown at the intestinal border; predisposes to histamine intolerance symptoms.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Alcohol, NSAIDs, some probiotics (L. fermentum), and gut dysbiosis further reduce DAO capacity.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports quercetin (mast-cell/DAO-adjacent stabilisation), vitamin C (DAO cofactor), and vitamin B6 (P5P) as HDC/DAO axis cofactors.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">NAT2 haplotype</div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">Slow acetylator</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced N-acetylation of arylamines and histamine (minor route).</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Slow acetylator status may increase sensitivity to certain drugs and dietary carcinogens.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports pantothenic acid (B5) as the NAT2 cofactor; caution with arylamine and heterocyclic amine exposures.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">BHMT G716A <span style="font-weight:300;color:#8A8F81">(rs3733890)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">GG wild type — slow per Library</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced betaine-dependent remethylation of homocysteine (short liver/kidney route).</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Slow BHMT plus slow MTR/MTRR increases reliance on both remethylation routes; homocysteine may drift higher.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports zinc (BHMT cofactor) and adequate choline/betaine dietary intake.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">TCN2 c.776G&gt;C <span style="font-weight:300;color:#8A8F81">(rs1801198)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">GC heterozygous — slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced transcobalamin II affinity for B12; may lower functional B12 status even with normal dietary intake.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Combined with slow MTR/MTRR increases requirement for bioavailable B12 forms.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports methylcobalamin/hydroxocobalamin at conservative-to-moderate dose.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">SLC19A1 G80A <span style="font-weight:300;color:#8A8F81">(rs1051266)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">TC heterozygous — slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced folate transporter capacity; preferentially binds reduced folates over synthetic folic acid.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Folate receptor autoantibodies and unmetabolised folic acid can further impair transport.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports use of calcium folinate rather than folic acid; avoid supplements containing folic acid.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">GSTA1 C-69T <span style="font-weight:300;color:#8A8F81">(rs3957357)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">AG heterozygous — slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>~50% reduced GSTA1 expression per in vitro data; reduced Phase II conjugation and lipid peroxide handling.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Environmental xenobiotic burden compounds this susceptibility.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports NAC and glutathione precursor strategy; sulforaphane and cruciferous vegetable intake (diet/lifestyle).</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">GSTO1 / GSTO2 <span style="font-weight:300;color:#8A8F81">(-2200 GG fast; C419A AC slow; A424G AG intermediate)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">Mixed haplotype</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Overall GSTO detoxification capacity variable; likely intermediate.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Arsenic biotransformation may be affected; environmental exposure history relevant.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports general antioxidant/Phase II strategy (NAC, milk thistle in diet/lifestyle framing).</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">SOD2 A16V <span style="font-weight:300;color:#8A8F81">(rs4880)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">GG wild type — slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced mitochondrial superoxide dismutase activity (15–20% lower than AA).</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Compounded by slow GPX4 and mixed CAT activity; oxidative stress management is key.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports manganese (SOD2 cofactor) at conservative dose plus antioxidant/redox support (vitamin C, CoQ10 in future biomarker-supported context).</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">GPX4 C718T <span style="font-weight:300;color:#8A8F81">(rs713041)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">TT — selenium-status dependent</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Activity contingent on selenium sufficiency.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Selenium excess is cumulatively toxic; caution warranted without measured status.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports conservative-dose selenium (≤100 mcg elemental) given no biomarker to confirm red-cell selenium.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">CAT <span style="font-weight:300;color:#8A8F81">(rs769217 CC fast; rs1001179 CT slow)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">Mixed</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Catalase activity likely near reference with mild susceptibility to oxidative stress.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Heme cofactor availability and iron balance modulate function.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports general antioxidant strategy without high-dose iron.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">GSR -386C&gt;A <span style="font-weight:300;color:#8A8F81">(rs1002149)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#7A6A3E;background:#F2EADA;padding:3px 8px">TT — fast (upregulated)</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Increased glutathione reductase demand for riboflavin (B2).</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Adequate B2 essential for redox cycling of GSSG back to GSH.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Riboflavin B2 optimisation is a shared priority with MTHFR/MAOA support.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">GGT1 -1207T&gt;C <span style="font-weight:300;color:#8A8F81">(rs4820599)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#7A6A3E;background:#F2EADA;padding:3px 8px">AG — fast (upregulated)</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Increased extracellular glutathione breakdown; may reduce active GSH availability if pro-oxidant load is high.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Iron and copper excess can amplify GGT-associated oxidative stress.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports vitamin C and antioxidant/anti-inflammatory strategy.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">NOX (CYBA) <span style="font-weight:300;color:#8A8F81">(rs9932581)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">TT — slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced neutrophil/vascular NOX-driven superoxide generation; may be protective against inflammation but reduces immune oxidative burst.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Clinical relevance context-dependent.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports niacin B3 (NADPH cofactor context) and general immune resilience through nutrients.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">IDO2 R248W <span style="font-weight:300;color:#8A8F81">(rs10109853)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">TC — very slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>~50% reduced tryptophan-to-kynurenine flux via IDO2; may preserve tryptophan for the serotonin pathway but affect immune tolerance.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Chronic infection or inflammation typically upregulates IDO.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>No specific ingredient targeting IDO2 in the current Library; supports overall B6/tryptophan pathway consideration.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">TPH2 G-703T <span style="font-weight:300;color:#8A8F81">(rs4570625)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">GG wild type — slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced brain tryptophan hydroxylase 2 activity; contributes to lower serotonergic tone.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Winter/low-light periods, chronic stress, low vitamin D compound this variant.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports vitamin D3 (TPH2 transcriptional activator), iron adequacy (dietary), and B6 for downstream DDC.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">HTR2A G-1438A <span style="font-weight:300;color:#8A8F81">(rs6311)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">TC — intermediate</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Mildly increased serotonin receptor 2A expression.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Acute stress and dehydration exacerbate downstream effects.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>General magnesium/calcium and omega-3 dietary considerations.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">HTR3A C178T + HTR3B A386C <span style="font-weight:300;color:#8A8F81">(rs1062613, rs1176744)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">Both slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Lower 5-HT3 receptor signalling; potentially reduced nausea susceptibility but also altered mood/pain modulation.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Adverse early-life events can amplify receptor downregulation.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Support serotonin synthesis rather than receptor block; TPH2/BH4/B6 support relevant.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">DRD2 <span style="font-weight:300;color:#8A8F81">(rs12364283 AA slow; rs1076560 CC fast)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">Mixed receptor profile</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced D2 receptor density with wild-type D2S/L expression; combined with SLC6A3 fast reuptake suggests lower synaptic dopamine.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">BPA and welding fumes further reduce receptor density.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports iron (for TH cofactor), vitamin D, and tyrosine-supportive foods.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">SLC6A3 <span style="font-weight:300;color:#8A8F81">(rs6347)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#7A6A3E;background:#F2EADA;padding:3px 8px">CC — fast reuptake</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Lower synaptic dopamine due to increased reuptake.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">PCBs and paraquat further upregulate; positive social connection downregulates.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports dopamine pathway nutrient support (iron, tyrosine, vitamin D).</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">SLC18A1 C407T <span style="font-weight:300;color:#8A8F81">(rs1390938)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#7A6A3E;background:#F2EADA;padding:3px 8px">AG — fast (intermediate)</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Balanced monoamine vesicular transport, with tendency toward resilience.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Organochlorine exposures reduce activity.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>General nutrient support; no specific ingredient in the Library targets this transporter directly.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">ADRB1 / ADRB2 <span style="font-weight:300;color:#8A8F81">(rs1801253 CC, rs1042713 GG, rs1042714 GG)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">Mixed β-adrenergic pattern</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Enhanced β1 and β2 sensitivity to catecholamines with blunted secondary β2 response.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Thyroid dysregulation and chronic stress modulate expression.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Reinforces stress management, magnesium, and adaptogenic considerations (diet/lifestyle).</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">PON1 <span style="font-weight:300;color:#8A8F81">(rs662 TC + rs854560 AT)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">Intermediate / slow</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Reduced paraoxonase activity toward organophosphates and oxidised LDL.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Selenium adequacy mitigates heavy-metal-driven PON1 inhibition.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports NAC, quercetin, and calcium-related antioxidant/anti-inflammatory strategy.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">ADORA2A <span style="font-weight:300;color:#8A8F81">(rs2236624)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">TC — slow (mild)</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Mildly altered adenosine A2A receptor sensitivity; may modulate caffeine response.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Interacts with CYP1A2 and COMT.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Lifestyle consideration around caffeine intake.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">CYP1A2 <span style="font-weight:300;color:#8A8F81">(rs762551)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#535B50;background:#EDEDE4;padding:3px 8px">AC — reduced inducibility</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Attenuated CYP1A2 upregulation by polyaromatic hydrocarbons/smoke.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Diet composition strongly modulates.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Lifestyle: moderate caffeine; supports xenobiotic-avoidance recommendations.</div>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;padding:14px 0 12px;border-top:1px solid #E4E2DA;border-bottom:1px solid #E4E2DA">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px">
+        <div style="font-family:Jost,sans-serif;font-weight:600;font-size:11pt;color:#2E332A">CYP1B1 <span style="font-weight:300;color:#8A8F81">(rs1800440)</span></div>
+        <div style="font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#7A6A3E;background:#F2EADA;padding:3px 8px">TT — fast</div>
+      </div>
+      <div style="display:grid;grid-template-columns:104px 1fr;gap:5px 14px;font-size:9.5pt;line-height:1.5">
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Interpretation</div><div>Faster CYP1B1 activity; may generate more catechol oestrogens/quinones if Phase II cannot keep up.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Contributors</div><div style="color:#5C6155">Smoke and PAH exposure further induce; cruciferous vegetables provide balancing Phase II support.</div>
+        <div style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91;padding-top:3px">Formulation</div><div>Supports DIM, calcium D-glucarate, and resveratrol strategy (hormone metabolism axis).</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="break-inside:avoid;margin:0 0 14px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #535B50;padding-bottom:8px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:22pt;line-height:1;color:#C6AF81">03</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:15pt;letter-spacing:.01em;margin:0;color:#2E332A">Diet and Lifestyle Considerations</h2>
+    </div>
+  </div>
+  <p style="margin:0 0 20px;max-width:46em">The following considerations are surfaced for practitioner-led discussion. They sit alongside the recommended formulation rather than substituting for it.</p>
+
+  <div style="display:grid;gap:14px;margin-bottom:34px">
+    <div style="break-inside:avoid;display:grid;grid-template-columns:150px 1fr;gap:16px;padding-bottom:14px;border-bottom:1px solid #E4E2DA">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#535B50">Folate source</div>
+      <div><p style="margin:0 0 5px">The practitioner may wish to discuss avoidance of synthetic folic acid (fortified cereals, breads, non-prescription multivitamins containing folic acid) and preference for whole-food folate and reduced folate supplements (calcium folinate, methylfolate) given the SLC19A1, MTHFR, and MTHFD1 variants documented above.</p><p style="margin:0;font-size:9pt;color:#7A7F72"><span style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91">Rationale &nbsp;</span>Slow folate transport and reduced MTHFR/MTHFD1 flux favour reduced folate forms; unmetabolised folic acid may interfere with folate receptor activity.</p></div>
+    </div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:150px 1fr;gap:16px;padding-bottom:14px;border-bottom:1px solid #E4E2DA">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#535B50">Histamine and DAO support</div>
+      <div><p style="margin:0 0 5px">The practitioner may wish to explore lower-histamine dietary patterns and identify any personal food triggers, given the slow DAO haplotype and slow MAOA.</p><p style="margin:0;font-size:9pt;color:#7A7F72"><span style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91">Rationale &nbsp;</span>Reduced DAO activity elevates gut and systemic histamine burden; slow MAOA further reduces N-methylhistamine clearance.</p></div>
+    </div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:150px 1fr;gap:16px;padding-bottom:14px;border-bottom:1px solid #E4E2DA">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#535B50">Alcohol consumption</div>
+      <div><p style="margin:0 0 5px">Practitioner discussion regarding minimising alcohol may be considered — particularly wine, champagne, and beer — given DAO, MAOA, and NAT2 slow status.</p><p style="margin:0;font-size:9pt;color:#7A7F72"><span style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91">Rationale &nbsp;</span>Alcohol raises histamine load and acetaldehyde burden; reactive aldehydes rely on ALDH2/ADH1B (not genotyped here) for clearance.</p></div>
+    </div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:150px 1fr;gap:16px;padding-bottom:14px;border-bottom:1px solid #E4E2DA">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#535B50">Methyl-donor loading caution</div>
+      <div><p style="margin:0 0 5px">Given the intermediate COMT haplotype combined with slow MAOA, the practitioner may wish to avoid supraphysiologic methyl-donor stacks (e.g. high-dose SAMe or TMG) and use pulse-dosing when methylation support is introduced.</p><p style="margin:0;font-size:9pt;color:#7A7F72"><span style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91">Rationale &nbsp;</span>Slow COMT + slow MAOA increases catecholamine accumulation risk when methyl-donor drive is high.</p></div>
+    </div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:150px 1fr;gap:16px;padding-bottom:14px;border-bottom:1px solid #E4E2DA">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#535B50">Cruciferous vegetable intake</div>
+      <div><p style="margin:0 0 5px">Regular intake of cruciferous vegetables (broccoli, cauliflower, cabbage, Brussels sprouts, kale) may be discussed with the patient — supporting Phase II detoxification, Nrf2, and oestrogen metabolism.</p><p style="margin:0;font-size:9pt;color:#7A7F72"><span style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91">Rationale &nbsp;</span>Supports GSTA1, SOD2, CYP1B1 balance identified in the genotype.</p></div>
+    </div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:150px 1fr;gap:16px;padding-bottom:14px;border-bottom:1px solid #E4E2DA">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#535B50">Choline / betaine intake</div>
+      <div><p style="margin:0 0 5px">Adequate dietary choline (eggs, liver, legumes) or supplemental choline/betaine may be discussed given MTHFD1 and BHMT slow variants, particularly relevant for women of reproductive age.</p><p style="margin:0;font-size:9pt;color:#7A7F72"><span style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91">Rationale &nbsp;</span>MTHFD1 and BHMT slow variants increase choline demand; choline is generally underconsumed by women.</p></div>
+    </div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:150px 1fr;gap:16px;padding-bottom:14px;border-bottom:1px solid #E4E2DA">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#535B50">Iron and selenium status</div>
+      <div><p style="margin:0 0 5px">The practitioner may wish to confirm iron and selenium status (ferritin, transferrin saturation, and where possible red-cell selenium) before extended supplementation with either mineral, given the GP-only submission.</p><p style="margin:0;font-size:9pt;color:#7A7F72"><span style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91">Rationale &nbsp;</span>GPX4 activity depends on selenium sufficiency; several dopamine and serotonin synthesis enzymes require iron.</p></div>
+    </div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:150px 1fr;gap:16px;padding-bottom:14px;border-bottom:1px solid #E4E2DA">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#535B50">Environmental xenobiotic reduction</div>
+      <div><p style="margin:0 0 5px">Practitioner discussion regarding reducing exposure to organophosphate pesticides, plastics/BPA, and smoke may be considered given the PON1, GSTA1, SOD2, and CYP1B1 profile.</p><p style="margin:0;font-size:9pt;color:#7A7F72"><span style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91">Rationale &nbsp;</span>This genotype profile suggests reduced xenobiotic detoxification headroom.</p></div>
+    </div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:150px 1fr;gap:16px">
+      <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#535B50">Sleep and stress hygiene</div>
+      <div><p style="margin:0 0 5px">Attention to stress management, consistent sleep timing, and daylight exposure may be discussed — supporting the TPH2/serotonin pathway and MAOA regulation.</p><p style="margin:0;font-size:9pt;color:#7A7F72"><span style="font-family:Jost,sans-serif;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#9A9F91">Rationale &nbsp;</span>Vitamin D and daylight enhance brain TPH2; chronic stress modulates MAOA activity.</p></div>
+    </div>
+  </div>
+
+  <div style="break-inside:avoid;margin:0 0 14px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #535B50;padding-bottom:8px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:22pt;line-height:1;color:#C6AF81">04</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:15pt;letter-spacing:.01em;margin:0;color:#2E332A">Recommended Formulation Logic</h2>
+    </div>
+  </div>
+
+  <div style="font-family:Jost,sans-serif;font-size:8.5pt;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#8A8F81;margin:0 0 8px">Overall strategy</div>
+  <p style="margin:0 0 10px;max-width:46em">This is a StrateGene® Core GP-class modifier-only formulation for a 36-year-old female. The genotype-driven priority axes are:</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+    <div style="break-inside:avoid;display:flex;gap:10px;background:#F4F3EC;padding:11px 13px"><div style="font-family:Jost,sans-serif;font-size:13pt;font-weight:300;color:#C6AF81;line-height:1">1</div><div style="font-size:9pt;line-height:1.5">Methylation and folate cycle support — calcium folinate, methylcobalamin, riboflavin B2, P5P, zinc citrate.</div></div>
+    <div style="break-inside:avoid;display:flex;gap:10px;background:#F4F3EC;padding:11px 13px"><div style="font-family:Jost,sans-serif;font-size:13pt;font-weight:300;color:#C6AF81;line-height:1">2</div><div style="font-size:9pt;line-height:1.5">Catecholamine / histamine buffering — magnesium glycinate (COMT cofactor), quercetin and vitamin C for DAO/mast-cell support, pantothenic acid B5 for NAT2.</div></div>
+    <div style="break-inside:avoid;display:flex;gap:10px;background:#F4F3EC;padding:11px 13px"><div style="font-family:Jost,sans-serif;font-size:13pt;font-weight:300;color:#C6AF81;line-height:1">3</div><div style="font-size:9pt;line-height:1.5">Redox and antioxidant support — NAC, alpha-lipoic acid, vitamin C, CoQ10, resveratrol, milk thistle for Phase II Nrf2 support.</div></div>
+    <div style="break-inside:avoid;display:flex;gap:10px;background:#F4F3EC;padding:11px 13px"><div style="font-family:Jost,sans-serif;font-size:13pt;font-weight:300;color:#C6AF81;line-height:1">4</div><div style="font-size:9pt;line-height:1.5">Hormone metabolism support given CYP1B1-fast + intermediate COMT — DIM, calcium D-glucarate.</div></div>
+    <div style="break-inside:avoid;display:flex;gap:10px;background:#F4F3EC;padding:11px 13px;grid-column:span 2"><div style="font-family:Jost,sans-serif;font-size:13pt;font-weight:300;color:#C6AF81;line-height:1">5</div><div style="font-size:9pt;line-height:1.5">Dopaminergic and serotonergic background support — vitamin D3, moderate iron via dietary discussion, thiamine B1, nicotinamide B3.</div></div>
+  </div>
+  <p style="margin:0 0 24px;max-width:46em">Because this is a GP-only submission without any biomarker data, all doses are conservative, homocysteine-lowering and methyl-donor supplements are kept at moderate rather than high doses, and 5-HTP is deliberately excluded pending medication review and clinical correlation given slow MAOA. The formulation uses foundational + layer stacking within each axis at moderate doses, targeting a filled pod (600–720 granules) as required by the pod-fill principle for a multi-pattern panel.</p>
+
+  <div style="font-family:Jost,sans-serif;font-size:8.5pt;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#8A8F81;margin:0 0 10px">Intentionally included</div>
+  <div style="margin-bottom:24px;border-top:1px solid #DEDCD2">
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Calcium folinate <span style="color:#9A9F91">547 mcg</span></div><div style="font-size:9.5pt;line-height:1.5">Foundational for the methylation-impaired genotype (MTHFR, MTHFD1, SLC19A1); avoids folic acid; supports downstream MTR/MTRR flux.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Methylcobalamin (B12) <span style="color:#9A9F91">500 mcg</span></div><div style="font-size:9.5pt;line-height:1.5">Foundational for slow MTR/MTRR and TCN2; bioavailable B12 form.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Riboflavin (B2) <span style="color:#9A9F91">30 mg</span></div><div style="font-size:9.5pt;line-height:1.5">Cofactor for MTHFR, MAOA, MAOB, and GSR; addresses multiple upregulated and downregulated B2-dependent enzymes.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">P5P (B6) <span style="color:#9A9F91">15 mg</span></div><div style="font-size:9.5pt;line-height:1.5">Cofactor for DDC, CBS, and the HDC axis; supports serotonin/dopamine synthesis and homocysteine handling.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Thiamine (B1) <span style="color:#9A9F91">25 mg</span></div><div style="font-size:9.5pt;line-height:1.5">General methylation background support and aldehyde clearance cofactor context.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Nicotinamide (B3) <span style="color:#9A9F91">100 mg</span></div><div style="font-size:9.5pt;line-height:1.5">NADPH cofactor for multiple redox enzymes (GSR, CAT, MTRR); also supports methylation cycle demand.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Pantothenic acid (B5) <span style="color:#9A9F91">100 mg</span></div><div style="font-size:9.5pt;line-height:1.5">NAT2 acetylation cofactor.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Choline bitartrate <span style="color:#9A9F91">300 mg</span></div><div style="font-size:9.5pt;line-height:1.5">Supports the MTHFD1/BHMT slow phenotype where choline demand rises with reduced folate cycle flux.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Zinc citrate <span style="color:#9A9F91">15 mg elemental</span></div><div style="font-size:9.5pt;line-height:1.5">BHMT and MTR cofactor; also supports 5-alpha-reductase and immune context.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Magnesium glycinate <span style="color:#9A9F91">100 mg elemental</span></div><div style="font-size:9.5pt;line-height:1.5">COMT cofactor and general methylation/nervous-system support.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">N-acetylcysteine <span style="color:#9A9F91">500 mg</span></div><div style="font-size:9.5pt;line-height:1.5">Glutathione precursor; supports GSTA1-slow and SOD2-slow context.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">L-glutathione <span style="color:#9A9F91">250 mg</span></div><div style="font-size:9.5pt;line-height:1.5">S-acetyl form. Direct glutathione support to complement NAC and address GSR-fast / GGT1-fast / SOD2-slow interplay.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Alpha-lipoic acid <span style="color:#9A9F91">100 mg</span></div><div style="font-size:9.5pt;line-height:1.5">Antioxidant and glutathione recycling.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Vitamin C <span style="color:#9A9F91">500 mg</span></div><div style="font-size:9.5pt;line-height:1.5">DAO/HDC cofactor, adrenal cofactor, antioxidant and hydrogen peroxide buffer.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Vitamin D3 <span style="color:#9A9F91">25 mcg (1000 IU)</span></div><div style="font-size:9.5pt;line-height:1.5">TPH2 transcriptional activator; broadly supports serotonergic tone.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Quercetin <span style="color:#9A9F91">200 mg</span></div><div style="font-size:9.5pt;line-height:1.5">Mast-cell and DAO-adjacent stabilisation for the histamine-intolerance genotype.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Coenzyme Q10 <span style="color:#9A9F91">100 mg</span></div><div style="font-size:9.5pt;line-height:1.5">Mitochondrial support in SOD2-slow context.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Resveratrol <span style="color:#9A9F91">100 mg</span></div><div style="font-size:9.5pt;line-height:1.5">Nrf2 activation, oestrogen metabolism (CYP1B1-fast), and mitochondrial support.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Milk thistle (silymarin) <span style="color:#9A9F91">150 mg</span></div><div style="font-size:9.5pt;line-height:1.5">Phase II / Nrf2 support given GSTA1-slow and CYP1B1-fast.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">DIM <span style="color:#9A9F91">100 mg</span></div><div style="font-size:9.5pt;line-height:1.5">Oestrogen metabolism support (CYP1B1-fast + intermediate COMT).</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Calcium D-glucarate <span style="color:#9A9F91">500 mg</span></div><div style="font-size:9.5pt;line-height:1.5">β-glucuronidase inhibition supporting oestrogen and xenobiotic clearance.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Selenomethionine <span style="color:#9A9F91">100 mcg elemental</span></div><div style="font-size:9.5pt;line-height:1.5">GPX4-contextual variant support; conservative dose given no biomarker data (per GP-class rules).</div></div>
+  </div>
+
+  <div style="font-family:Jost,sans-serif;font-size:8.5pt;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#8A8F81;margin:0 0 10px">Intentionally excluded</div>
+  <div style="margin-bottom:34px;border-top:1px solid #DEDCD2">
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">5-HTP <span style="color:#9A9F91">W030006000</span></div><div style="font-size:9.5pt;line-height:1.5">Excluded from the pod given slow MAOA (T941G TT) and unknown medication context. Adding a serotonin precursor to a slow MAOA background without medication review risks serotonin accumulation. Documented in binding_exclusions_applied.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">High-dose iodine <span style="color:#9A9F91">&gt;150 mcg</span></div><div style="font-size:9.5pt;line-height:1.5">Not included because thyroid antibody and TSH status were not provided in this GP-only submission; a conservative iodine approach is preferred pending biomarker data.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Panax ginseng &amp; stimulating adaptogens</div><div style="font-size:9.5pt;line-height:1.5">Deprioritised for pod given slow MAOA + intermediate COMT + fast β-adrenergic receptor genotype, which increases sensitivity to catecholamine drive.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Iron</div><div style="font-size:9.5pt;line-height:1.5">A TH/TPH cofactor of interest, but excluded from the pod pending confirmed iron studies (ferritin, transferrin saturation) — surfaced as a diet/lifestyle discussion instead.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">Copper</div><div style="font-size:9.5pt;line-height:1.5">No biomarker data for Cu:Zn ratio or plasma copper is available; excluded to avoid potential imbalance with zinc supplementation.</div></div>
+    <div style="break-inside:avoid;display:grid;grid-template-columns:200px 1fr;gap:16px;padding:9px 0;border-bottom:1px solid #EDEBE3"><div style="font-family:Jost,sans-serif;font-size:10pt;color:#2E332A">SAMe / high-dose TMG</div><div style="font-size:9.5pt;line-height:1.5">Deprioritised given intermediate COMT + slow MAOA; the practitioner may consider these later based on measured homocysteine, if elevated.</div></div>
+  </div>
+
+  <div style="break-inside:avoid;background:#535B50;color:#EFEEE7;padding:16px 20px;margin-bottom:34px">
+    <p style="margin:0;font-size:9.5pt;line-height:1.55">The detailed ingredient-by-ingredient formulation, including doses, granule counts, and per-ingredient rationale, is in the companion <strong style="font-weight:600;color:#E4D6B4">Recommended Formulation Schedule (.xlsx)</strong>.</p>
+  </div>
+
+  <div style="break-inside:avoid;margin:0 0 14px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #535B50;padding-bottom:8px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:22pt;line-height:1;color:#C6AF81">05</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:15pt;letter-spacing:.01em;margin:0;color:#2E332A">Contraindication and Interaction Considerations</h2>
+    </div>
+  </div>
+  <p style="margin:0 0 14px;max-width:46em">Four contraindication or interaction considerations are raised for practitioner review.</p>
+
+  <table style="width:100%;border-collapse:collapse;font-size:9pt;line-height:1.45;margin-bottom:26px">
+    <thead>
+      <tr>
+        <th style="text-align:left;font-family:Jost,sans-serif;font-size:7.5pt;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#F1F0EA;background:#535B50;padding:8px 10px;width:88px">Severity</th>
+        <th style="text-align:left;font-family:Jost,sans-serif;font-size:7.5pt;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#F1F0EA;background:#535B50;padding:8px 10px;width:120px">Flag</th>
+        <th style="text-align:left;font-family:Jost,sans-serif;font-size:7.5pt;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#F1F0EA;background:#535B50;padding:8px 10px">Description</th>
+        <th style="text-align:left;font-family:Jost,sans-serif;font-size:7.5pt;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#F1F0EA;background:#535B50;padding:8px 10px;width:104px">Ingredients</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="break-inside:avoid">
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:#8A8F81">Informational</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;font-family:Jost,sans-serif;font-size:8.5pt;color:#535B50">Medication context not provided</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top">No current medications were listed in the practitioner's clinical notes. Standard contraindication checks were run against the recommended formulation itself. The practitioner may wish to review any concurrent SSRIs/SNRIs (serotonin support), anticoagulants (CoQ10, resveratrol, quercetin), and glucose-lowering agents (alpha-lipoic acid) before initiating.</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;color:#5C6155">R,S-alpha lipoic acid; Resveratrol; Quercetin; Coenzyme Q10</td>
+      </tr>
+      <tr style="break-inside:avoid">
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:#7A6A3E">Monitor</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;font-family:Jost,sans-serif;font-size:8.5pt;color:#535B50">Vitamin B6 TGA warning threshold</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top">The proposed P5P dose delivers ~10 mg pyridoxine equivalents per day — at the TGA warning threshold. The practitioner may wish to advise the patient to report any tingling, burning, or numbness immediately.</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;color:#5C6155">Vitamin B6 (P5P)</td>
+      </tr>
+      <tr style="break-inside:avoid">
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:#7A6A3E">Monitor</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;font-family:Jost,sans-serif;font-size:8.5pt;color:#535B50">Zinc–copper ratio monitoring</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top">Zinc supplementation (15 mg elemental) is conservative, but the practitioner may wish to monitor Cu:Zn ratio if the formulation is extended beyond 3 months.</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;color:#5C6155">Zinc citrate</td>
+      </tr>
+      <tr style="break-inside:avoid">
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:#8A8F81">Low in context</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;font-family:Jost,sans-serif;font-size:8.5pt;color:#535B50">Selenium cumulative toxicity</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top">Selenomethionine is dosed at 50 mcg elemental — well below toxicity thresholds. The practitioner may wish to consider red-cell selenium testing if extending use.</td>
+        <td style="padding:10px;border-bottom:1px solid #E4E2DA;vertical-align:top;color:#5C6155">Selenium (selenomethionine)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="font-family:Jost,sans-serif;font-size:8.5pt;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#8A8F81;margin:0 0 10px">Binding exclusions applied</div>
+  <p style="margin:0 0 12px;max-width:46em;font-size:9.5pt">One binding exclusion applied. These are ingredients held out of the pod because the panel does not measure the data needed to confirm safety, or the panel data crossed a hard exclusion threshold.</p>
+  <div style="break-inside:avoid;border-left:3px solid #C6AF81;background:#F4F3EC;padding:14px 16px;margin-bottom:34px">
+    <div style="font-family:Jost,sans-serif;font-weight:500;font-size:10.5pt;color:#2E332A;margin-bottom:5px">5-HTP — excluded</div>
+    <p style="margin:0;font-size:9.5pt;line-height:1.55;color:#4A4E43">The patient's slow MAOA genotype reduces serotonin degradation, and no medication history was supplied to rule out serotonergic pharmaceuticals. The practitioner may wish to consider re-introducing 5-HTP only after confirming absence of SSRIs/SNRIs/MAOIs/tramadol/triptans and reviewing symptomatic serotonin status.</p>
+  </div>
+
+  <div style="break-inside:avoid;margin:0 0 14px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #535B50;padding-bottom:8px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:22pt;line-height:1;color:#C6AF81">06</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:15pt;letter-spacing:.01em;margin:0;color:#2E332A">Monitoring and Follow-Up</h2>
+    </div>
+  </div>
+  <p style="margin:0 0 16px;max-width:46em">Because no functional pathology panel accompanies this GP-class submission, the practitioner may wish to consider baseline and follow-up testing to translate this genotype-driven formulation into a measurable clinical response.</p>
+  <div style="font-family:Jost,sans-serif;font-size:8.5pt;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#8A8F81;margin:0 0 10px">Markers for consideration at follow-up</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 26px;margin-bottom:16px;font-size:9.5pt">
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3">Plasma homocysteine <span style="color:#9A9F91">— baseline, recheck 8–12 weeks</span></div>
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3">Serum B12 and methylmalonic acid (MMA)</div>
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3">Red-cell folate</div>
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3">Red-cell magnesium</div>
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3">Ferritin and transferrin saturation</div>
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3">25-hydroxy vitamin D</div>
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3">Red-cell selenium <span style="color:#9A9F91">— if extending selenium</span></div>
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3">Cu:Zn ratio <span style="color:#9A9F91">— if zinc extended past 3 months</span></div>
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3">hs-CRP <span style="color:#9A9F91">— inflammatory context</span></div>
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3">Urinary organic acids <span style="color:#9A9F91">— practitioner-directed</span></div>
+    <div style="padding:7px 0;border-bottom:1px solid #EDEBE3;grid-column:span 2">Hormone metabolism panel (e.g. DUTCH / EndoSCAN) if symptoms warrant, given CYP1B1-fast + intermediate COMT profile</div>
+  </div>
+  <p style="margin:0 0 34px;font-size:9.5pt;font-style:italic;color:#7A7F72">Genotype-only submission — biomarker follow-up is essential to individualise doses and evaluate response.</p>
+
+  <sc-if value="{{ showStrengths }}" hint-placeholder-val="{{ true }}">
+  <div style="break-inside:avoid;margin:0 0 14px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #535B50;padding-bottom:8px">
+      <div style="font-family:Jost,sans-serif;font-weight:300;font-size:22pt;line-height:1;color:#C6AF81">07</div>
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:15pt;letter-spacing:.01em;margin:0;color:#2E332A">Areas of Strength</h2>
+    </div>
+  </div>
+  <p style="margin:0 0 14px;max-width:46em">Five findings on this panel are within reference and are surfaced as areas of clinical strength to contextualise the abnormal findings above.</p>
+  <div style="display:grid;gap:9px;margin-bottom:34px">
+    <div style="break-inside:avoid;display:flex;gap:12px;align-items:flex-start;font-size:9.5pt;line-height:1.5"><span style="flex:none;margin-top:6px;width:6px;height:6px;background:#C6AF81"></span><div>MAOB and several other monoamine oxidase-adjacent SNPs show contextual/indeterminate calls, suggesting no additional monoamine clearance burden beyond MAOA.</div></div>
+    <div style="break-inside:avoid;display:flex;gap:12px;align-items:flex-start;font-size:9.5pt;line-height:1.5"><span style="flex:none;margin-top:6px;width:6px;height:6px;background:#C6AF81"></span><div>GSR is upregulated (fast) — a strength for glutathione recycling capacity when riboflavin (B2) is optimised.</div></div>
+    <div style="break-inside:avoid;display:flex;gap:12px;align-items:flex-start;font-size:9.5pt;line-height:1.5"><span style="flex:none;margin-top:6px;width:6px;height:6px;background:#C6AF81"></span><div>NOX (CYBA) is slow — potentially reducing inflammatory oxidative burst risk in vascular tissue.</div></div>
+    <div style="break-inside:avoid;display:flex;gap:12px;align-items:flex-start;font-size:9.5pt;line-height:1.5"><span style="flex:none;margin-top:6px;width:6px;height:6px;background:#C6AF81"></span><div>COMT haplotype resolves as intermediate rather than fully slow — indicating balanced methylation of catecholamines and oestrogens with modifiable expression.</div></div>
+    <div style="break-inside:avoid;display:flex;gap:12px;align-items:flex-start;font-size:9.5pt;line-height:1.5"><span style="flex:none;margin-top:6px;width:6px;height:6px;background:#C6AF81"></span><div>SLC18A1 fast genotype (A allele carrier) may support neurotransmitter storage and resilience against stress-related mood fluctuations.</div></div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ showReferences }}" hint-placeholder-val="{{ true }}">
+  <div style="break-inside:avoid;margin:0 0 14px">
+    <div style="display:flex;align-items:baseline;gap:14px;border-bottom:2px solid #535B50;padding-bottom:8px">
+      <h2 style="font-family:Jost,sans-serif;font-weight:500;font-size:15pt;letter-spacing:.01em;margin:0;color:#2E332A">References</h2>
+    </div>
+  </div>
+  <p style="margin:0 0 14px;max-width:46em;font-size:9.5pt;color:#5C6155">Key published studies cited by the clinical decision support system in support of each formulation decision. Citations should be independently verified by the reviewing practitioner before clinical reliance. PMIDs and DOIs can be confirmed via PubMed.</p>
+  <div style="column-count:2;column-gap:26px;font-size:8.5pt;line-height:1.45;color:#4A4E43">
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">1</span> &nbsp;Scaglione F &amp; Panzavolta G (2014). Folate, folic acid and 5-methyltetrahydrofolate are not the same thing. <em>Xenobiotica</em>. — Calcium folinate</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">2</span> &nbsp;Paul C &amp; Brady DM (2017). Comparative bioavailability and utilization of particular forms of B12 supplements with potential to mitigate B12-related genetic polymorphisms. <em>Integrative Medicine</em>. — Methylcobalamin</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">3</span> &nbsp;McNulty H et al. (2017). Riboflavin lowers blood pressure in adults with the MTHFR 677TT genotype. <em>Am J Clin Nutr</em>. — Riboflavin</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">4</span> &nbsp;Ueland PM et al. (2017). Direct and functional biomarkers of vitamin B6 status. <em>Annu Rev Nutr</em>. — Vitamin B6 (P5P)</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">5</span> &nbsp;Manzetti S et al. (2014). Thiamin function, metabolism, uptake, and transport. <em>Biochemistry</em>. — Thiamine</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">6</span> &nbsp;Kirkland JB (2012). Niacin requirements for genomic stability. <em>Mutation Research</em>. — Nicotinamide</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">7</span> &nbsp;Gominak SC (2016). Vitamin D deficiency changes the intestinal microbiome reducing B vitamin production in the gut. <em>Medical Hypotheses</em>. — Pantothenic acid</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">8</span> &nbsp;Kohlmeier M et al. (2005). Genetic variation of folate-mediated one-carbon transfer pathway predicts susceptibility to choline deficiency in humans. <em>PNAS</em>. — Choline bitartrate</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">9</span> &nbsp;Wessels I et al. (2017). Zinc as a gatekeeper of immune function. <em>Nutrients</em>. — Zinc citrate</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">10</span> &nbsp;Boyle NB et al. (2017). The effects of magnesium supplementation on subjective anxiety and stress — a systematic review. <em>Nutrients</em>. — Magnesium glycinate</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">11</span> &nbsp;Méplan C et al. (2007). Genetic polymorphisms in the human selenoprotein P gene determine the response of selenoprotein markers to selenium supplementation (SELGEN). <em>FASEB J</em>. — Selenium</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">12</span> &nbsp;Ooi SL et al. (2018). N-acetylcysteine for the treatment of psychiatric disorders: a review of current evidence. <em>BioMed Research International</em>. — NAC</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">13</span> &nbsp;Richie JP Jr et al. (2015). Randomized controlled trial of oral glutathione supplementation on body stores of glutathione. <em>Eur J Nutr</em>. — L-glutathione</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">14</span> &nbsp;Shay KP et al. (2009). Alpha-lipoic acid as a dietary supplement: molecular mechanisms and therapeutic potential. <em>BBA</em>. — Alpha-lipoic acid</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">15</span> &nbsp;Carr AC &amp; Maggini S (2017). Vitamin C and immune function. <em>Nutrients</em>. — Vitamin C</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">16</span> &nbsp;Patrick RP &amp; Ames BN (2014). Vitamin D hormone regulates serotonin synthesis. Part 1. <em>FASEB J</em>. — Vitamin D3</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">17</span> &nbsp;Mlcek J et al. (2016). Quercetin and its anti-allergic immune response. <em>Molecules</em>. — Quercetin</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">18</span> &nbsp;Hernández-Camacho JD et al. (2018). Coenzyme Q10 supplementation in aging and disease. <em>Frontiers in Physiology</em>. — CoQ10</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">19</span> &nbsp;Chow HH et al. (2010). Resveratrol modulates drug- and carcinogen-metabolizing enzymes in a healthy volunteer study. <em>Cancer Prev Res</em>. — Resveratrol</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">20</span> &nbsp;Abenavoli L et al. (2018). Milk thistle (Silybum marianum): a concise overview. <em>Phytotherapy Research</em>. — Milk thistle</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">21</span> &nbsp;Thomson CA et al. (2017). A randomized, placebo-controlled trial of diindolylmethane for breast cancer biomarker modulation in patients taking tamoxifen. <em>Breast Cancer Res Treat</em>. — DIM</p>
+    <p style="margin:0 0 7px;break-inside:avoid"><span style="color:#C6AF81;font-family:Jost,sans-serif">22</span> &nbsp;Walaszek Z et al. (1997). Metabolism, uptake, and excretion of a D-glucaric acid salt and its potential use in cancer prevention. <em>Cancer Detect Prev</em>. — Calcium D-glucarate</p>
+  </div>
+  </sc-if>
+
+  <div style="break-inside:avoid;margin-top:32px;padding-top:16px;border-top:2px solid #535B50">
+    <p style="margin:0 0 10px;font-family:Jost,sans-serif;font-size:9pt;font-weight:500;color:#535B50">Patients should not act on the contents of this document without the direct guidance of their treating practitioner.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px 20px;font-family:Jost,sans-serif;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#9A9F91">
+      <div>Submission SUB-2026-682</div>
+      <div>Generated 31 July 2026, 4:01 pm</div>
+      <div>Audit reference 2B6D-054F-8F67</div>
+    </div>
+  </div>
+
+</div>
+</doc-page>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showDraftNotice&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Document sections&quot;},&quot;showStrengths&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Document sections&quot;},&quot;showReferences&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Document sections&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      showDraftNotice: this.props.showDraftNotice ?? true,
+      showStrengths: this.props.showStrengths ?? true,
+      showReferences: this.props.showReferences ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>

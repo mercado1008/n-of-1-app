@@ -25,3 +25,89 @@ body {
     text-wrap: balance;
   }
 }
+
+/* ── Health Analysis print layout ───────────────────────────────────────────
+   Architecture:
+   - @page margin-left/right: 0  →  doc-body's px-[0.7in] supplies horizontal margins
+   - @page margin-top/bottom: 1in  →  reserves space for the fixed header/footer on
+     EVERY page, preventing content from flowing behind them on pages 2+
+   - doc-header-wrap / doc-footer-wrap: position:fixed + height:1in to fill those margins
+   - print-color-adjust: exact  →  forces backgrounds/fills to print (equivalent to
+     Puppeteer's printBackground:true), fixing the "colours don't show" issue
+   ──────────────────────────────────────────────────────────────────────────── */
+@page {
+  size: A4;
+  margin-top: 1in;
+  margin-bottom: 1in;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+@media print {
+  /* Force white body background regardless of system dark-mode preference */
+  body {
+    background: white !important;
+    color: #23261F !important;
+  }
+
+  /* Force ALL backgrounds and fills to print — CSS equivalent of printBackground:true.
+     Scoped to doc-paper so it doesn't affect other routes' print output. */
+  .doc-paper,
+  .doc-paper * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* 1. Remove the "paper on desk" screen chrome */
+  .doc-desktop {
+    background: transparent !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+  }
+
+  /* 2. A4 paper fills the full print page (inline width:210mm is overridden by !important) */
+  .doc-paper {
+    width: 100% !important;
+    max-width: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+
+  /* 3. Running header — fixed, fills the 1in @page top margin on every page.
+        The inner div's pt-[0.7in] positions the text 0.7in from the paper edge;
+        the remaining ~0.3in is the gap between the header rule and the content area. */
+  .doc-header-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1in;
+    background: white;
+    z-index: 100;
+  }
+
+  /* 4. Running footer — fixed, fills the 1in @page bottom margin on every page.
+        The inner div's pb-[0.7in] positions the text 0.7in from the paper edge. */
+  .doc-footer-wrap {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1in;
+    background: white;
+    z-index: 100;
+  }
+
+  /* 5. Content body — @page margins reserve per-page top/bottom space, so no
+        extra padding is needed here (unlike the old margin:0 approach). Horizontal
+        px-[0.7in] stays: it supplies the content column since @page left/right is 0. */
+  .doc-body {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* 6. Remove screen-only leading margin above the footer rule */
+  .doc-footer-inner {
+    margin-top: 0 !important;
+  }
+}
