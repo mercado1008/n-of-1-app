@@ -38,6 +38,6 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Protect all routes except Next.js internals and static assets.
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  // Protect all routes except Next.js internals, static assets, and the health check.
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|api/health).*)'],
 };
