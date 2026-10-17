@@ -278,6 +278,95 @@ function tryMatch(
  * The per-gram qualifier is implicit context — the Protocol Translator treats
  * all ARTG amounts as per-serving, so mcg/g → mcg and mg/g → mg.
  */
+/**
+ * Convert an ELEMENTAL mineral amount into the moiety's unit when the only
+ * difference is mg vs mcg (e.g. "Equivalent: copper, Qty 400 microgram" against
+ * a copper moiety stored in mg). Returns null when the units are genuinely
+ * incompatible, so callers can still discard the amount.
+ */
+const KNOWN_MASS_UNIT_RE = /^(mg|milligrams?|mcg|microgram|micrograms|µg|ug|g|grams?)(\/g)?$/i;
+
+function toMoietyUnit(amount: number, unit: string, moietyUnit: string, rawUnit: string): number | null {
+  // normaliseUnit() falls back to 'mg' for units it does not recognise (e.g. "ng"),
+  // so only convert when the raw TGA unit really was a known mass unit.
+  if (!KNOWN_MASS_UNIT_RE.test(rawUnit.trim())) return null;
+  if (unit === moietyUnit) return amount;
+  if (unit === 'mcg' && moietyUnit === 'mg') return amount / 1000;
+  if (unit === 'mg' && moietyUnit === 'mcg') return amount * 1000;
+  return null;
+}
+
+/**
+ * Salt/chelate → elemental mass fractions, used ONLY when TGA publishes a mineral
+ * as its salt weight with no "Equivalent: <element>" row. Without this the salt
+ * mass would be stored as if it were elemental (e.g. 200 mg magnesium citrate
+ * recorded as 200 mg Mg). Fractions are element mass / formula mass for the
+ * hydration state in the name; where the library stocks the same salt the
+ * library's own equivalent_line_2 / dose_per_granule ratio is used. Names whose
+ * hydration or composition is ambiguous (amino acid chelates, orotate, aspartate,
+ * chloride, chromium nicotinate, selenium yeast ...) are intentionally absent:
+ * those rows are discarded rather than guessed.
+ */
+const SALT_ELEMENTAL_FRACTION: Record<string, { moiety: string; fraction: number }> = {
+  // Magnesium
+  'magnesium citrate':            { moiety: 'Magnesium (elemental)', fraction: 0.1449 }, // library: 1 / 6.9
+  'magnesium glycinate dihydrate':{ moiety: 'Magnesium (elemental)', fraction: 0.1170 }, // library: 1 / 8.55
+  'magnesium bisglycinate':       { moiety: 'Magnesium (elemental)', fraction: 0.1410 }, // anhydrous Mg(C2H4NO2)2
+  'magnesium glycinate':          { moiety: 'Magnesium (elemental)', fraction: 0.1410 }, // CAS 14783-68-7 = anhydrous bisglycinate
+  'magnesium threonate':          { moiety: 'Magnesium (elemental)', fraction: 0.0720 }, // library: 1 / 13.89
+  'magnesium oxide':              { moiety: 'Magnesium (elemental)', fraction: 0.6030 },
+  'heavy magnesium oxide':        { moiety: 'Magnesium (elemental)', fraction: 0.6030 },
+  // Selenium
+  'selenomethionine':             { moiety: 'Selenium (elemental)',  fraction: 0.4026 }, // library: 50 / 124.19
+  'l-selenomethionine':           { moiety: 'Selenium (elemental)',  fraction: 0.4026 },
+  'sodium selenite':              { moiety: 'Selenium (elemental)',  fraction: 0.4566 },
+  'sodium selenate':              { moiety: 'Selenium (elemental)',  fraction: 0.4180 },
+  // Iodine / chromium / copper
+  'potassium iodide':             { moiety: 'Iodine (elemental)',    fraction: 0.7645 },
+  'chromium picolinate':          { moiety: 'Chromium (elemental)',  fraction: 0.1243 },
+  'copper gluconate':             { moiety: 'Copper (elemental)',    fraction: 0.1400 },
+  'cupric sulfate pentahydrate':  { moiety: 'Copper (elemental)',    fraction: 0.2545 },
+  // Zinc
+  'zinc oxide':                   { moiety: 'Zinc (elemental)',      fraction: 0.8034 },
+  'zinc gluconate':               { moiety: 'Zinc (elemental)',      fraction: 0.1433 },
+  'zinc citrate dihydrate':       { moiety: 'Zinc (elemental)',      fraction: 0.3213 }, // library: 2 / 6.23
+  'zinc sulfate monohydrate':     { moiety: 'Zinc (elemental)',      fraction: 0.3643 },
+  'zinc picolinate':              { moiety: 'Zinc (elemental)',      fraction: 0.2112 },
+  // Calcium / potassium / manganese / iron
+  'calcium carbonate':            { moiety: 'Calcium (elemental)',   fraction: 0.4004 },
+  'calcium citrate tetrahydrate': { moiety: 'Calcium (elemental)',   fraction: 0.2109 },
+  'potassium citrate':            { moiety: 'Potassium (elemental)', fraction: 0.3619 }, // library: 2.001 / 5.53
+  'manganese gluconate':          { moiety: 'Manganese (elemental)', fraction: 0.1149 }, // library: 1 / 8.7
+  'manganese sulfate monohydrate':{ moiety: 'Manganese (elemental)', fraction: 0.3250 },
+  'iron bisglycinate':            { moiety: 'Iron (elemental)',      fraction: 0.1901 }, // library: 1 / 5.26
+  'iron (ii) glycinate':          { moiety: 'Iron (elemental)',      fraction: 0.1901 },
+  'ferrous bisglycinate':         { moiety: 'Iron (elemental)',      fraction: 0.1901 },
+  'ferrous fumarate':             { moiety: 'Iron (elemental)',      fraction: 0.3282 },
+  'ferrous sulfate heptahydrate': { moiety: 'Iron (elemental)',      fraction: 0.2009 },
+  'dried ferrous sulfate':        { moiety: 'Iron (elemental)',      fraction: 0.3672 },
+};
+
+/** Elemental-name primaries (already elemental, fraction 1). */
+const ELEMENT_NAMES = new Set(['iodine', 'selenium', 'chromium', 'copper', 'zinc', 'magnesium', 'calcium', 'potassium', 'manganese', 'iron']);
+
+/**
+ * Convert a salt-weight primary quantity to the elemental amount in the moiety's
+ * unit. Returns null when the salt has no trusted fraction or the unit is not a
+ * recognised mass unit.
+ */
+function saltToElemental(
+  primaryName: string, primaryQty: number, primaryUnit: string, def: MoietyDefinition,
+): number | null {
+  const key = primaryName.toLowerCase().trim();
+  const fraction = ELEMENT_NAMES.has(key)
+    ? 1
+    : SALT_ELEMENTAL_FRACTION[key]?.moiety === def.moietyName ? SALT_ELEMENTAL_FRACTION[key].fraction : null;
+  if (fraction === null) return null;
+  const norm = normaliseUnit(primaryUnit, primaryQty);
+  const converted = toMoietyUnit(norm.amount, norm.unit, def.moietyUnit, primaryUnit);
+  return converted === null ? null : converted * fraction;
+}
+
 function normaliseUnit(rawUnit: string, quantity: number): { amount: number; unit: NormalisedActive['unit'] } {
   const u = rawUnit.toLowerCase().trim();
   if (u === 'mg' || u === 'milligram' || u === 'milligrams') {
@@ -532,6 +621,8 @@ async function main() {
   // ── Build lookup structures ───────────────────────────────────────────────
   const aliases      = buildAliasStore(aliasFilePath);
   const moietyByName = buildMoietyNameIndex();
+  const saltConverted = new Map<string, number>();
+  const saltDiscarded = new Map<string, number>();
 
   const matchedMoietyNames = new Set<string>();
   const misses = new Map<string, AliasMiss>();
@@ -581,6 +672,8 @@ async function main() {
         // block (e.g. "Equivalent: Magnesium, Qty 49 mg"). Use that when available.
         let finalAmount: number;
         let finalUnit: NormalisedActive['unit'];
+        let fromElementalEquiv = false;
+        let elementalRawUnit = '';
 
         if (def.basis === 'ELEMENTAL' && block.equivalents.length > 0) {
           let elementalEquiv: { quantity: number; unit: string } | null = null;
@@ -603,10 +696,35 @@ async function main() {
             : normaliseUnit(block.primaryUnit, block.primaryQuantity);
           finalAmount = norm.amount;
           finalUnit   = norm.unit;
+          fromElementalEquiv = elementalEquiv !== null;
+          elementalRawUnit = elementalEquiv ? elementalEquiv.unit : '';
         } else {
           const norm = normaliseUnit(block.primaryUnit, block.primaryQuantity);
           finalAmount = norm.amount;
           finalUnit   = norm.unit;
+        }
+
+        // No published elemental amount: the quantity above is a salt weight.
+        // Convert via the salt's elemental fraction, or discard if unknown.
+        if (def.basis === 'ELEMENTAL' && !fromElementalEquiv) {
+          const elemental = saltToElemental(block.primaryName, block.primaryQuantity, block.primaryUnit, def);
+          if (elemental === null) {
+            productUnmatched.push(`${block.primaryName} [no elemental equivalent or known salt factor]`);
+            saltDiscarded.set(block.primaryName, (saltDiscarded.get(block.primaryName) ?? 0) + 1);
+            continue;
+          }
+          finalAmount = elemental;
+          finalUnit   = def.moietyUnit as NormalisedActive['unit'];
+          fromElementalEquiv = true;
+          elementalRawUnit = block.primaryUnit;
+          saltConverted.set(block.primaryName, (saltConverted.get(block.primaryName) ?? 0) + 1);
+        }
+
+        // Unrecognised units (ng/mL, microgram/mL ...) are read by normaliseUnit() as mg,
+        // which would overstate an elemental mineral by orders of magnitude. Discard.
+        if (def.basis === 'ELEMENTAL' && !KNOWN_MASS_UNIT_RE.test((elementalRawUnit || block.primaryUnit).trim())) {
+          productUnmatched.push(`${block.primaryName} [unrecognised unit: ${elementalRawUnit || block.primaryUnit}]`);
+          continue;
         }
 
         if (pass === 1) pass1Count++; else pass2Count++;
@@ -623,8 +741,15 @@ async function main() {
         //   physically mismatched amount. This prevents chromium picolinate
         //   salt (mg) from appearing as elemental chromium (mcg) in the engine.
         if (def.basis === 'ELEMENTAL' && finalUnit !== def.moietyUnit) {
-          productUnmatched.push(`${block.primaryName} [unit mismatch: ${finalUnit} vs moiety ${def.moietyUnit}]`);
-          continue;
+          // Only convert mg<->mcg for a published elemental amount. A salt/chelate
+          // mass (no elemental equivalent row) must never be passed off as elemental.
+          const converted = fromElementalEquiv ? toMoietyUnit(finalAmount, finalUnit, def.moietyUnit, elementalRawUnit) : null;
+          if (converted === null) {
+            productUnmatched.push(`${block.primaryName} [unit mismatch: ${finalUnit} vs moiety ${def.moietyUnit}]`);
+            continue;
+          }
+          finalAmount = converted;
+          finalUnit   = def.moietyUnit as NormalisedActive['unit'];
         }
         //
         // Guard 2 — Physiological ceiling (mg-unit moieties only).
@@ -664,9 +789,15 @@ async function main() {
         const directAttempt = tryMatch(equiv.name, moietyByName, aliases);
         if (directAttempt.match) {
           const { def, pass } = directAttempt.match;
-          const { amount, unit } = normaliseUnit(equiv.unit, equiv.quantity);
-          // Apply same ELEMENTAL guards as Step B (unit compatibility + mg cap)
-          if (def.basis === 'ELEMENTAL' && unit !== def.moietyUnit) break;
+          let { amount, unit } = normaliseUnit(equiv.unit, equiv.quantity);
+          // Apply same ELEMENTAL guards as Step B (unit conversion + mg cap)
+          if (def.basis === 'ELEMENTAL' && !KNOWN_MASS_UNIT_RE.test(equiv.unit.trim())) break;
+          if (def.basis === 'ELEMENTAL' && unit !== def.moietyUnit) {
+            const converted = toMoietyUnit(amount, unit, def.moietyUnit, equiv.unit);
+            if (converted === null) break;
+            amount = converted;
+            unit   = def.moietyUnit as NormalisedActive['unit'];
+          }
           if (
             def.basis === 'ELEMENTAL' && unit === 'mg' &&
             ELEMENTAL_AMOUNT_CAPS_MG[def.moietyName] !== undefined &&
@@ -684,9 +815,15 @@ async function main() {
         const equivKeyAttempt = tryMatch(`equivalent ${equiv.name}`, moietyByName, aliases);
         if (equivKeyAttempt.match) {
           const { def, pass } = equivKeyAttempt.match;
-          const { amount, unit } = normaliseUnit(equiv.unit, equiv.quantity);
-          // Apply same ELEMENTAL guards as Step B (unit compatibility + mg cap)
-          if (def.basis === 'ELEMENTAL' && unit !== def.moietyUnit) break;
+          let { amount, unit } = normaliseUnit(equiv.unit, equiv.quantity);
+          // Apply same ELEMENTAL guards as Step B (unit conversion + mg cap)
+          if (def.basis === 'ELEMENTAL' && !KNOWN_MASS_UNIT_RE.test(equiv.unit.trim())) break;
+          if (def.basis === 'ELEMENTAL' && unit !== def.moietyUnit) {
+            const converted = toMoietyUnit(amount, unit, def.moietyUnit, equiv.unit);
+            if (converted === null) break;
+            amount = converted;
+            unit   = def.moietyUnit as NormalisedActive['unit'];
+          }
           if (
             def.basis === 'ELEMENTAL' && unit === 'mg' &&
             ELEMENTAL_AMOUNT_CAPS_MG[def.moietyName] !== undefined &&
@@ -702,6 +839,21 @@ async function main() {
         }
       }
       if (matchedViaEquiv) continue;
+
+      // Salt with no elemental equivalent row and no alias: convert by salt fraction.
+      const saltSpec = SALT_ELEMENTAL_FRACTION[block.primaryName.toLowerCase().trim()];
+      if (saltSpec) {
+        const saltDef = moietyByName.get(saltSpec.moiety.toLowerCase());
+        const elemental = saltDef ? saltToElemental(block.primaryName, block.primaryQuantity, block.primaryUnit, saltDef) : null;
+        if (saltDef && elemental !== null) {
+          matchedMoietyNames.add(saltDef.moietyName);
+          saltConverted.set(block.primaryName, (saltConverted.get(block.primaryName) ?? 0) + 1);
+          const existing = activesPerUnit.find((a) => a.moiety === saltDef.moietyName);
+          if (existing) existing.amount = Math.max(existing.amount, elemental);
+          else activesPerUnit.push({ libraryId: saltDef.tsiCode, moiety: saltDef.moietyName, amount: elemental, unit: saltDef.moietyUnit as NormalisedActive['unit'] });
+          continue;
+        }
+      }
 
       // Completely unmatched — record for alias report
       productUnmatched.push(block.primaryName);
@@ -820,6 +972,8 @@ async function main() {
   console.log('  Ingredient matching');
   console.log(`    Pass 1 (exact):            ${pass1Count.toLocaleString()}`);
   console.log(`    Pass 2 (alias file):       ${pass2Count.toLocaleString()}`);
+  console.log(`    Salt → elemental converted: ${[...saltConverted.values()].reduce((a, b) => a + b, 0)}  ${JSON.stringify(Object.fromEntries(saltConverted))}`);
+  console.log(`    Salt rows discarded (no factor): ${JSON.stringify(Object.fromEntries(saltDiscarded))}`);
   console.log(`    Pass 3:                    suggest-only → see ${reportPath}`);
   console.log(`    Unmatched names:           ${misses.size.toLocaleString()} → see ${reportPath}`);
   console.log('');
