@@ -26,7 +26,6 @@
     "target": "Acetyl-L-Carnitine",
     "verified": true
   },
-
   "pyridoxal 5'-phosphate": {
     "target": "Pyridoxine (vitamin B6)",
     "verified": false
@@ -679,9 +678,7 @@
     "target": "Vitamin A",
     "verified": false
   },
-
   "_comment_tga_bare_latin_names": "TGA ARTG listings often use the bare Latin species name (Withania somnifera) rather than the 'extract' form (withania somnifera extract) covered by seeds above. Added after first real TGA ingest — 2026-08-12.",
-
   "withania somnifera": {
     "target": "Ashwagandha",
     "verified": false
@@ -782,9 +779,7 @@
     "target": "Saffron",
     "verified": false
   },
-
   "_comment_tga_functional_names": "TGA sometimes uses bare functional/chemical names without the L- prefix or salt suffix.",
-
   "theanine": {
     "target": "L-theanine",
     "verified": false
@@ -821,9 +816,7 @@
     "target": "Vitamin E",
     "verified": false
   },
-
   "_comment_additional_latin_names": "Second pass after full-run alias report — 2026-08-12. Additional high-frequency Latin names not covered by the extract-form seeds above.",
-
   "passiflora incarnata": {
     "target": "Passionflower",
     "verified": false
@@ -858,6 +851,90 @@
   },
   "punica granatum": {
     "target": "Pomegranate",
+    "verified": false
+  },
+  "ocimum tenuiflorum": {
+    "target": "Holy basil",
+    "verified": true
+  },
+  "ocimum sanctum": {
+    "target": "Holy basil",
+    "verified": true
+  },
+  "angelica polymorpha": {
+    "target": "Dong quai",
+    "verified": true
+  },
+  "matricaria chamomilla": {
+    "target": "Chamomile",
+    "verified": true
+  },
+  "cinnamomum cassia": {
+    "target": "Cinnamon",
+    "verified": true
+  },
+  "trigonella foenum-graecum": {
+    "target": "Fenugreek",
+    "verified": true
+  },
+  "apium graveolens": {
+    "target": "Celery",
+    "verified": true
+  },
+  "bromelains": {
+    "target": "Bromelain",
+    "verified": true
+  },
+  "lepidium meyenii": {
+    "target": "Maca (fruit)",
+    "verified": true
+  },
+  "rosmarinus officinalis": {
+    "target": "Rosemary",
+    "verified": true
+  },
+  "eschscholzia californica": {
+    "target": "California poppy",
+    "verified": true
+  },
+  "lavandula angustifolia": {
+    "target": "Lavender",
+    "verified": true
+  },
+  "prunus cerasus": {
+    "target": "Tart cherry",
+    "verified": true
+  },
+  "coffea arabica": {
+    "target": "Coffee",
+    "verified": true
+  },
+  "elettaria cardamomum": {
+    "target": "Cardamom",
+    "verified": true
+  },
+  "citrus aurantium": {
+    "target": "Bergamot",
+    "verified": false
+  },
+  "plectranthus barbatus": {
+    "target": "Coleus (forskolin)",
+    "verified": false
+  },
+  "calcium beta-hydroxy-beta-methylbutyrate": {
+    "target": "MyHMB (HMB)",
+    "verified": false
+  },
+  "calcium beta-hydroxy-beta-methylbutyrate monohydrate": {
+    "target": "MyHMB (HMB)",
+    "verified": false
+  },
+  "citrulline": {
+    "target": "L-citrulline",
+    "verified": false
+  },
+  "l-citrulline": {
+    "target": "L-citrulline",
     "verified": false
   }
 }

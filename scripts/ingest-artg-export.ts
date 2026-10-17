@@ -2,6 +2,11 @@
 /**
  * scripts/ingest-artg-export.ts  (v2 — TGA public export format)
  *
+ * NOTE: data/artg-aliases.json must be kept in sync with n-of-1-translator.
+ * The translator's copy (n-of-1-translator/data/artg-aliases.json) is the master;
+ * edit it there and copy it here, otherwise this script will regenerate a
+ * candidates.json that silently loses matches the translator relies on.
+ *
  * Convert a TGA ARTG public export (.xlsx) into the candidates.json format
  * consumed by the justification engine.
  *
